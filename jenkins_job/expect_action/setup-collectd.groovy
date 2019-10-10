@@ -49,7 +49,7 @@ echo "SN: $SN"
 
 # get passphrase
 echo "${SESAME2_URL}${SN}" | awk '/Access Key/{print $3}' | tr -d '"
-PASSPHRASE=`curl "${SESAME2_URL}${SN}" | awk '/Access Key/{print $3}' | tr -d '`
+PASSPHRASE=`curl "${SESAME2_URL}${SN}" | awk '/Access Key/{print $3}' | tr -d \\\'`
 export PASSPHRASE=$PASSPHRASE
 
 
