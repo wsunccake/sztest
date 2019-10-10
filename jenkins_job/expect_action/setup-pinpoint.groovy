@@ -73,6 +73,9 @@ fi
 
 export SZ_IP=$SZ_IP
 
+# work dir
+cd $API_PERF_DIR/public_api/$API_PERF_VER
+
 init_time=`date +%s`
 waiting_time=$WAITING_TIME
 interval=10
