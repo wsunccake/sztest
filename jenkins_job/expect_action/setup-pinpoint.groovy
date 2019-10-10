@@ -52,8 +52,32 @@ PASSPHRASE=`curl "${SESAME2_URL}${SN}" | awk '/Access Key/{print $3}' | tr -d \'
 export PASSPHRASE=$PASSPHRASE
 
 
-echo "setup collectd"
-$EXPECT_DIR/sz/common/setup-collectd.exp
+echo "setup pippoint"
+$EXPECT_DIR/sz/common/setup-pinpoint.exp
+
+
+init_time=`date +%s`
+waiting_time=$WAITING_TIME
+interval=10
+
+# check in-service
+echo "start job:`date`"
+  while true; do
+    echo "start time:`date`"
+
+    ./login.sh admin "$ADMIN_PASSWORD"
+    is_in_service=`./login.sh admin "$ADMIN_PASSWORD" | grep 'Response code: 200' >& /dev/null && echo "true" || echo "false"`
+
+    end_time=`date +%s`
+    echo "end time:`date`"
+    [ "x$is_in_service" == "xtrue" ] && break
+    [ "`expr $end_time - $init_time`" -gt "$waiting_time" ] && exit 1
+
+    sleep $interval
+  done
+  
+  ./login.sh admin "$ADMIN_PASSWORD"
+echo "end job:`date`"
 '''
             }
         }

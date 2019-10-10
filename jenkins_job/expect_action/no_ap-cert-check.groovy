@@ -20,7 +20,7 @@ pipeline {
             }
         }
 
-        stage('Setup Collectd') {
+        stage('Disable AP Cert Check') {
             steps {
                 sh '''#!/bin/bash
 # expect work
@@ -32,8 +32,7 @@ if [ -z $SZ_IP ]; then
 fi 
 
 export SZ_IP=$SZ_IP
-export CLUSTER_NAME=$CLUSTER_NAME
-echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME, CLUSTER_NAME: $CLUSTER_NAME"
+echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 #env
 
 

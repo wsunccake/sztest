@@ -6,7 +6,6 @@ pipeline {
 
         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: '')
         string(name: 'EXPECT_DIR', defaultValue: '/var/lib/jenkins/expect', description: '')
-        string(name: 'EXPECT_VER', defaultValue: '5.2', description: '')
         string(name: 'API_PERF_DIR', defaultValue: '/var/lib/jenkins/api_perf', description: '')
         string(name: 'API_PERF_VER', defaultValue: 'v9_0', description: '')
 
@@ -35,7 +34,7 @@ if [ -z $SZ_IP ]; then
 fi 
 
 export SZ_IP=$SZ_IP
-echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME, CLUSTER_NAME: $CLUSTER_NAME"
+echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 #env
 
 # work dir
