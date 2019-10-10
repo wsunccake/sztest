@@ -26,6 +26,11 @@ pipeline {
 echo "data dir: $VAR_DIR/output/$VAR_DATA"
 #grep -A1 'Response code: 201' $VAR_DIR/output/$VAR_DATA/*.out
 
+echo "find $VAR_DIR/output/$VAR_DATA -name \\*.out -exec grep -A1 'Response code: 201' {} \\;"
+
+echo "find $VAR_DIR/output/$VAR_DATA -name \\*.out -exec grep -A1 'Response code: 201' {} \\; \\
+| awk '/Response time:/ {print \\$3}'"
+
 find $VAR_DIR/output/$VAR_DATA -name \\*.out -exec grep -A1 'Response code: 201' {} \\; \\
 | awk '/Response time:/ {print \\$3}' \\
 |  $API_PERF_DIR/util/statistics.awk
