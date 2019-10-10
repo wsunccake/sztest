@@ -47,7 +47,7 @@ echo "SN: $SN"
 
 
 cd $API_PERF_DIR/util
-env LICENSE_SERVER_IP=$LOCAL_LICENSE_SERVER_IP ./local_license_server_add_entry.sh $SN CAPACITY-AP 1.0 10000
+./local_license_server_add_entry.sh $SN CAPACITY-AP 1.0 10000
 '''
             }
         }
