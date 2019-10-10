@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        stage('Fresh Install') {
+        stage('Update Local License Server') {
             steps {
                 sh '''#!/bin/bash
 # expect work
