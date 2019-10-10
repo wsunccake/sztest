@@ -50,6 +50,8 @@ echo "SN: $SN"
 # get passphrase
 echo "${SESAME2_URL}${SN} | awk '/Access Key/{print \\$3}'"
 echo "${SESAME2_URL}${SN} | awk '/Access Key/{print \\$3}' | tr -d \\'"
+PASSPHRASE=`curl ${SESAME2_URL}${SN} | awk '/Access Key/{print \\$3}' | tr -d \\'`
+export PASSPHRASE=$PASSPHRASE
 
 #echo "${SESAME2_URL}${SN}" | awk '/Access Key/{print $3}'"
 #echo "${SESAME2_URL}${SN}" | awk '/Access Key/{print \$3}'"
@@ -67,8 +69,8 @@ echo "${SESAME2_URL}${SN} | awk '/Access Key/{print \\$3}' | tr -d \\'"
 #export PASSPHRASE=$PASSPHRASE
 
 
-#echo "setup collectd"
-#$EXPECT_DIR/sz/common/setup-collectd.exp
+echo "setup collectd"
+$EXPECT_DIR/sz/common/setup-collectd.exp
 '''
             }
         }
