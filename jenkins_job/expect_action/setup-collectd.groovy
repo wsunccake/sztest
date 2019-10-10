@@ -48,25 +48,8 @@ SN=`./get_sn.sh`
 echo "SN: $SN"
 
 # get passphrase
-echo "${SESAME2_URL}${SN} | awk '/Access Key/{print \\$3}'"
-echo "${SESAME2_URL}${SN} | awk '/Access Key/{print \\$3}' | tr -d \\'"
 PASSPHRASE=`curl ${SESAME2_URL}${SN} | awk '/Access Key/{print \\$3}' | tr -d \\'`
 export PASSPHRASE=$PASSPHRASE
-
-#echo "${SESAME2_URL}${SN}" | awk '/Access Key/{print $3}'"
-#echo "${SESAME2_URL}${SN}" | awk '/Access Key/{print \$3}'"
-#echo "${SESAME2_URL}${SN}" | awk '/Access Key/{print \\$3}'"
-#echo "${SESAME2_URL}${SN}" | awk '/Access Key/{print \\\$3}'"
-#echo "${SESAME2_URL}${SN}" | awk '/Access Key/{print \\\\$3}'"
-
-#echo "${SESAME2_URL}${SN}" | awk '/Access Key/{print $3}' | tr -d '"
-#echo "${SESAME2_URL}${SN}" | awk '/Access Key/{print $3}' | tr -d \'"
-#echo "${SESAME2_URL}${SN}" | awk '/Access Key/{print $3}' | tr -d \\'"
-#echo "${SESAME2_URL}${SN}" | awk '/Access Key/{print $3}' | tr -d \\\'"
-#echo "${SESAME2_URL}${SN}" | awk '/Access Key/{print $3}' | tr -d \\\\'"
-
-#PASSPHRASE=`curl ${SESAME2_URL}${SN} | awk '/Access Key/{print $3}' | tr -d \'`
-#export PASSPHRASE=$PASSPHRASE
 
 
 echo "setup collectd"
