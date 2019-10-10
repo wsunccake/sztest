@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        stage('Create Zone') {
+        stage('Create DPSK WLAN') {
             steps {
                 sh '''#!/bin/bash
 # expect work
