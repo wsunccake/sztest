@@ -1,8 +1,8 @@
 pipeline {
     agent any
     parameters {
-        string(name: 'SCG_VERSION', defaultValue: '1.0.0.0', description: '')
-        string(name: 'CLUSTER_NAME', defaultValue: 'api-perf-group0', description: '')
+        string(name: 'version', defaultValue: '1.0.0.0', description: '')
+        string(name: 'scenario', defaultValue: 'group0', description: '')
 
         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: '')
         string(name: 'EXPECT_DIR', defaultValue: '/var/lib/jenkins/expect', description: '')
@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        stage('Setup Collectd') {
+        stage('Setup PinPoint') {
             steps {
                 sh '''#!/bin/bash
 # expect work
@@ -48,7 +48,7 @@ SN=`./get_sn.sh`
 echo "SN: $SN"
 
 # get passphrase
-PASSPHRASE=`curl "${SESAME2_URL}${SN}" | awk '/Access Key/{print $3}' | tr -d \'`
+PASSPHRASE=`curl ${SESAME2_URL}${SN} | awk '/Access Key/{print \\$3}' | tr -d \\'`
 export PASSPHRASE=$PASSPHRASE
 
 
