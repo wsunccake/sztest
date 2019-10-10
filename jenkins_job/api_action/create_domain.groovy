@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        stage('Setup Collectd') {
+        stage('Create Domain') {
             steps {
                 sh '''#!/bin/bash
 # expect work
