@@ -36,7 +36,7 @@ fi
 export SZ_IP=$SZ_IP
 export CLUSTER_NAME=$CLUSTER_NAME
 echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME, CLUSTER_NAME: $CLUSTER_NAME"
-load_setup_collectd_variable
+load_setup_pinpoint_variable
 #env
 
 # work dir
