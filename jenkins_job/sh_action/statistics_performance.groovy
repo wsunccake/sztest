@@ -14,7 +14,7 @@ pipeline {
         stage('Update Build Name') {
             steps {
                 script {
-                    currentBuild.displayName = "${version} - ${scenario} - ${$VAR_DATA} #${currentBuild.number}"
+                    currentBuild.displayName = "${version} - ${scenario} - ${VAR_DATA} #${currentBuild.number}"
                 }
 
             }
