@@ -10,6 +10,8 @@ pipeline {
         string(name: 'API_PERF_VER', defaultValue: 'v9_0', description: '')
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
+
+        string(name: 'WAITING_TIME', defaultValue: '900', description: '')
     }
 
     stages {
@@ -54,13 +56,27 @@ export PASSPHRASE=$PASSPHRASE
 
 echo "setup pippoint"
 $EXPECT_DIR/sz/common/setup-pinpoint.exp
+'''
+            }
+        }
 
+        stage('Check In-Service') {
+                steps {
+                    sh '''#!/bin/bash
+# expect work
+source $EXPECT_DIR/sz/var/expect-var.sh
+
+# setup sz ip
+if [ -z $SZ_IP ]; then
+  SZ_IP=`sed -n 1p $VAR_DIR/input/sz/sz.inp`
+fi 
+
+export SZ_IP=$SZ_IP
 
 init_time=`date +%s`
 waiting_time=$WAITING_TIME
 interval=10
 
-# check in-service
 echo "start job:`date`"
   while true; do
     echo "start time:`date`"
