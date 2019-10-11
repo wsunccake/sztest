@@ -29,9 +29,9 @@ pipeline {
 source $EXPECT_DIR/sz/var/expect-var.sh
 
 # setup sz ip
-if [ -z $SZ_IP ]; then
-  SZ_IP=`sed -n 1p $VAR_DIR/input/sz/sz.inp`
-fi 
+#if [ -z $SZ_IP ]; then
+#  SZ_IP=`sed -n 1p $VAR_DIR/input/sz/sz.inp`
+#fi 
 
 export SZ_IP=$SZ_IP
 export CLUSTER_NAME=$CLUSTER_NAME

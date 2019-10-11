@@ -1,3 +1,5 @@
+def szIP
+
 node {
     properties([
             parameters([string(name: 'version', defaultValue: '1.0.0.0'),
@@ -12,15 +14,24 @@ node {
                                                                       string(name: 'scenario', value: "${params.scenario}"),]
     }
 
+    stage('Setup SZ IP') {
+        script {
+            File szInp = new File("${VAR_DIR}/input/sz/sz.inp")
+            szIP=szInp.readLines().get(0)
+        }
+    }
+
     stage('Fresh Install') {
         build job: 'fresh_install', parameters: [string(name: 'version', value: "${params.version}"),
-                                                 string(name: 'scenario', value: "${params.scenario}"),]
+                                                 string(name: 'scenario', value: "${params.scenario}"),
+                                                 string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     try {
         stage('Configure Collectd') {
             build job: 'setup-collectd', parameters: [string(name: 'version', value: "${params.version}"),
-                                                      string(name: 'scenario', value: "${params.scenario}"),]
+                                                      string(name: 'scenario', value: "${params.scenario}"),
+                                                      string(name: 'SZ_IP', value: "${szIP}"),]
         }
     } catch (Exception e) {
         echo "Stage ${currentBuild.result}, but we continue"
@@ -29,7 +40,8 @@ node {
     try {
         stage('Disable AP Cert Check') {
             build job: 'no_ap-cert-check', parameters: [string(name: 'version', value: "${params.version}"),
-                                                        string(name: 'scenario', value: "${params.scenario}"),]
+                                                        string(name: 'scenario', value: "${params.scenario}"),
+                                                        string(name: 'SZ_IP', value: "${szIP}"),]
         }
     } catch (Exception e) {
         echo "Stage ${currentBuild.result}, but we continue"
@@ -38,7 +50,8 @@ node {
     try {
         stage('Configure PinPoint') {
             build job: 'setup-pinpoint', parameters: [string(name: 'version', value: "${params.version}"),
-                                                      string(name: 'scenario', value: "${params.scenario}"),]
+                                                      string(name: 'scenario', value: "${params.scenario}"),
+                                                      string(name: 'SZ_IP', value: "${szIP}"),]
         }
     } catch (Exception e) {
         echo "Stage ${currentBuild.result}, but we continue"
@@ -47,7 +60,8 @@ node {
     try {
         stage('Configure Local License Server') {
             build job: 'update_local_license_server', parameters: [string(name: 'version', value: "${params.version}"),
-                                                                   string(name: 'scenario', value: "${params.scenario}"),]
+                                                                   string(name: 'scenario', value: "${params.scenario}"),
+                                                                   string(name: 'SZ_IP', value: "${szIP}"),]
         }
     } catch (Exception e) {
         echo "Stage ${currentBuild.result}, but we continue"
