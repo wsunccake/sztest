@@ -115,12 +115,45 @@ node {
 
     stage('Create AP Group') {
         build job: 'create_ap_group', parameters: [string(name: 'version', value: "${params.version}"),
-                                                     string(name: 'scenario', value: "${params.scenario}"),]
+                                                   string(name: 'scenario', value: "${params.scenario}"),]
     }
 
     stage('Analyze AP Group') {
         build job: 'statistics_performance', parameters: [string(name: 'version', value: "${params.version}"),
                                                           string(name: 'scenario', value: "${params.scenario}"),
                                                           string(name: 'VAR_DATA', value: "ap_groups"),]
+    }
+
+    stage('Startup SimPC') {
+        build job: 'startup_sim_pc', parameters: [string(name: 'version', value: "${params.version}"),
+                                                  string(name: 'scenario', value: "${params.scenario}"),]
+    }
+
+    stage('Join AP') {
+        build job: 'join_sim_ap', parameters: [string(name: 'version', value: "${params.version}"),
+                                               string(name: 'scenario', value: "${params.scenario}"),]
+    }
+
+    stage('Count On Line AP') {
+        build job: 'monitor_ap', parameters: [string(name: 'version', value: "${params.version}"),
+                                              string(name: 'scenario', value: "${params.scenario}"),
+                                              string(name: 'AP_NUM', value: "1"),]
+    }
+
+    stage('Count Update-To-Date AP') {
+        build job: 'monitor_ap_update-to-date', parameters: [string(name: 'version', value: "${params.version}"),
+                                                             string(name: 'scenario', value: "${params.scenario}"),
+                                                             string(name: 'AP_NUM', value: "1"),]
+    }
+
+    stage('Associate UE') {
+        build job: 'associate_sim_ue', parameters: [string(name: 'version', value: "${params.version}"),
+                                                    string(name: 'scenario', value: "${params.scenario}"),]
+    }
+
+    stage('Count UE') {
+        build job: 'monitor_client', parameters: [string(name: 'version', value: "${params.version}"),
+                                                  string(name: 'scenario', value: "${params.scenario}"),
+                                                  string(name: 'UE_NUM', value: "1"),]
     }
 }

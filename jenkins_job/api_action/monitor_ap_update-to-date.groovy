@@ -25,7 +25,7 @@ pipeline {
             }
         }
 
-        stage('Count On Line AP') {
+        stage('Count Update-To-Date AP') {
             steps {
                 sh '''#!/bin/bash
 # expect work
@@ -54,15 +54,15 @@ echo "start job:`date`"
     ./login.sh admin "$ADMIN_PASSWORD"
     echo "start time:`date`"
 
-    ./monitor_ap.sh
-    online_aps=`./monitor_ap.sh | awk '/onlineCount/ {print \$2}' | tr -d ,`
-    
+    ./count_ap.sh
+    update_to_date_aps=`./count_ap.sh`
+
     end_time=`date +%s`
     echo "end time:`date`"
-    echo "ap num: $AP_NUM, $online_aps"    
-    [ "$online_aps" -ge "$AP_NUM" ] && break
+    echo "ap num: $AP_NUM, $update_to_date_aps"    
+    [ "$update_to_date_aps" -ge "$AP_NUM" ] && break
     [ "`expr $end_time - $init_time`" -gt "$waiting_time" ] && exit 1
-    
+
     sleep $interval
   done
 echo "end job:`date`"
