@@ -20,12 +20,10 @@ pipeline {
         stage('Associate UE') {
             steps {
                 sh '''#!/bin/bash
+set -e
+
 # expect work
 source $EXPECT_DIR/sz/var/expect-var.sh
-
-export SZ_IP=$SZ_IP
-echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
-#env
 
 
 SIM_INPUT=$VAR_DIR/input/sim/sim.inp

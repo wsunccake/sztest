@@ -20,6 +20,8 @@ pipeline {
         stage('Startup SimPC') {
             steps {
                 sh '''#!/bin/bash
+set -e
+
 for sim_pc in `awk '{print \$1}' $VAR_DIR/input/sim/sim.inp`; do
   echo "start: `date`"
   time gcloud compute instances start $sim_pc

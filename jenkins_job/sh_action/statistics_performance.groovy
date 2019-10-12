@@ -23,6 +23,8 @@ pipeline {
         stage('Figure Performance') {
             steps {
                 sh '''#!/bin/bash
+set -e
+
 echo "data dir: $VAR_DIR/output/$VAR_DATA"
 
 echo "find $VAR_DIR/output/$VAR_DATA -name \\*.out -exec grep -A1 'Response code: 201' {} \\; \\
