@@ -23,11 +23,6 @@ pipeline {
 # expect work
 source $EXPECT_DIR/sz/var/expect-var.sh
 
-# setup sz ip
-if [ -z $SZ_IP ]; then
-  SZ_IP=`sed -n 1p $VAR_DIR/input/sz/sz.inp`
-fi 
-
 export SZ_IP=$SZ_IP
 echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 #env

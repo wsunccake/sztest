@@ -3,8 +3,8 @@ def szIP
 node {
     properties([
             parameters([string(name: 'version', defaultValue: '1.0.0.0'),
-                        string(name: 'scenario', defaultValue: 'group0')])
-
+                        string(name: 'scenario', defaultValue: 'group0'),
+                        string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: '')])
     ])
 
     currentBuild.displayName = "${params.version} - ${params.scenario} - #${currentBuild.number}"
@@ -17,7 +17,8 @@ node {
     stage('Setup SZ IP') {
         script {
             File szInp = new File("${VAR_DIR}/input/sz/sz.inp")
-            szIP=szInp.readLines().get(0)
+            szIP = szInp.readLines().get(0)
+            println "SZ IP: ${szIP}"
         }
     }
 
@@ -69,7 +70,10 @@ node {
 
     stage('Create Domain') {
         build job: 'create_domain', parameters: [string(name: 'version', value: "${params.version}"),
-                                                               string(name: 'scenario', value: "${params.scenario}"),]
+                                                 string(name: 'scenario', value: "${params.scenario}"),
+                                                 string(name: 'SZ_IP', value: "${szIP}"),]
+
+
     }
 
     stage('Analyze Domain') {
@@ -80,7 +84,8 @@ node {
 
     stage('Create Zone') {
         build job: 'create_zone', parameters: [string(name: 'version', value: "${params.version}"),
-                                               string(name: 'scenario', value: "${params.scenario}"),]
+                                               string(name: 'scenario', value: "${params.scenario}"),
+                                               string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     stage('Analyze Zone') {
@@ -91,12 +96,14 @@ node {
 
     stage('Create Open WLAN') {
         build job: 'create_open_wlan', parameters: [string(name: 'version', value: "${params.version}"),
-                                                    string(name: 'scenario', value: "${params.scenario}"),]
+                                                    string(name: 'scenario', value: "${params.scenario}"),
+                                                    string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     stage('Create DPSK WLAN') {
         build job: 'create_dpsk_wlan', parameters: [string(name: 'version', value: "${params.version}"),
-                                                    string(name: 'scenario', value: "${params.scenario}"),]
+                                                    string(name: 'scenario', value: "${params.scenario}"),
+                                                    string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     stage('Analyze WLAN') {
@@ -107,7 +114,8 @@ node {
 
     stage('Create WLAN Group') {
         build job: 'create_wlan_group', parameters: [string(name: 'version', value: "${params.version}"),
-                                                     string(name: 'scenario', value: "${params.scenario}"),]
+                                                     string(name: 'scenario', value: "${params.scenario}"),
+                                                     string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     stage('Analyze WLAN Group') {
@@ -118,7 +126,8 @@ node {
 
     stage('Pre-Provision AP') {
         build job: 'create_ap', parameters: [string(name: 'version', value: "${params.version}"),
-                                             string(name: 'scenario', value: "${params.scenario}"),]
+                                             string(name: 'scenario', value: "${params.scenario}"),
+                                             string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     stage('Analyze AP') {
@@ -129,7 +138,8 @@ node {
 
     stage('Create AP Group') {
         build job: 'create_ap_group', parameters: [string(name: 'version', value: "${params.version}"),
-                                                   string(name: 'scenario', value: "${params.scenario}"),]
+                                                   string(name: 'scenario', value: "${params.scenario}"),
+                                                   string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     stage('Analyze AP Group') {
@@ -145,18 +155,21 @@ node {
 
     stage('Join AP') {
         build job: 'join_sim_ap', parameters: [string(name: 'version', value: "${params.version}"),
-                                               string(name: 'scenario', value: "${params.scenario}"),]
+                                               string(name: 'scenario', value: "${params.scenario}"),
+                                               string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     stage('Count On Line AP') {
         build job: 'monitor_ap', parameters: [string(name: 'version', value: "${params.version}"),
                                               string(name: 'scenario', value: "${params.scenario}"),
+                                              string(name: 'SZ_IP', value: "${szIP}"),
                                               string(name: 'AP_NUM', value: "1"),]
     }
 
     stage('Count Update-To-Date AP') {
         build job: 'monitor_ap_update-to-date', parameters: [string(name: 'version', value: "${params.version}"),
                                                              string(name: 'scenario', value: "${params.scenario}"),
+                                                             string(name: 'SZ_IP', value: "${szIP}"),
                                                              string(name: 'AP_NUM', value: "1"),]
     }
 
@@ -168,6 +181,7 @@ node {
     stage('Count UE') {
         build job: 'monitor_client', parameters: [string(name: 'version', value: "${params.version}"),
                                                   string(name: 'scenario', value: "${params.scenario}"),
+                                                  string(name: 'SZ_IP', value: "${szIP}"),
                                                   string(name: 'UE_NUM', value: "1"),]
     }
 }

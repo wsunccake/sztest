@@ -36,7 +36,6 @@ export SZ_IP=$SZ_IP
 echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME, CLUSTER_NAME: $CLUSTER_NAME"
 #env
 
-
 echo "run setup network"
 $EXPECT_DIR/sz/$EXPECT_VER/setup-network.exp
 

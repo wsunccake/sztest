@@ -5,6 +5,8 @@ pipeline {
         string(name: 'scenario', defaultValue: 'group0', description: '')
 
         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: '')
+
+        string(name: 'SZ_IP', defaultValue: '', description: '')
     }
 
     stages {
@@ -22,11 +24,6 @@ pipeline {
                 sh '''#!/bin/bash
 # expect work
 source $EXPECT_DIR/sz/var/expect-var.sh
-
-# setup sz ip
-if [ -z $SZ_IP ]; then
-  SZ_IP=`sed -n 1p $VAR_DIR/input/sz/sz.inp`
-fi 
 
 export SZ_IP=$SZ_IP
 echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"

@@ -12,7 +12,6 @@ pipeline {
         string(name: 'SZ_IP', defaultValue: '', description: '')
         string(name: 'AP_NUM', defaultValue: '1', description: '')
         string(name: 'WAITING_TIME', defaultValue: '600', description: '')
-
     }
 
     stages {
@@ -30,11 +29,6 @@ pipeline {
                 sh '''#!/bin/bash
 # expect work
 source $EXPECT_DIR/sz/var/expect-var.sh
-
-# setup sz ip
-if [ -z $SZ_IP ]; then
-  SZ_IP=`sed -n 1p $VAR_DIR/input/sz/sz.inp`
-fi 
 
 export SZ_IP=$SZ_IP
 echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
