@@ -22,8 +22,7 @@ pipeline {
         stage('Startup SimPC') {
             steps {
                 sh '''#!/bin/bash
-# expect work
-source $EXPECT_DIR/sz/var/expect-var.sh
+set -e
 
 export SZ_IP=$SZ_IP
 echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
@@ -35,6 +34,12 @@ SIM_USER="jenkins"
 
 # run
 cd $VAR_DIR/input/sim
+
+if [ ! -f $SIM_INPUT ]; then
+  echo "no found $SIM_INPUT"
+  exit 1
+fi
+
 sim_number=`cat $SIM_INPUT | wc -l`
 
 for sim_config_dir in `seq $sim_number`; do
@@ -48,6 +53,7 @@ for sim_config_dir in `seq $sim_number`; do
     ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'
   else
     echo "$sim_pc no found config $sim_config_dir"
+    exit 1
   fi
 done
 '''

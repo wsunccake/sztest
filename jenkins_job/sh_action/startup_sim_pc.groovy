@@ -22,6 +22,12 @@ pipeline {
                 sh '''#!/bin/bash
 set -e
 
+if [ ! -f $VAR_DIR/input/sim/sim.inp ]; then
+  echo "no found $VAR_DIR/input/sim/sim.inp"
+  exit 1
+fi
+
+
 for sim_pc in `awk '{print \$1}' $VAR_DIR/input/sim/sim.inp`; do
   echo "start: `date`"
   time gcloud compute instances start $sim_pc

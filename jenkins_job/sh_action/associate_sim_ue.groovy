@@ -22,16 +22,18 @@ pipeline {
                 sh '''#!/bin/bash
 set -e
 
-# expect work
-source $EXPECT_DIR/sz/var/expect-var.sh
-
-
 SIM_INPUT=$VAR_DIR/input/sim/sim.inp
 SIM_USER="jenkins"
 
 
 # run
 cd $VAR_DIR/input/sim
+
+if [ ! -f $SIM_INPUT ]; then
+  echo "no found $SIM_INPUT"
+  exit 1
+fi
+
 sim_number=`cat $SIM_INPUT | wc -l`
 
 for sim_config_dir in `seq $sim_number`; do
@@ -44,6 +46,7 @@ for sim_config_dir in `seq $sim_number`; do
     ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_madue.sh /tmp/ue_open.conf'
   else
     echo "$sim_pc no found config $sim_config_dir"
+    exit 1
   fi
 done
 '''
