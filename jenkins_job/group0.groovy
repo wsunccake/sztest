@@ -14,10 +14,15 @@ node {
                                                                       string(name: 'scenario', value: "${params.scenario}"),]
     }
 
+    stage('Launch SZ') {
+        build job: 'launch_sz', parameters: [string(name: 'version', value: "${params.version}"),
+                                             string(name: 'scenario', value: "${params.scenario}")]
+    }
+
     stage('Setup SZ IP') {
         script {
             File szInp = new File("${VAR_DIR}/input/sz/sz.inp")
-            szIP = szInp.readLines().get(0)
+            szIP = szInp.readLines().get(0).split()[1]
             println "SZ IP: ${szIP}"
         }
     }
@@ -112,6 +117,13 @@ node {
                                                           string(name: 'VAR_DATA', value: "wlans"),]
     }
 
+    stage('Create DPSK ') {
+        build job: 'create_dpsk_patch', parameters: [string(name: 'version', value: "${params.version}"),
+                                                     string(name: 'scenario', value: "${params.scenario}"),
+                                                     string(name: 'SZ_IP', value: "${szIP}"),
+                                                     string(name: 'SZ_IP', value: "1"),]
+    }
+
     stage('Create WLAN Group') {
         build job: 'create_wlan_group', parameters: [string(name: 'version', value: "${params.version}"),
                                                      string(name: 'scenario', value: "${params.scenario}"),
@@ -183,5 +195,15 @@ node {
                                                   string(name: 'scenario', value: "${params.scenario}"),
                                                   string(name: 'SZ_IP', value: "${szIP}"),
                                                   string(name: 'UE_NUM', value: "1"),]
+    }
+
+    stage('Shutdown SZ') {
+        build job: 'shutdown_sz', parameters: [string(name: 'version', value: "${params.version}"),
+                                               string(name: 'scenario', value: "${params.scenario}"),]
+    }
+
+    stage('Shutdown SimPC') {
+        build job: 'shutdown_sim_pc', parameters: [string(name: 'version', value: "${params.version}"),
+                                                   string(name: 'scenario', value: "${params.scenario}"),]
     }
 }
