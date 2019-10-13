@@ -4,7 +4,10 @@ node {
     properties([
             parameters([string(name: 'version', defaultValue: '1.0.0.0'),
                         string(name: 'scenario', defaultValue: 'group0'),
-                        string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: '')])
+                        string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: ''),
+                        string(name: 'AP_NUM', defaultValue: '10', description: ''),
+                        string(name: 'UE_NUM', defaultValue: '10', description: ''),
+            ])
     ])
 
     currentBuild.displayName = "${params.version} - ${params.scenario} - #${currentBuild.number}"
@@ -23,6 +26,7 @@ node {
         script {
             File szInp = new File("${VAR_DIR}/input/sz/sz.inp")
             szIP = szInp.readLines().get(0).split()[1]
+            println "SZ Name: ${szInp.readLines().get(0).split()[0]}"
             println "SZ IP: ${szIP}"
         }
     }
@@ -30,14 +34,16 @@ node {
     stage('Fresh Install') {
         build job: 'fresh_install', parameters: [string(name: 'version', value: "${params.version}"),
                                                  string(name: 'scenario', value: "${params.scenario}"),
-                                                 string(name: 'SZ_IP', value: "${szIP}"),]
+                                                 string(name: 'SZ_IP', value: "${szIP}"),
+                                                 string(name: 'CLUSTER_NAME', value: "api-perf-${params.scenario}"),]
     }
 
     try {
         stage('Configure Collectd') {
             build job: 'setup-collectd', parameters: [string(name: 'version', value: "${params.version}"),
                                                       string(name: 'scenario', value: "${params.scenario}"),
-                                                      string(name: 'SZ_IP', value: "${szIP}"),]
+                                                      string(name: 'SZ_IP', value: "${szIP}"),
+                                                      string(name: 'CLUSTER_NAME', value: "api-perf-${params.scenario}"),]
         }
     } catch (Exception e) {
         echo "Stage ${currentBuild.result}, but we continue"
@@ -57,7 +63,8 @@ node {
         stage('Configure PinPoint') {
             build job: 'setup-pinpoint', parameters: [string(name: 'version', value: "${params.version}"),
                                                       string(name: 'scenario', value: "${params.scenario}"),
-                                                      string(name: 'SZ_IP', value: "${szIP}"),]
+                                                      string(name: 'SZ_IP', value: "${szIP}"),
+                                                      string(name: 'CLUSTER_NAME', value: "api-perf-${params.scenario}"),]
         }
     } catch (Exception e) {
         echo "Stage ${currentBuild.result}, but we continue"
@@ -118,10 +125,10 @@ node {
     }
 
     stage('Create DPSK ') {
-        build job: 'create_dpsk_patch', parameters: [string(name: 'version', value: "${params.version}"),
+        build job: 'create_dpsk_batch', parameters: [string(name: 'version', value: "${params.version}"),
                                                      string(name: 'scenario', value: "${params.scenario}"),
                                                      string(name: 'SZ_IP', value: "${szIP}"),
-                                                     string(name: 'SZ_IP', value: "1"),]
+                                                     string(name: 'DPSK_AMOUNT', value: "1"),]
     }
 
     stage('Create WLAN Group') {
@@ -171,18 +178,26 @@ node {
                                                string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
-    stage('Count On Line AP') {
-        build job: 'monitor_ap', parameters: [string(name: 'version', value: "${params.version}"),
-                                              string(name: 'scenario', value: "${params.scenario}"),
-                                              string(name: 'SZ_IP', value: "${szIP}"),
-                                              string(name: 'AP_NUM', value: "1"),]
+    try {
+        stage('Count On Line AP') {
+            build job: 'monitor_ap', parameters: [string(name: 'version', value: "${params.version}"),
+                                                  string(name: 'scenario', value: "${params.scenario}"),
+                                                  string(name: 'SZ_IP', value: "${szIP}"),
+                                                  string(name: 'AP_NUM', value: "${AP_NUM}"),]
+        }
+    } catch (Exception e) {
+        echo "Stage ${currentBuild.result}, but we continue"
     }
 
-    stage('Count Update-To-Date AP') {
-        build job: 'monitor_ap_update-to-date', parameters: [string(name: 'version', value: "${params.version}"),
-                                                             string(name: 'scenario', value: "${params.scenario}"),
-                                                             string(name: 'SZ_IP', value: "${szIP}"),
-                                                             string(name: 'AP_NUM', value: "1"),]
+    try {
+        stage('Count Update-To-Date AP') {
+            build job: 'monitor_ap_update-to-date', parameters: [string(name: 'version', value: "${params.version}"),
+                                                                 string(name: 'scenario', value: "${params.scenario}"),
+                                                                 string(name: 'SZ_IP', value: "${szIP}"),
+                                                                 string(name: 'AP_NUM', value: "${AP_NUM}"),]
+        }
+    } catch (Exception e) {
+        echo "Stage ${currentBuild.result}, but we continue"
     }
 
     stage('Associate UE') {
@@ -190,20 +205,32 @@ node {
                                                     string(name: 'scenario', value: "${params.scenario}"),]
     }
 
-    stage('Count UE') {
-        build job: 'monitor_client', parameters: [string(name: 'version', value: "${params.version}"),
-                                                  string(name: 'scenario', value: "${params.scenario}"),
-                                                  string(name: 'SZ_IP', value: "${szIP}"),
-                                                  string(name: 'UE_NUM', value: "1"),]
+    try {
+        stage('Count UE') {
+            build job: 'monitor_client', parameters: [string(name: 'version', value: "${params.version}"),
+                                                      string(name: 'scenario', value: "${params.scenario}"),
+                                                      string(name: 'SZ_IP', value: "${szIP}"),
+                                                      string(name: 'UE_NUM', value: "${UE_NUM}"),]
+        }
+    } catch (Exception e) {
+        echo "Stage ${currentBuild.result}, but we continue"
     }
 
-    stage('Shutdown SZ') {
-        build job: 'shutdown_sz', parameters: [string(name: 'version', value: "${params.version}"),
-                                               string(name: 'scenario', value: "${params.scenario}"),]
-    }
-
-    stage('Shutdown SimPC') {
-        build job: 'shutdown_sim_pc', parameters: [string(name: 'version', value: "${params.version}"),
+    try {
+        stage('Shutdown SZ') {
+            build job: 'shutdown_sz', parameters: [string(name: 'version', value: "${params.version}"),
                                                    string(name: 'scenario', value: "${params.scenario}"),]
+        }
+    } catch (Exception e) {
+        echo "Stage ${currentBuild.result}, but we continue"
+    }
+
+    try {
+        stage('Shutdown SimPC') {
+            build job: 'shutdown_sim_pc', parameters: [string(name: 'version', value: "${params.version}"),
+                                                       string(name: 'scenario', value: "${params.scenario}"),]
+        }
+    } catch (Exception e) {
+        echo "Stage ${currentBuild.result}, but we continue"
     }
 }

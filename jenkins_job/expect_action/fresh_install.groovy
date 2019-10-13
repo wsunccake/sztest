@@ -9,6 +9,7 @@ pipeline {
         string(name: 'EXPECT_VER', defaultValue: '5.2', description: '')
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
+        string(name: 'CLUSTER_NAME', defaultValue: '', description: '')
     }
 
     stages {

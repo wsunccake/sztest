@@ -10,6 +10,7 @@ pipeline {
         string(name: 'API_PERF_VER', defaultValue: 'v9_0', description: '')
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
+        string(name: 'CLUSTER_NAME', defaultValue: '', description: '')
     }
 
     stages {
