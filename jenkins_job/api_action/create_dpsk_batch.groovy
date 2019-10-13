@@ -34,7 +34,7 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 
 # work dir
 cd $API_PERF_DIR/public_api/$API_PERF_VER
-mkdir -p $VAR_DIR/output/wlans/dpks
+mkdir -p $VAR_DIR/output/wlans/dpsk
 
 # run
 echo "start job:`date`"
@@ -50,7 +50,7 @@ for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
     wlan_id=`awk -F\\" '/"id":/{print \\$4}' $VAR_DIR/output/wlans/${zone_name}_${wlan_name}.out`
     echo "start time:`date`"
     echo "$wlan_id $zone_id"
-    ./create_dpsk_batch.sh $DPSK_AMOUNT $zone_id $wlan_id | tee $VAR_DIR/output/wlans/dpks/${zone_name}_${wlan_name}.out
+    ./create_dpsk_batch.sh $DPSK_AMOUNT $zone_id $wlan_id | tee $VAR_DIR/output/wlans/dpsk/${zone_name}_${wlan_name}.out
     echo "end time:`date`"
   done
 done
