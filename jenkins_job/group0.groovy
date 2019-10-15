@@ -7,6 +7,7 @@ node {
                         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: ''),
                         string(name: 'AP_NUM', defaultValue: '10', description: ''),
                         string(name: 'UE_NUM', defaultValue: '10', description: ''),
+                        string(name: 'DPSK_AMOUNT', defaultValue: "1", description: ''),
             ])
     ])
 
@@ -128,7 +129,7 @@ node {
         build job: 'create_dpsk_batch', parameters: [string(name: 'version', value: "${params.version}"),
                                                      string(name: 'scenario', value: "${params.scenario}"),
                                                      string(name: 'SZ_IP', value: "${szIP}"),
-                                                     string(name: 'DPSK_AMOUNT', value: "1"),]
+                                                     string(name: 'DPSK_AMOUNT', value: "${DPSK_AMOUNT}"),]
     }
 
     stage('Create WLAN Group') {
