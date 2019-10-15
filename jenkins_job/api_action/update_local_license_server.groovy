@@ -68,5 +68,21 @@ cd $API_PERF_DIR/public_api/$API_PERF_VER
 '''
                 }
         }
+
+        stage('Show License') {
+            steps {
+                sh '''#!/bin/bash
+# expect work
+source $EXPECT_DIR/sz/var/expect-var.sh
+
+export SZ_IP=$SZ_IP
+echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
+#env
+
+echo "run show license"
+$EXPECT_DIR/sz/common/show-license.exp
+'''
+            }
+        }
     }
 }
