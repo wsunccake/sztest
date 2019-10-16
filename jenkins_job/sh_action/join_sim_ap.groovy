@@ -7,6 +7,7 @@ pipeline {
         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: '')
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
+        string(name: 'AP_VER', defaultValue: '', description: '')
     }
 
     stages {
@@ -47,6 +48,7 @@ for sim_config_dir in `seq $sim_number`; do
   if [ -d $sim_config_dir ]; then
     echo "$sim_pc config"
     sed s/SZ_IP/$SZ_IP/ $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg.template > $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg
+    sed -i s/AP_VER/$AP_VER/ $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg
     echo "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg"
     scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg
     echo "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'"
