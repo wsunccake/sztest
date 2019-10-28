@@ -84,9 +84,14 @@ ansible-playbook -i $TMP_DATE deploy.yaml -t madsz -e "madsz_package=$MADSZ_TGZ"
 echo "ansible madsz -i $TMP_DATE -m command -a \"sudo reboot\" -v"
 ansible madsz -i $TMP_DATE -m command -a "sudo reboot" -v
 
+sleep 30
+
 for madsz_ip in `awk '{print \$2}' $VAR_DIR/input/sim/sim.inp`; do
   check_pingable ${madsz_ip}
 done
+
+echo "ansible madsz -i $TMP_DATE -m command -a \"uptime\" -v"
+ansible madsz -i $TMP_DATE -m command -a "uptime" -v
 
 rm $API_PERF_DIR/util/playbook/$TMP_DATE
 '''
