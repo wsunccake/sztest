@@ -84,7 +84,7 @@ ansible-playbook -i $TMP_DATE deploy.yaml -t madsz -e "madsz_package=$MADSZ_TGZ"
 echo "ansible madsz -i $TMP_DATE -m command -a \"sudo reboot\" -v"
 ansible madsz -i $TMP_DATE -m command -a "sudo reboot" -v
 
-sleep 30
+sleep 300
 
 echo "ansible madsz -i $TMP_DATE -m command -a \"uptime\" -v"
 ansible madsz -i $TMP_DATE -m command -a "uptime" -v
