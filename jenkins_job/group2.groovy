@@ -4,6 +4,7 @@ node {
     properties([
             parameters([string(name: 'version', defaultValue: '1.0.0.0'),
                         string(name: 'scenario', defaultValue: 'group2'),
+                        string(name: 'ap_version', defaultValue: '2.0.0.0'),
                         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: ''),
                         string(name: 'AP_NUM', defaultValue: '2000', description: ''),
                         string(name: 'UE_NUM', defaultValue: '48000', description: ''),
@@ -174,15 +175,21 @@ node {
                                                           string(name: 'VAR_DATA', value: "ap_groups"),]
     }
 
-    stage('Startup SimPC') {
-        build job: 'startup_sim_pc', parameters: [string(name: 'version', value: "${params.version}"),
-                                                  string(name: 'scenario', value: "${params.scenario}"),]
+    stage('Launch SimPC') {
+        build job: 'launch_sim_pc', parameters: [string(name: 'version', value: "${params.version}"),
+                                                 string(name: 'scenario', value: "${params.scenario}"),]
     }
+
+//    stage('Startup SimPC') {
+//        build job: 'startup_sim_pc', parameters: [string(name: 'version', value: "${params.version}"),
+//                                                  string(name: 'scenario', value: "${params.scenario}"),]
+//    }
 
     stage('Join AP') {
         build job: 'join_sim_ap', parameters: [string(name: 'version', value: "${params.version}"),
                                                string(name: 'scenario', value: "${params.scenario}"),
-                                               string(name: 'SZ_IP', value: "${szIP}"),]
+                                               string(name: 'SZ_IP', value: "${szIP}"),
+                                               string(name: 'AP_VER', value: "${params.ap_version}")]
     }
 
     try {

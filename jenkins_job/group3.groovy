@@ -4,6 +4,7 @@ node {
     properties([
             parameters([string(name: 'version', defaultValue: '1.0.0.0'),
                         string(name: 'scenario', defaultValue: 'group3'),
+                        string(name: 'ap_version', defaultValue: '2.0.0.0'),
                         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: ''),
                         string(name: 'AP_NUM', defaultValue: '2000', description: ''),
                         string(name: 'UE_NUM', defaultValue: '4000', description: ''),
@@ -182,7 +183,8 @@ node {
     stage('Join AP') {
         build job: 'join_sim_ap', parameters: [string(name: 'version', value: "${params.version}"),
                                                string(name: 'scenario', value: "${params.scenario}"),
-                                               string(name: 'SZ_IP', value: "${szIP}"),]
+                                               string(name: 'SZ_IP', value: "${szIP}"),
+                                               string(name: 'AP_VER', value: "${params.ap_version}")]
     }
 
     try {
@@ -201,7 +203,8 @@ node {
             build job: 'monitor_ap_update-to-date', parameters: [string(name: 'version', value: "${params.version}"),
                                                                  string(name: 'scenario', value: "${params.scenario}"),
                                                                  string(name: 'SZ_IP', value: "${szIP}"),
-                                                                 string(name: 'AP_NUM', value: "${AP_NUM}"),]
+                                                                 string(name: 'AP_NUM', value: "${AP_NUM}"),
+                                                                 string(name: 'WAITING_TIME', value: "6000"),]
         }
     } catch (Exception e) {
         echo "Stage ${currentBuild.result}, but we continue"
@@ -217,7 +220,8 @@ node {
             build job: 'monitor_client', parameters: [string(name: 'version', value: "${params.version}"),
                                                       string(name: 'scenario', value: "${params.scenario}"),
                                                       string(name: 'SZ_IP', value: "${szIP}"),
-                                                      string(name: 'UE_NUM', value: "${UE_NUM}"),]
+                                                      string(name: 'UE_NUM', value: "${UE_NUM}"),
+                                                      string(name: 'WAITING_TIME', value: "6000"),]
         }
     } catch (Exception e) {
         echo "Stage ${currentBuild.result}, but we continue"
