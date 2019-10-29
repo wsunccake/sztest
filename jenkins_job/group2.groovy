@@ -175,6 +175,11 @@ node {
                                                           string(name: 'VAR_DATA', value: "ap_groups"),]
     }
 
+    stage('Arrange Data') {
+        build job: 'pickup_data', parameters: [string(name: 'version', value: "${params.version}"),
+                                               string(name: 'scenario', value: "${params.scenario}"),]
+    }
+
     stage('Launch SimPC') {
         build job: 'launch_sim_pc', parameters: [string(name: 'version', value: "${params.version}"),
                                                  string(name: 'scenario', value: "${params.scenario}"),]
@@ -209,7 +214,7 @@ node {
                                                                  string(name: 'scenario', value: "${params.scenario}"),
                                                                  string(name: 'SZ_IP', value: "${szIP}"),
                                                                  string(name: 'AP_NUM', value: "${AP_NUM}"),
-                                                                 string(name: 'WAITING_TIME', value: "3000"),]
+                                                                 string(name: 'WAITING_TIME', value: "6000"),]
         }
     } catch (Exception e) {
         echo "Stage ${currentBuild.result}, but we continue"
@@ -226,10 +231,16 @@ node {
                                                       string(name: 'scenario', value: "${params.scenario}"),
                                                       string(name: 'SZ_IP', value: "${szIP}"),
                                                       string(name: 'UE_NUM', value: "${UE_NUM}"),
-                                                      string(name: 'WAITING_TIME', value: "3000"),]
+                                                      string(name: 'WAITING_TIME', value: "6000"),]
         }
     } catch (Exception e) {
         echo "Stage ${currentBuild.result}, but we continue"
+    }
+
+    stage('Test Query API') {
+        build job: 'test_query', parameters: [string(name: 'version', value: "${params.version}"),
+                                              string(name: 'scenario', value: "${params.scenario}"),
+                                              string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     try {
