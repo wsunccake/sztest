@@ -175,10 +175,20 @@ node {
                                                           string(name: 'VAR_DATA', value: "ap_groups"),]
     }
 
-    stage('Startup SimPC') {
-        build job: 'startup_sim_pc', parameters: [string(name: 'version', value: "${params.version}"),
-                                                  string(name: 'scenario', value: "${params.scenario}"),]
+    stage('Arrange Data') {
+        build job: 'pickup_data', parameters: [string(name: 'version', value: "${params.version}"),
+                                               string(name: 'scenario', value: "${params.scenario}"),]
     }
+
+    stage('Launch SimPC') {
+        build job: 'launch_sim_pc', parameters: [string(name: 'version', value: "${params.version}"),
+                                                 string(name: 'scenario', value: "${params.scenario}"),]
+    }
+
+//    stage('Startup SimPC') {
+//        build job: 'startup_sim_pc', parameters: [string(name: 'version', value: "${params.version}"),
+//                                                  string(name: 'scenario', value: "${params.scenario}"),]
+//    }
 
     stage('Join AP') {
         build job: 'join_sim_ap', parameters: [string(name: 'version', value: "${params.version}"),
@@ -222,6 +232,22 @@ node {
                                                       string(name: 'SZ_IP', value: "${szIP}"),
                                                       string(name: 'UE_NUM', value: "${UE_NUM}"),
                                                       string(name: 'WAITING_TIME', value: "6000"),]
+        }
+    } catch (Exception e) {
+        echo "Stage ${currentBuild.result}, but we continue"
+    }
+
+    stage('Test Query API') {
+        build job: 'test_query', parameters: [string(name: 'version', value: "${params.version}"),
+                                              string(name: 'scenario', value: "${params.scenario}"),
+                                              string(name: 'SZ_IP', value: "${szIP}"),]
+    }
+
+    try {
+        stage('Clean Local License Server') {
+            build job: 'clean_local_license_server', parameters: [string(name: 'version', value: "${params.version}"),
+                                                                  string(name: 'scenario', value: "${params.scenario}"),
+                                                                  string(name: 'SZ_IP', value: "${szIP}"),]
         }
     } catch (Exception e) {
         echo "Stage ${currentBuild.result}, but we continue"

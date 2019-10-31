@@ -244,6 +244,16 @@ node {
     }
 
     try {
+        stage('Clean Local License Server') {
+            build job: 'clean_local_license_server', parameters: [string(name: 'version', value: "${params.version}"),
+                                                                  string(name: 'scenario', value: "${params.scenario}"),
+                                                                  string(name: 'SZ_IP', value: "${szIP}"),]
+        }
+    } catch (Exception e) {
+        echo "Stage ${currentBuild.result}, but we continue"
+    }
+
+    try {
         stage('Shutdown SZ') {
             build job: 'shutdown_sz', parameters: [string(name: 'version', value: "${params.version}"),
                                                    string(name: 'scenario', value: "${params.scenario}"),]
