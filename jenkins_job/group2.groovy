@@ -5,7 +5,8 @@ node {
             parameters([string(name: 'version', defaultValue: '1.0.0.0'),
                         string(name: 'scenario', defaultValue: 'group2'),
                         string(name: 'ap_version', defaultValue: '2.0.0.0'),
-                        string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: ''),
+                        string(name: 'SRC_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: ''),
+                        string(name: 'VAR_DIR', defaultValue: '/usr/share/nginx/html/api_perf/${version}/${scenario}', description: ''),
                         string(name: 'AP_NUM', defaultValue: '2000', description: ''),
                         string(name: 'UE_NUM', defaultValue: '48000', description: ''),
                         string(name: 'DPSK_AMOUNT', defaultValue: "5", description: ''),
@@ -14,14 +15,17 @@ node {
 
     currentBuild.displayName = "${params.version} - ${params.scenario} - #${currentBuild.number}"
 
-    stage('Clean Previous Output') {
-        build job: 'clean_output_dir', propagate: false, parameters: [string(name: 'version', value: "${params.version}"),
-                                                                      string(name: 'scenario', value: "${params.scenario}"),]
+    stage('Prepare Var Dir') {
+        build job: 'prepare_var_dir', propagate: false, parameters: [string(name: 'version', value: "${params.version}"),
+                                                                     string(name: 'scenario', value: "${params.scenario}"),
+                                                                     string(name: 'SRC_DIR', value: "/var/lib/jenkins/api_perf/var/${scenario}"),
+                                                                     string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),]
     }
 
     stage('Launch SZ') {
         build job: 'launch_sz', parameters: [string(name: 'version', value: "${params.version}"),
-                                             string(name: 'scenario', value: "${params.scenario}")]
+                                             string(name: 'scenario', value: "${params.scenario}"),
+                                             string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),]
     }
 
     stage('Setup SZ IP') {
@@ -36,6 +40,7 @@ node {
     stage('Fresh Install') {
         build job: 'fresh_install', parameters: [string(name: 'version', value: "${params.version}"),
                                                  string(name: 'scenario', value: "${params.scenario}"),
+                                                 string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                  string(name: 'SZ_IP', value: "${szIP}"),
                                                  string(name: 'CLUSTER_NAME', value: "api-perf-${params.scenario}"),]
     }
@@ -44,6 +49,7 @@ node {
         stage('Configure Collectd') {
             build job: 'setup-collectd', parameters: [string(name: 'version', value: "${params.version}"),
                                                       string(name: 'scenario', value: "${params.scenario}"),
+                                                      string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                       string(name: 'SZ_IP', value: "${szIP}"),
                                                       string(name: 'CLUSTER_NAME', value: "api-perf-${params.scenario}"),]
         }
@@ -55,6 +61,7 @@ node {
         stage('Disable AP Cert Check') {
             build job: 'no_ap-cert-check', parameters: [string(name: 'version', value: "${params.version}"),
                                                         string(name: 'scenario', value: "${params.scenario}"),
+                                                        string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                         string(name: 'SZ_IP', value: "${szIP}"),]
         }
     } catch (Exception e) {
@@ -65,6 +72,7 @@ node {
         stage('Configure PinPoint') {
             build job: 'setup-pinpoint', parameters: [string(name: 'version', value: "${params.version}"),
                                                       string(name: 'scenario', value: "${params.scenario}"),
+                                                      string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                       string(name: 'SZ_IP', value: "${szIP}"),
                                                       string(name: 'CLUSTER_NAME', value: "api-perf-${params.scenario}"),]
         }
@@ -76,6 +84,7 @@ node {
         stage('Configure Local License Server') {
             build job: 'update_local_license_server', parameters: [string(name: 'version', value: "${params.version}"),
                                                                    string(name: 'scenario', value: "${params.scenario}"),
+                                                                   string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                                    string(name: 'SZ_IP', value: "${szIP}"),]
         }
     } catch (Exception e) {
@@ -85,6 +94,7 @@ node {
     stage('Create Domain') {
         build job: 'create_domain', parameters: [string(name: 'version', value: "${params.version}"),
                                                  string(name: 'scenario', value: "${params.scenario}"),
+                                                 string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                  string(name: 'SZ_IP', value: "${szIP}"),]
 
 
@@ -93,42 +103,49 @@ node {
     stage('Analyze Domain') {
         build job: 'statistics_performance', parameters: [string(name: 'version', value: "${params.version}"),
                                                           string(name: 'scenario', value: "${params.scenario}"),
+                                                          string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                           string(name: 'VAR_DATA', value: "domains"),]
     }
 
     stage('Create Zone') {
         build job: 'create_zone', parameters: [string(name: 'version', value: "${params.version}"),
                                                string(name: 'scenario', value: "${params.scenario}"),
+                                               string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     stage('Analyze Zone') {
         build job: 'statistics_performance', parameters: [string(name: 'version', value: "${params.version}"),
                                                           string(name: 'scenario', value: "${params.scenario}"),
+                                                          string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                           string(name: 'VAR_DATA', value: "zones"),]
     }
 
     stage('Create Open WLAN') {
         build job: 'create_open_wlan', parameters: [string(name: 'version', value: "${params.version}"),
                                                     string(name: 'scenario', value: "${params.scenario}"),
+                                                    string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                     string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     stage('Create DPSK WLAN') {
         build job: 'create_dpsk_wlan', parameters: [string(name: 'version', value: "${params.version}"),
                                                     string(name: 'scenario', value: "${params.scenario}"),
+                                                    string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                     string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     stage('Analyze WLAN') {
         build job: 'statistics_performance', parameters: [string(name: 'version', value: "${params.version}"),
                                                           string(name: 'scenario', value: "${params.scenario}"),
+                                                          string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                           string(name: 'VAR_DATA', value: "wlans"),]
     }
 
     stage('Create DPSK ') {
         build job: 'create_dpsk_batch', parameters: [string(name: 'version', value: "${params.version}"),
                                                      string(name: 'scenario', value: "${params.scenario}"),
+                                                     string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                      string(name: 'SZ_IP', value: "${szIP}"),
                                                      string(name: 'DPSK_AMOUNT', value: "${DPSK_AMOUNT}"),]
     }
@@ -136,53 +153,62 @@ node {
     stage('Analyze DPSK') {
         build job: 'statistics_performance', parameters: [string(name: 'version', value: "${params.version}"),
                                                           string(name: 'scenario', value: "${params.scenario}"),
+                                                          string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                           string(name: 'VAR_DATA', value: "wlans/dpsk"),]
     }
 
     stage('Create WLAN Group') {
         build job: 'create_wlan_group', parameters: [string(name: 'version', value: "${params.version}"),
                                                      string(name: 'scenario', value: "${params.scenario}"),
+                                                     string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                      string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     stage('Analyze WLAN Group') {
         build job: 'statistics_performance', parameters: [string(name: 'version', value: "${params.version}"),
                                                           string(name: 'scenario', value: "${params.scenario}"),
+                                                          string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                           string(name: 'VAR_DATA', value: "wlan_groups"),]
     }
 
     stage('Pre-Provision AP') {
         build job: 'create_ap', parameters: [string(name: 'version', value: "${params.version}"),
                                              string(name: 'scenario', value: "${params.scenario}"),
+                                             string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                              string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     stage('Analyze AP') {
         build job: 'statistics_performance', parameters: [string(name: 'version', value: "${params.version}"),
                                                           string(name: 'scenario', value: "${params.scenario}"),
+                                                          string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                           string(name: 'VAR_DATA', value: "aps"),]
     }
 
     stage('Create AP Group') {
         build job: 'create_ap_group', parameters: [string(name: 'version', value: "${params.version}"),
                                                    string(name: 'scenario', value: "${params.scenario}"),
+                                                   string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                    string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
     stage('Analyze AP Group') {
         build job: 'statistics_performance', parameters: [string(name: 'version', value: "${params.version}"),
                                                           string(name: 'scenario', value: "${params.scenario}"),
+                                                          string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                           string(name: 'VAR_DATA', value: "ap_groups"),]
     }
 
     stage('Arrange Data') {
         build job: 'pickup_data', parameters: [string(name: 'version', value: "${params.version}"),
-                                               string(name: 'scenario', value: "${params.scenario}"),]
+                                               string(name: 'scenario', value: "${params.scenario}"),
+                                               string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),]
     }
 
     stage('Launch SimPC') {
         build job: 'launch_sim_pc', parameters: [string(name: 'version', value: "${params.version}"),
-                                                 string(name: 'scenario', value: "${params.scenario}"),]
+                                                 string(name: 'scenario', value: "${params.scenario}"),
+                                                 string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),]
     }
 
 //    stage('Startup SimPC') {
@@ -193,6 +219,7 @@ node {
     stage('Join AP') {
         build job: 'join_sim_ap', parameters: [string(name: 'version', value: "${params.version}"),
                                                string(name: 'scenario', value: "${params.scenario}"),
+                                               string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                string(name: 'SZ_IP', value: "${szIP}"),
                                                string(name: 'AP_VER', value: "${params.ap_version}")]
     }
@@ -201,6 +228,7 @@ node {
         stage('Count On Line AP') {
             build job: 'monitor_ap', parameters: [string(name: 'version', value: "${params.version}"),
                                                   string(name: 'scenario', value: "${params.scenario}"),
+                                                  string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                   string(name: 'SZ_IP', value: "${szIP}"),
                                                   string(name: 'AP_NUM', value: "${AP_NUM}"),]
         }
@@ -212,6 +240,7 @@ node {
         stage('Count Update-To-Date AP') {
             build job: 'monitor_ap_update-to-date', parameters: [string(name: 'version', value: "${params.version}"),
                                                                  string(name: 'scenario', value: "${params.scenario}"),
+                                                                 string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                                  string(name: 'SZ_IP', value: "${szIP}"),
                                                                  string(name: 'AP_NUM', value: "${AP_NUM}"),
                                                                  string(name: 'WAITING_TIME', value: "6000"),]
@@ -222,13 +251,15 @@ node {
 
     stage('Associate UE') {
         build job: 'associate_sim_ue', parameters: [string(name: 'version', value: "${params.version}"),
-                                                    string(name: 'scenario', value: "${params.scenario}"),]
+                                                    string(name: 'scenario', value: "${params.scenario}"),
+                                                    string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),]
     }
 
     try {
         stage('Count UE') {
             build job: 'monitor_client', parameters: [string(name: 'version', value: "${params.version}"),
                                                       string(name: 'scenario', value: "${params.scenario}"),
+                                                      string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                       string(name: 'SZ_IP', value: "${szIP}"),
                                                       string(name: 'UE_NUM', value: "${UE_NUM}"),
                                                       string(name: 'WAITING_TIME', value: "6000"),]
@@ -240,6 +271,7 @@ node {
     stage('Test Query API') {
         build job: 'test_query', parameters: [string(name: 'version', value: "${params.version}"),
                                               string(name: 'scenario', value: "${params.scenario}"),
+                                              string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                               string(name: 'SZ_IP', value: "${szIP}"),]
     }
 
@@ -247,6 +279,7 @@ node {
         stage('Clean Local License Server') {
             build job: 'clean_local_license_server', parameters: [string(name: 'version', value: "${params.version}"),
                                                                   string(name: 'scenario', value: "${params.scenario}"),
+                                                                  string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
                                                                   string(name: 'SZ_IP', value: "${szIP}"),]
         }
     } catch (Exception e) {
@@ -256,7 +289,8 @@ node {
     try {
         stage('Shutdown SZ') {
             build job: 'shutdown_sz', parameters: [string(name: 'version', value: "${params.version}"),
-                                                   string(name: 'scenario', value: "${params.scenario}"),]
+                                                   string(name: 'scenario', value: "${params.scenario}"),
+                                                   string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),]
         }
     } catch (Exception e) {
         echo "Stage ${currentBuild.result}, but we continue"
@@ -265,7 +299,8 @@ node {
     try {
         stage('Shutdown SimPC') {
             build job: 'shutdown_sim_pc', parameters: [string(name: 'version', value: "${params.version}"),
-                                                       string(name: 'scenario', value: "${params.scenario}"),]
+                                                       string(name: 'scenario', value: "${params.scenario}"),
+                                                       string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),]
         }
     } catch (Exception e) {
         echo "Stage ${currentBuild.result}, but we continue"

@@ -10,7 +10,7 @@ pipeline {
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
 
-        string(name: 'NUM_CLIENT', defaultValue: '1', description: '')
+        string(name: 'NUM_CLIENT', defaultValue: '2', description: '')
         string(name: 'HATCH_RATE', defaultValue: '1', description: '')
         string(name: 'RUN_TIME', defaultValue: '20m', description: '')
     }
