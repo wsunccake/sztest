@@ -42,8 +42,10 @@ for var_dir in ${VAR_DIRS[*]}; do
       | awk -F\\" '/id/ {print \$4}' \\
       > $VAR_DIR/output/id/${var_dir}.log
     fi
+    
+    tar zcf ${VAR_DIR}/output/${var_dir}.tgz -C ${VAR_DIR}/output/${var_dir} .
+    rm -rf ${VAR_DIR}/output/${var_dir}
   fi
-
 done
 '''
             }
