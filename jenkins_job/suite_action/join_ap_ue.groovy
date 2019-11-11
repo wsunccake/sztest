@@ -1,0 +1,80 @@
+node {
+    properties([
+            parameters([string(name: 'version', defaultValue: '1.0.0.0'),
+                        string(name: 'scenario', defaultValue: 'group0'),
+                        string(name: 'ap_version', defaultValue: '2.0.0.0'),
+                        string(name: 'VAR_DIR', defaultValue: '/usr/share/nginx/html/api_perf/${version}/${scenario}', description: ''),
+                        string(name: 'SZ_IP', defaultValue: '1.2.3.4', description: ''),
+                        string(name: 'AP_NUM', defaultValue: '1', description: ''),
+                        string(name: 'UE_NUM', defaultValue: '1', description: ''),
+            ])
+    ])
+
+    currentBuild.displayName = "${params.version} - ${params.scenario} - #${currentBuild.number}"
+
+    stage('Launch SimPC') {
+        build job: 'launch_sim_pc', parameters: [string(name: 'version', value: "${params.version}"),
+                                                 string(name: 'scenario', value: "${params.scenario}"),
+                                                 string(name: 'VAR_DIR', value: "${VAR_DIR}")
+        ]
+    }
+
+
+    stage('Join AP') {
+        build job: 'join_sim_ap', parameters: [string(name: 'version', value: "${params.version}"),
+                                               string(name: 'scenario', value: "${params.scenario}"),
+                                               string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                               string(name: 'SZ_IP', value: "${SZ_IP}"),
+                                               string(name: 'AP_VER', value: "${params.ap_version}"),
+        ]
+    }
+
+    try {
+        stage('Count On Line AP') {
+            build job: 'monitor_ap', parameters: [string(name: 'version', value: "${params.version}"),
+                                                  string(name: 'scenario', value: "${params.scenario}"),
+                                                  string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                  string(name: 'SZ_IP', value: "${SZ_IP}"),
+                                                  string(name: 'AP_NUM', value: "${AP_NUM}"),
+                                                  string(name: 'WAITING_TIME', value: "1000")
+            ]
+        }
+    } catch (Exception e) {
+        echo "Stage ${currentBuild.result}, but we continue"
+    }
+
+    try {
+        stage('Count Update-To-Date AP') {
+            build job: 'monitor_ap_update-to-date', parameters: [string(name: 'version', value: "${params.version}"),
+                                                                 string(name: 'scenario', value: "${params.scenario}"),
+                                                                 string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                                 string(name: 'SZ_IP', value: "${SZ_IP}"),
+                                                                 string(name: 'AP_NUM', value: "${AP_NUM}"),
+                                                                 string(name: 'WAITING_TIME', value: "6000"),
+            ]
+        }
+    } catch (Exception e) {
+        echo "Stage ${currentBuild.result}, but we continue"
+    }
+
+    stage('Associate UE') {
+        build job: 'associate_sim_ue', parameters: [string(name: 'version', value: "${params.version}"),
+                                                    string(name: 'scenario', value: "${params.scenario}"),
+                                                    string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+        ]
+    }
+
+    try {
+        stage('Count UE') {
+            build job: 'monitor_client', parameters: [string(name: 'version', value: "${params.version}"),
+                                                      string(name: 'scenario', value: "${params.scenario}"),
+                                                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                      string(name: 'SZ_IP', value: "${SZ_IP}"),
+                                                      string(name: 'UE_NUM', value: "${UE_NUM}"),
+                                                      string(name: 'WAITING_TIME', value: "6000"),
+            ]
+        }
+    } catch (Exception e) {
+        echo "Stage ${currentBuild.result}, but we continue"
+    }
+}
