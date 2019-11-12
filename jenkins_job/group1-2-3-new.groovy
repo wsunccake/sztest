@@ -70,13 +70,13 @@ node {
         ]
     }
 
-//    stage('Test Query API') {
-//        build job: 'test_query', parameters: [string(name: 'version', value: "${version}"),
-//                                              string(name: 'scenario', value: "${scenario}"),
-//                                              string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-//                                              string(name: 'SZ_IP', value: "${szIP}"),
-//                                              ]
-//    }
+    stage('Test Query API') {
+        build job: 'test_query', parameters: [string(name: 'version', value: "${version}"),
+                                              string(name: 'scenario', value: "${scenario}"),
+                                              string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                              string(name: 'SZ_IP', value: "${szIP}"),
+                                              ]
+    }
 
 
     stage('Clean Env') {
