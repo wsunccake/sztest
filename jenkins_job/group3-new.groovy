@@ -7,6 +7,7 @@ node {
                         string(name: 'ap_version', defaultValue: '2.0.0.0'),
                         string(name: 'SRC_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: ''),
                         string(name: 'VAR_DIR', defaultValue: '/usr/share/nginx/html/api_perf/${version}/${scenario}', description: ''),
+                        string(name: 'API_PERF_VER', defaultValue: 'v1_0', description: ''),
                         string(name: 'AP_NUM', defaultValue: '2000', description: ''),
                         string(name: 'UE_NUM', defaultValue: '4000', description: ''),
                         string(name: 'DPSK_AMOUNT', defaultValue: "10", description: ''),
@@ -43,6 +44,7 @@ node {
         build job: 'prepare_sz', parameters: [string(name: 'version', value: "${version}"),
                                               string(name: 'scenario', value: "${scenario}"),
                                               string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                              string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                                               string(name: 'SZ_IP', value: "${szIP}"),
                                               string(name: 'CLUSTER_NAME', value: "api-perf-${scenario}"),]
     }
@@ -51,6 +53,7 @@ node {
         build job: 'create_config', parameters: [string(name: 'version', value: "${version}"),
                                                  string(name: 'scenario', value: "${scenario}"),
                                                  string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                 string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                                                  string(name: 'SZ_IP', value: "${szIP}"),
                                                  string(name: 'AP_NUM', value: "${AP_NUM}"),
                                                  string(name: 'UE_NUM', value: "${UE_NUM}"),
@@ -61,8 +64,10 @@ node {
     stage('Join AP and UE') {
         build job: 'join_ap_ue', parameters: [string(name: 'version', value: "${version}"),
                                               string(name: 'scenario', value: "${scenario}"),
+                                              string(name: 'ap_version', value: "${ap_version}"),
                                               string(name: 'SRC_DIR', value: "${SRC_DIR}"),
                                               string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                              string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                                               string(name: 'SZ_IP', value: "${szIP}"),
                                               string(name: 'AP_NUM', value: "${AP_NUM}"),
                                               string(name: 'UE_NUM', value: "${UE_NUM}"),
@@ -74,13 +79,14 @@ node {
                                               string(name: 'scenario', value: "${scenario}"),
                                               string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                                               string(name: 'SZ_IP', value: "${szIP}"),
-                                              ]
+        ]
     }
 
     stage('Clean Env') {
         build job: 'clean_env', parameters: [string(name: 'version', value: "${version}"),
                                              string(name: 'scenario', value: "${scenario}"),
                                              string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                                              string(name: 'SZ_IP', value: "${szIP}"),
         ]
     }
