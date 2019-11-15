@@ -81,9 +81,10 @@ cd $API_PERF_DIR/util/playbook
 echo "ansible-playbook -i $TMP_DATE deploy.yaml -t madsz -e madsz_package=$MADSZ_TGZ -v"
 ansible-playbook -i $TMP_DATE deploy.yaml -t madsz -e "madsz_package=$MADSZ_TGZ" -v
 
-echo "after ansible-playbook status: $?"
+ansible_status=$?
+echo "after ansible-playbook status: $ansible_status"
 
-if [ "x$?" != "x0" ]; then
+if [ "x$ansible_status" != "x0" ]; then
   echo "ansible-playbook again"
   ansible-playbook -i $TMP_DATE deploy.yaml -t madsz -e "madsz_package=$MADSZ_TGZ" -v
   echo "after ansible-playbook status: $?"
