@@ -38,7 +38,7 @@ node {
                                                   string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                                                   string(name: 'SZ_IP', value: "${SZ_IP}"),
                                                   string(name: 'AP_NUM', value: "${AP_NUM}"),
-                                                  string(name: 'WAITING_TIME', value: "1000")
+                                                  string(name: 'WAITING_TIME', value: "1800")
             ]
         }
     } catch (Exception e) {
@@ -75,7 +75,7 @@ node {
                                                       string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                                                       string(name: 'SZ_IP', value: "${SZ_IP}"),
                                                       string(name: 'UE_NUM', value: "${UE_NUM}"),
-                                                      string(name: 'WAITING_TIME', value: "6000"),
+                                                      string(name: 'WAITING_TIME', value: "9000"),
             ]
         }
     } catch (Exception e) {
