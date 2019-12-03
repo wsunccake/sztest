@@ -11,7 +11,7 @@ pipeline {
         string(name: 'API_PERF_VER', defaultValue: 'v9_0', description: '')
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
-        string(name: 'BACKUP_CONFIG_FILE', defaultValue: 'Configuration_20191130114056GMT_6.0.0.0.35.bak', description: '')
+        string(name: 'BACKUP_CONFIG_FILE', defaultValue: 'Configuration_20191202094725GMT_5.2.0.0.612.bak', description: '')
     }
 
     stages {

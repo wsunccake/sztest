@@ -5,12 +5,14 @@ node {
             parameters([string(name: 'version', defaultValue: '1.0.0.0'),
                         string(name: 'scenario', defaultValue: 'group1-2-3'),
                         string(name: 'ap_version', defaultValue: '2.0.0.0'),
-                        string(name: 'SRC_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: ''),
+                        string(name: 'SRC_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/query/${scenario}', description: ''),
                         string(name: 'VAR_DIR', defaultValue: '/usr/share/nginx/html/api_perf/${version}/${scenario}', description: ''),
                         string(name: 'API_PERF_VER', defaultValue: 'v1_0', description: ''),
                         string(name: 'AP_NUM', defaultValue: '10000', description: ''),
                         string(name: 'UE_NUM', defaultValue: '100000', description: ''),
                         string(name: 'DPSK_AMOUNT', defaultValue: "10", description: ''),
+                        string(name: 'BACKUP_CONFIG_FILE', defaultValue: 'Configuration_20191202094725GMT_5.2.0.0.612.bak', description: '')
+
             ])
     ])
 
@@ -51,43 +53,41 @@ node {
 
     stage('Restore Config') {
         build job: 'restore_config', parameters: [string(name: 'version', value: "${version}"),
-                                                 string(name: 'scenario', value: "${scenario}"),
-                                                 string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                 string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                 string(name: 'SZ_IP', value: "${szIP}"),
-                                                 string(name: 'AP_NUM', value: "${AP_NUM}"),
-                                                 string(name: 'UE_NUM', value: "${UE_NUM}"),
-                                                 string(name: 'DPSK_AMOUNT', value: "${DPSK_AMOUNT}"),
+                                                  string(name: 'scenario', value: "${scenario}"),
+                                                  string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                  string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                                  string(name: 'SZ_IP', value: "${szIP}"),
+                                                  string(name: 'BACKUP_CONFIG_FILE', value: "${BACKUP_CONFIG_FILE}"),
         ]
     }
-//
-//    stage('Join AP and UE') {
-//        build job: 'join_ap_ue', parameters: [string(name: 'version', value: "${version}"),
-//                                              string(name: 'scenario', value: "${scenario}"),
-//                                              string(name: 'ap_version', value: "${ap_version}"),
-//                                              string(name: 'SRC_DIR', value: "${SRC_DIR}"),
-//                                              string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-//                                              string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-//                                              string(name: 'SZ_IP', value: "${szIP}"),
-//                                              string(name: 'AP_NUM', value: "${AP_NUM}"),
-//                                              string(name: 'UE_NUM', value: "${UE_NUM}"),
-//        ]
-//    }
-//
-//    stage('Test Query API') {
-//        build job: 'test_query', parameters: [string(name: 'version', value: "${version}"),
-//                                              string(name: 'scenario', value: "${scenario}"),
-//                                              string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-//                                              string(name: 'SZ_IP', value: "${szIP}"),
-//        ]
-//    }
-//
-//    stage('Clean Env') {
-//        build job: 'clean_env', parameters: [string(name: 'version', value: "${version}"),
-//                                             string(name: 'scenario', value: "${scenario}"),
-//                                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-//                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-//                                             string(name: 'SZ_IP', value: "${szIP}"),
-//        ]
-//    }
+
+    stage('Join AP and UE') {
+        build job: 'join_ap_ue', parameters: [string(name: 'version', value: "${version}"),
+                                              string(name: 'scenario', value: "${scenario}"),
+                                              string(name: 'ap_version', value: "${ap_version}"),
+                                              string(name: 'SRC_DIR', value: "${SRC_DIR}"),
+                                              string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                              string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                              string(name: 'SZ_IP', value: "${szIP}"),
+                                              string(name: 'AP_NUM', value: "${AP_NUM}"),
+                                              string(name: 'UE_NUM', value: "${UE_NUM}"),
+        ]
+    }
+
+    stage('Test Query API') {
+        build job: 'test_query', parameters: [string(name: 'version', value: "${version}"),
+                                              string(name: 'scenario', value: "${scenario}"),
+                                              string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                              string(name: 'SZ_IP', value: "${szIP}"),
+        ]
+    }
+
+    stage('Clean Env') {
+        build job: 'clean_env', parameters: [string(name: 'version', value: "${version}"),
+                                             string(name: 'scenario', value: "${scenario}"),
+                                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                             string(name: 'SZ_IP', value: "${szIP}"),
+        ]
+    }
 }
