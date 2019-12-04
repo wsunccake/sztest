@@ -26,7 +26,7 @@ mkdir -p $VAR_DIR/..
 echo "cp -rf ${SRC_DIR} ${VAR_DIR}/.."
 cp -rf ${SRC_DIR} ${VAR_DIR}/..
 
-[ -d ${VAR_DIR}/output ] && rm -rf ${VAR_DIR}/output
+#[ -d ${VAR_DIR}/output ] && rm -rf ${VAR_DIR}/output
 mkdir -p $VAR_DIR/output
 '''
                 echo "var dir: ${VAR_DIR}"
