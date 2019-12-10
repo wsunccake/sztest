@@ -8,6 +8,7 @@ node {
                         string(name: 'SZ_IP', defaultValue: '1.2.3.4', description: ''),
                         string(name: 'AP_NUM', defaultValue: '1', description: ''),
                         string(name: 'UE_NUM', defaultValue: '1', description: ''),
+                        string(name: 'MADSZ_TGZ', defaultValue: 'madSZ-v5.2-38-u1804.tar.xz', description: ''),
             ])
     ])
 
@@ -16,7 +17,8 @@ node {
     stage('Launch SimPC') {
         build job: 'launch_sim_pc', parameters: [string(name: 'version', value: "${version}"),
                                                  string(name: 'scenario', value: "${scenario}"),
-                                                 string(name: 'VAR_DIR', value: "${VAR_DIR}")
+                                                 string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                 string(name: 'MADSZ_TGZ', value: "${MADSZ_TGZ}"),
         ]
     }
 

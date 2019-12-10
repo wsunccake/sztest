@@ -9,7 +9,7 @@ pipeline {
 
         string(name: 'MADSZ_IMAGE', defaultValue: 'ubuntu-minimal-1804-bionic-v20191024', description: '')
         string(name: 'MADSZ_IMAGE_PROJECT', defaultValue: 'ubuntu-os-cloud', description: '')
-        string(name: 'MADSZ_TGZ', defaultValue: 'madSZ-v5.2-24-u1804.tar.xz', description: '')
+        string(name: 'MADSZ_TGZ', defaultValue: 'madSZ-v5.2-38-u1804.tar.xz', description: '')
     }
 
     stages {
