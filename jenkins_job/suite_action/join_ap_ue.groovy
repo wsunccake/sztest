@@ -8,7 +8,7 @@ node {
                         string(name: 'SZ_IP', defaultValue: '1.2.3.4', description: ''),
                         string(name: 'AP_NUM', defaultValue: '1', description: ''),
                         string(name: 'UE_NUM', defaultValue: '1', description: ''),
-                        string(name: 'MADSZ_TGZ', defaultValue: 'madSZ-v5.2-38-u1804.tar.xz', description: ''),
+                        string(name: 'MADSZ_TGZ', defaultValue: 'madSZ-v5.2-39-u1804.tar.xz', description: ''),
             ])
     ])
 
@@ -40,7 +40,7 @@ node {
                                                   string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                                                   string(name: 'SZ_IP', value: "${SZ_IP}"),
                                                   string(name: 'AP_NUM', value: "${AP_NUM}"),
-                                                  string(name: 'WAITING_TIME', value: "1800")
+                                                  string(name: 'WAITING_TIME', value: "2400")
             ]
         }
     } catch (Exception e) {
@@ -55,7 +55,7 @@ node {
                                                                  string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                                                                  string(name: 'SZ_IP', value: "${SZ_IP}"),
                                                                  string(name: 'AP_NUM', value: "${AP_NUM}"),
-                                                                 string(name: 'WAITING_TIME', value: "6000"),
+                                                                 string(name: 'WAITING_TIME', value: "7800"),
             ]
         }
     } catch (Exception e) {
@@ -77,7 +77,7 @@ node {
                                                       string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                                                       string(name: 'SZ_IP', value: "${SZ_IP}"),
                                                       string(name: 'UE_NUM', value: "${UE_NUM}"),
-                                                      string(name: 'WAITING_TIME', value: "9000"),
+                                                      string(name: 'WAITING_TIME', value: "1800"),
             ]
         }
     } catch (Exception e) {

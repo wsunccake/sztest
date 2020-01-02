@@ -11,7 +11,7 @@ node {
                         string(name: 'AP_NUM', defaultValue: '10000', description: ''),
                         string(name: 'UE_NUM', defaultValue: '100000', description: ''),
                         string(name: 'DPSK_AMOUNT', defaultValue: "10", description: ''),
-                        string(name: 'MADSZ_TGZ', defaultValue: 'madSZ-v5.2-38-u1804.tar.xz', description: '')
+                        string(name: 'MADSZ_TGZ', defaultValue: 'madSZ-v5.2-39-u1804.tar.xz', description: '')
             ])
     ])
 
