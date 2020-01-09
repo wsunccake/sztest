@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        stage('Create AP') {
+        stage('Delete AP') {
             steps {
                 sh '''#!/bin/bash
 # expect work
