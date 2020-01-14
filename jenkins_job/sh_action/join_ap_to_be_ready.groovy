@@ -41,10 +41,14 @@ create_ap_cfg() {
 join_sim_ap() {
   local apsim_cfg=$1
 
+  echo "start to join ap time:`date`"
+  
   echo "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $apsim_cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg"
   scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $apsim_cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg
   echo "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'"
-  ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg\'
+  ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'
+  
+  echo "end to join ap time:`date`"
 }
 
 
@@ -62,13 +66,13 @@ check_ap_online() {
     while true; do
       ./login.sh admin "$ADMIN_PASSWORD"
       echo "ap on line"
-      echo "start time:`date`"
+      echo "start to check ap online time:`date`"
 
       ./monitor_ap.sh
       online_aps=`./monitor_ap.sh | awk '/onlineCount/ {print \$2}' | tr -d ,`
     
       end_time=`date +%s`
-      echo "end time:`date`"
+      echo "end to check ap online time:`date`"
       echo "ap num: $ap_num, $online_aps"    
       [ "$online_aps" -ge "$ap_num" ] && break
       [ "`expr $end_time - $init_time`" -gt "$waiting_time" ] && exit 1
@@ -93,13 +97,13 @@ check_ap_up_to_date() {
     while true; do
       echo "ap up to date"
       ./login.sh admin "$ADMIN_PASSWORD"
-      echo "start time:`date`"
+      echo "start to check ap up-to-date time:`date`"
 
       ./count_ap.sh
       up_to_date_aps=`./count_ap.sh`
 
       end_time=`date +%s`
-      echo "end time:`date`"
+      echo "end to check ap up-to-date time:`date`"
       echo "ap num: $ap_num, $up_to_date_aps"    
       [ "$up_to_date_aps" -ge "$ap_num" ] && break
       [ "`expr $end_time - $init_time`" -gt "$waiting_time" ] && exit 1
@@ -131,6 +135,8 @@ fi
 sim_number=`cat $SIM_INPUT | wc -l`
 touch $done_file
 
+echo "start job:`date`"
+
 for sim_config_dir in `seq $sim_number`; do
   cd $VAR_DIR/input/sim
   sim_pc=`sed -n ${sim_config_dir}p $SIM_INPUT | awk '{print \$2}'`
@@ -153,6 +159,8 @@ for sim_config_dir in `seq $sim_number`; do
     exit 1
   fi
 done
+
+echo "end job:`date`"
 '''
             }
         }

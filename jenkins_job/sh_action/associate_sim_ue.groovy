@@ -35,20 +35,28 @@ if [ ! -f $SIM_INPUT ]; then
 fi
 
 sim_number=`cat $SIM_INPUT | wc -l`
+echo "start job:`date`"
 
 for sim_config_dir in `seq $sim_number`; do
   sim_pc=`sed -n ${sim_config_dir}p $SIM_INPUT | awk '{print \$2}'`
   if [ -d $sim_config_dir ]; then
     echo "$sim_pc config"
+    
+    echo "start time:`date`"
+    
     echo "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $VAR_DIR/input/sim/$sim_config_dir/ue_open.conf $SIM_USER@$sim_pc:/tmp/ue_open.conf"
     scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $VAR_DIR/input/sim/$sim_config_dir/ue_open.conf $SIM_USER@$sim_pc:/tmp/ue_open.conf
     echo "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_madue.sh /tmp/ue_open.conf'"
     ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_madue.sh /tmp/ue_open.conf'
+    
+    echo "end time:`date`"
   else
     echo "$sim_pc no found config $sim_config_dir"
     exit 1
   fi
 done
+
+echo "end job:`date`"
 '''
             }
         }

@@ -32,16 +32,15 @@ set -e
 
 join_sim_ue() {
   local ue_cfg=$1
+  
+  echo "start to join ue time:`date`"
 
   echo "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $ue_cfg $SIM_USER@$sim_pc:/tmp/ue_open.conf"
   scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $ue_cfg $SIM_USER@$sim_pc:/tmp/ue_open.conf
   echo "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_madue.sh /tmp/ue_open.conf'"
-  ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_madue.sh /tmp/ue_open.conf\'
+  ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_madue.sh /tmp/ue_open.conf'
 
-#  echo "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $apsim_cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg"
-#  scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $apsim_cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg
-#  echo "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'"
-#  ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg\'
+  echo "end to join ue time:`date`"
 }
 
 
@@ -59,13 +58,13 @@ check_ue_online() {
     while true; do
       ./login.sh admin "$ADMIN_PASSWORD"
       echo "ue on line"
-      echo "start time:`date`"
+      echo "start to check ue online time:`date`"
 
       ./monitor_client.sh
       online_ues=`./monitor_client.sh | awk '/onlineCount/ {print \$2}' | tr -d ,`
     
       end_time=`date +%s`
-      echo "end time:`date`"
+      echo "end to check ue online time:`date`"
       echo "ap num: $ue_num, $online_ues"    
       [ "$online_ues" -ge "$ue_num" ] && break
       [ "`expr $end_time - $init_time`" -gt "$waiting_time" ] && exit 1

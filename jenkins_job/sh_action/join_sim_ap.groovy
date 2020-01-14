@@ -20,10 +20,31 @@ pipeline {
             }
         }
 
-        stage('Startup SimPC') {
+        stage('Join AP') {
             steps {
                 sh '''#!/bin/bash
 set -e
+
+create_ap_cfg() {
+  local apsim_cfg=$1
+
+  sed s/SZ_IP/$SZ_IP/ ${apsim_cfg}.template > $apsim_cfg
+  sed -i s/AP_VER/$AP_VER/ $apsim_cfg
+}
+
+
+join_sim_ap() {
+  local apsim_cfg=$1
+  
+  echo "start to join ap time:`date`"
+
+  echo "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $apsim_cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg"
+  scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $apsim_cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg
+  echo "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'"
+  ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'
+  
+  echo "start to join ap time:`date`"
+}
 
 export SZ_IP=$SZ_IP
 echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
@@ -42,6 +63,7 @@ if [ ! -f $SIM_INPUT ]; then
 fi
 
 sim_number=`cat $SIM_INPUT | wc -l`
+echo "start job:`date`"
 
 for sim_config_dir in `seq $sim_number`; do
   sim_pc=`sed -n ${sim_config_dir}p $SIM_INPUT | awk '{print \$2}'`
@@ -49,15 +71,22 @@ for sim_config_dir in `seq $sim_number`; do
     echo "$sim_pc config"
     sed s/SZ_IP/$SZ_IP/ $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg.template > $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg
     sed -i s/AP_VER/$AP_VER/ $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg
+    
+    echo "start time:`date`"
+    
     echo "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg"
     scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg
     echo "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'"
     ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'
+    
+    echo "end time:`date`"
   else
     echo "$sim_pc no found config $sim_config_dir"
     exit 1
   fi
 done
+
+echo "end job:`date`"
 '''
             }
         }
