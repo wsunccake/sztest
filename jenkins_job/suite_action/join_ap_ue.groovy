@@ -32,35 +32,55 @@ node {
         ]
     }
 
-    try {
-        stage('Count On Line AP') {
-            build job: 'monitor_ap', parameters: [string(name: 'version', value: "${version}"),
-                                                  string(name: 'scenario', value: "${scenario}"),
-                                                  string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                  string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                  string(name: 'SZ_IP', value: "${SZ_IP}"),
-                                                  string(name: 'AP_NUM', value: "${AP_NUM}"),
-                                                  string(name: 'WAITING_TIME', value: "2400")
-            ]
-        }
-    } catch (Exception e) {
-        echo "Stage ${currentBuild.result}, but we continue"
+    stage('Count On Line AP') {
+        build job: 'monitor_ap', parameters: [string(name: 'version', value: "${version}"),
+                                              string(name: 'scenario', value: "${scenario}"),
+                                              string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                              string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                              string(name: 'SZ_IP', value: "${SZ_IP}"),
+                                              string(name: 'AP_NUM', value: "${AP_NUM}"),
+                                              string(name: 'WAITING_TIME', value: "2400")
+        ]
     }
+//    try {
+//        stage('Count On Line AP') {
+//            build job: 'monitor_ap', parameters: [string(name: 'version', value: "${version}"),
+//                                                  string(name: 'scenario', value: "${scenario}"),
+//                                                  string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//                                                  string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+//                                                  string(name: 'SZ_IP', value: "${SZ_IP}"),
+//                                                  string(name: 'AP_NUM', value: "${AP_NUM}"),
+//                                                  string(name: 'WAITING_TIME', value: "2400")
+//            ]
+//        }
+//    } catch (Exception e) {
+//        echo "Stage ${currentBuild.result}, but we continue"
+//    }
 
-    try {
-        stage('Count Update-To-Date AP') {
-            build job: 'monitor_ap_update-to-date', parameters: [string(name: 'version', value: "${version}"),
-                                                                 string(name: 'scenario', value: "${scenario}"),
-                                                                 string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                                 string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                                 string(name: 'SZ_IP', value: "${SZ_IP}"),
-                                                                 string(name: 'AP_NUM', value: "${AP_NUM}"),
-                                                                 string(name: 'WAITING_TIME', value: "7800"),
-            ]
-        }
-    } catch (Exception e) {
-        echo "Stage ${currentBuild.result}, but we continue"
+    stage('Count Update-To-Date AP') {
+        build job: 'monitor_ap_update-to-date', parameters: [string(name: 'version', value: "${version}"),
+                                                             string(name: 'scenario', value: "${scenario}"),
+                                                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                                             string(name: 'SZ_IP', value: "${SZ_IP}"),
+                                                             string(name: 'AP_NUM', value: "${AP_NUM}"),
+                                                             string(name: 'WAITING_TIME', value: "18000"),
+        ]
     }
+//    try {
+//        stage('Count Update-To-Date AP') {
+//            build job: 'monitor_ap_update-to-date', parameters: [string(name: 'version', value: "${version}"),
+//                                                                 string(name: 'scenario', value: "${scenario}"),
+//                                                                 string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//                                                                 string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+//                                                                 string(name: 'SZ_IP', value: "${SZ_IP}"),
+//                                                                 string(name: 'AP_NUM', value: "${AP_NUM}"),
+//                                                                 string(name: 'WAITING_TIME', value: "7800"),
+//            ]
+//        }
+//    } catch (Exception e) {
+//        echo "Stage ${currentBuild.result}, but we continue"
+//    }
 
     stage('Associate UE') {
         build job: 'associate_sim_ue', parameters: [string(name: 'version', value: "${version}"),
@@ -69,18 +89,28 @@ node {
         ]
     }
 
-    try {
-        stage('Count UE') {
-            build job: 'monitor_client', parameters: [string(name: 'version', value: "${version}"),
-                                                      string(name: 'scenario', value: "${scenario}"),
-                                                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                      string(name: 'SZ_IP', value: "${SZ_IP}"),
-                                                      string(name: 'UE_NUM', value: "${UE_NUM}"),
-                                                      string(name: 'WAITING_TIME', value: "1800"),
-            ]
-        }
-    } catch (Exception e) {
-        echo "Stage ${currentBuild.result}, but we continue"
+    stage('Count UE') {
+        build job: 'monitor_client', parameters: [string(name: 'version', value: "${version}"),
+                                                  string(name: 'scenario', value: "${scenario}"),
+                                                  string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                  string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                                  string(name: 'SZ_IP', value: "${SZ_IP}"),
+                                                  string(name: 'UE_NUM', value: "${UE_NUM}"),
+                                                  string(name: 'WAITING_TIME', value: "7200"),
+        ]
     }
+//    try {
+//        stage('Count UE') {
+//            build job: 'monitor_client', parameters: [string(name: 'version', value: "${version}"),
+//                                                      string(name: 'scenario', value: "${scenario}"),
+//                                                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//                                                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+//                                                      string(name: 'SZ_IP', value: "${SZ_IP}"),
+//                                                      string(name: 'UE_NUM', value: "${UE_NUM}"),
+//                                                      string(name: 'WAITING_TIME', value: "1800"),
+//            ]
+//        }
+//    } catch (Exception e) {
+//        echo "Stage ${currentBuild.result}, but we continue"
+//    }
 }
