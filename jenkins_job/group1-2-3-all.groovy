@@ -7,9 +7,11 @@ node {
                         string(name: 'ap_version', defaultValue: '2.0.0.0'),
                         string(name: 'SRC_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: ''),
                         string(name: 'VAR_DIR', defaultValue: '/usr/share/nginx/html/api_perf/${version}/${scenario}', description: ''),
-                        string(name: 'API_PERF_VER', defaultValue: 'v1_0', description: ''),
-                        string(name: 'AP_NUM', defaultValue: '10000', description: ''),
-                        string(name: 'UE_NUM', defaultValue: '100000', description: ''),
+                        string(name: 'API_PERF_VER', defaultValue: 'v9_0', description: ''),
+//                        string(name: 'AP_NUM', defaultValue: '10000', description: ''),
+                        string(name: 'AP_NUM', defaultValue: '9500', description: ''),
+//                        string(name: 'UE_NUM', defaultValue: '100000', description: ''),
+                        string(name: 'UE_NUM', defaultValue: '95000', description: ''),
                         string(name: 'DPSK_AMOUNT', defaultValue: "10", description: ''),
                         string(name: 'MADSZ_TGZ', defaultValue: 'madSZ-v5.2-39-u1804.tar.xz', description: '')
             ])
