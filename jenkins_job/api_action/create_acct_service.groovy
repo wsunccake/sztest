@@ -56,7 +56,7 @@ for n in `seq $num`; do
   acct_secret=`echo "$line" | awk '{print $4}'`
 
   echo "start time:`date`"
-  ./create_acct_service.sh acct_name $acct_ip $acct_port $acct_secret | tee $VAR_DIR/output/acct/$acct_name.out
+  ./create_acct_service.sh $acct_name $acct_ip $acct_port $acct_secret | tee $VAR_DIR/output/acct/$acct_name.out
   echo "end time:`date`"
 done
 

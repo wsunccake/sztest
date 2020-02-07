@@ -56,7 +56,7 @@ for n in `seq $num`; do
   auth_secret=`echo "$line" | awk '{print $4}'`
 
   echo "start time:`date`"
-  ./create_auth_service.sh auth_name $auth_ip $auth_port $auth_secret | tee $VAR_DIR/output/auth/$auth_name.out
+  ./create_auth_service.sh $auth_name $auth_ip $auth_port $auth_secret | tee $VAR_DIR/output/auth/$auth_name.out
   echo "end time:`date`"
 done
 
