@@ -64,6 +64,15 @@ node {
         ]
     }
 
+    stage('Create Hotspot') {
+        build job: 'create_hotspot', parameters: [string(name: 'version', value: "${version}"),
+                                                  string(name: 'scenario', value: "${scenario}"),
+                                                  string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                  string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                                  string(name: 'SZ_IP', value: "${SZ_IP}"),
+        ]
+    }
+
     stage('Create WISPr WLAN') {
         build job: 'create_wispr_wlan', parameters: [string(name: 'version', value: "${version}"),
                                                      string(name: 'scenario', value: "${scenario}"),
