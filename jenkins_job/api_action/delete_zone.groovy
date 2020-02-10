@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        stage('Delete AP') {
+        stage('Delete Zone') {
             steps {
                 sh '''#!/bin/bash
 # expect work
@@ -34,7 +34,7 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 
 # work dir
 cd $API_PERF_DIR/public_api/$API_PERF_VER
-mkdir -p $VAR_DIR/output/delete_aps
+mkdir -p $VAR_DIR/output/delete_zones
 
 # run
 echo "start job:`date`"
@@ -45,13 +45,10 @@ for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
   echo "zone: $zone_name, $zone_id"
   ./login.sh admin "$ADMIN_PASSWORD"
   
-  # delete ap
-  for ap_mac in `cat $VAR_DIR/input/aps/$zone_name.inp`; do
-    echo "start time:`date`"
-    echo "$ap_mac $zone_id"
-    ./delete_ap.sh $ap_mac "" "" $zone_id | tee $VAR_DIR/output/delete_aps/$ap_mac.out
-    echo "end time:`date`"
-  done
+  # delete zone
+  echo "start time:`date`"
+  ./delete_zone.sh $zone_id | tee $VAR_DIR/output/delete_zones/$zone_id.out
+  echo "end time:`date`"
 
 done
 echo "end job:`date`"

@@ -7,7 +7,7 @@ pipeline {
         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: '')
         string(name: 'EXPECT_DIR', defaultValue: '/var/lib/jenkins/expect', description: '')
         string(name: 'API_PERF_DIR', defaultValue: '/var/lib/jenkins/api_perf', description: '')
-        string(name: 'API_PERF_VER', defaultValue: 'v9_0', description: '')
+        string(name: 'API_PERF_VER', defaultValue: 'v9_1', description: '')
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
     }
@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        stage('Delete AP') {
+        stage('Delete Accounting Service') {
             steps {
                 sh '''#!/bin/bash
 # expect work
@@ -34,24 +34,21 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 
 # work dir
 cd $API_PERF_DIR/public_api/$API_PERF_VER
-mkdir -p $VAR_DIR/output/delete_aps
+mkdir -p $VAR_DIR/output/delete_acct
 
 # run
 echo "start job:`date`"
-for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
+for acct_name in `awk '{print \$1}' $VAR_DIR/input/acct/acct.inp`; do
 
-  # get zone_id
-  zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
-  echo "zone: $zone_name, $zone_id"
+  # get acct_id
+  acct_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/output/acct/$acct_name.out`
+  echo "accounting service: $acct_name, $acct_id"
   ./login.sh admin "$ADMIN_PASSWORD"
   
-  # delete ap
-  for ap_mac in `cat $VAR_DIR/input/aps/$zone_name.inp`; do
-    echo "start time:`date`"
-    echo "$ap_mac $zone_id"
-    ./delete_ap.sh $ap_mac "" "" $zone_id | tee $VAR_DIR/output/delete_aps/$ap_mac.out
-    echo "end time:`date`"
-  done
+  # delete accounting service
+  echo "start time:`date`"
+  ./delete_acct_service.sh $acct_id | tee $VAR_DIR/output/delete_acct/$acct_id.out
+  echo "end time:`date`"
 
 done
 echo "end job:`date`"
