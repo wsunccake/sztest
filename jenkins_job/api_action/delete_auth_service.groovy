@@ -38,7 +38,7 @@ mkdir -p $VAR_DIR/output/delete_auth
 
 # run
 echo "start job:`date`"
-for acct_name in `awk '{print \$1}' $VAR_DIR/input/auth/auth.inp`; do
+for auth_name in `awk '{print \$1}' $VAR_DIR/input/auth/auth.inp`; do
 
   # get auth_id
   auth_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/auth/$auth_name.out`
