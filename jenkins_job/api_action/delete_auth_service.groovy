@@ -41,7 +41,7 @@ echo "start job:`date`"
 for acct_name in `awk '{print \\$1}' $VAR_DIR/input/auth/auth.inp`; do
 
   # get auth_id
-  auth_id=`awk -F\\" '/id/{print \\$4}' $VAR_DIR/output/output/auth/$auth_name.out`
+  auth_id=`awk -F\\" '/id/{print \\$4}' $VAR_DIR/output/auth/$auth_name.out`
   echo "authentication service: $auth_name, $auth_id"
   ./login.sh admin "$ADMIN_PASSWORD"
   

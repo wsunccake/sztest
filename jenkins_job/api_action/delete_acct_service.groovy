@@ -41,7 +41,7 @@ echo "start job:`date`"
 for acct_name in `awk '{print \$1}' $VAR_DIR/input/acct/acct.inp`; do
 
   # get acct_id
-  acct_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/output/acct/$acct_name.out`
+  acct_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/acct/$acct_name.out`
   echo "accounting service: $acct_name, $acct_id"
   ./login.sh admin "$ADMIN_PASSWORD"
   
