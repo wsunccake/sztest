@@ -10,24 +10,6 @@ node {
 
     currentBuild.displayName = "${params.version} - ${params.scenario} - #${currentBuild.number}"
 
-    stage('Create Auth') {
-        build job: 'create_auth_service', parameters: [string(name: 'version', value: "${version}"),
-                                                       string(name: 'scenario', value: "${scenario}"),
-                                                       string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                       string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                       string(name: 'SZ_IP', value: "${SZ_IP}"),
-        ]
-    }
-
-    stage('Create Acct') {
-        build job: 'create_acct_service', parameters: [string(name: 'version', value: "${version}"),
-                                                       string(name: 'scenario', value: "${scenario}"),
-                                                       string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                       string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                       string(name: 'SZ_IP', value: "${SZ_IP}"),
-        ]
-    }
-
     stage('Create Domain') {
         build job: 'create_domain', parameters: [string(name: 'version', value: "${version}"),
                                                  string(name: 'scenario', value: "${scenario}"),

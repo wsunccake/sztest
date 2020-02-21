@@ -17,7 +17,7 @@ pipeline {
             }
         }
 
-        stage('Startup Radius') {
+        stage('Shutdown Radius') {
             steps {
                 sh '''#!/bin/bash
 if [ ! -f $VAR_DIR/input/radius/radius.inp ]; then

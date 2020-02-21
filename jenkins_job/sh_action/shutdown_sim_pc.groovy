@@ -17,7 +17,7 @@ pipeline {
             }
         }
 
-        stage('Startup SimPC') {
+        stage('Shutdown SimPC') {
             steps {
                 sh '''#!/bin/bash
 if [ ! -f $VAR_DIR/input/sim/sim.inp ]; then

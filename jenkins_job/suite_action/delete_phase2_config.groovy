@@ -10,6 +10,15 @@ node {
 
     currentBuild.displayName = "${params.version} - ${params.scenario} - #${currentBuild.number}"
 
+    stage('Delete AP') {
+        build job: 'delete_ap', parameters: [string(name: 'version', value: "${version}"),
+                                             string(name: 'scenario', value: "${scenario}"),
+                                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                             string(name: 'SZ_IP', value: "${SZ_IP}"),
+        ]
+    }
+
     stage('Delete Zone') {
         build job: 'delete_zone', parameters: [string(name: 'version', value: "${version}"),
                                                string(name: 'scenario', value: "${scenario}"),
@@ -28,21 +37,4 @@ node {
         ]
     }
 
-    stage('Delete Acct') {
-        build job: 'delete_acct_service', parameters: [string(name: 'version', value: "${version}"),
-                                                       string(name: 'scenario', value: "${scenario}"),
-                                                       string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                       string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                       string(name: 'SZ_IP', value: "${SZ_IP}"),
-        ]
-    }
-
-    stage('Delete Auth') {
-        build job: 'delete_auth_service', parameters: [string(name: 'version', value: "${version}"),
-                                                       string(name: 'scenario', value: "${scenario}"),
-                                                       string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                       string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                       string(name: 'SZ_IP', value: "${SZ_IP}"),
-        ]
-    }
 }
