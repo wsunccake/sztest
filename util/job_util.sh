@@ -157,7 +157,7 @@ create_view() {
 
     for v in ${VIEWS[@]}; do
         job_array=()
-        for j in `find ${UTIL_PATH}/../jenkins_job/${v} -name *.groovy -exec basename {} \;`; do
+        for j in `find ${UTIL_PATH}/../jenkins_job/${v} -name *.groovy -exec basename {} \; | sort`; do
             job_array+=("${j%%.*}")
         done
 
