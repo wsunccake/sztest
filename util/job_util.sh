@@ -10,7 +10,7 @@ export JENKINS_USER_ID=${USERNAME:-"username"}
 export JENKINS_API_TOKEN="${PASSWORD:-"password"}"
 
 JENKINS_URL="http://${JENKINS_IP}:${JENKINS_PORT}/"
-VIEWS=("api_action" "expect_action" "sh_action")
+VIEWS=("api_action" "expect_action" "sh_action" "suite_action")
 
 
 ###

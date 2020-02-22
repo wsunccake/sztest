@@ -23,6 +23,20 @@ node {
         ]
     }
 
+//    stage('Launch Radius') {
+//        build job: 'launch_radius', parameters: [string(name: 'version', value: "${version}"),
+//                                                 string(name: 'scenario', value: "${scenario}"),
+//                                                 string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//        ]
+//    }
+//
+//    stage('Shutdown Radius') {
+//        build job: 'shutdown_radius', parameters: [string(name: 'version', value: "${version}"),
+//                                                   string(name: 'scenario', value: "${scenario}"),
+//                                                   string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//        ]
+//    }
+
     stage('Launch SZ') {
         build job: 'launch_sz', parameters: [string(name: 'version', value: "${version}"),
                                              string(name: 'scenario', value: "${scenario}"),
@@ -50,7 +64,7 @@ node {
     }
 
     stage('Create Config') {
-        build job: 'create_config', parameters: [string(name: 'version', value: "${version}"),
+        build job: 'create_phase2_config', parameters: [string(name: 'version', value: "${version}"),
                                                         string(name: 'scenario', value: "${scenario}"),
                                                         string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                                                         string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
@@ -60,33 +74,33 @@ node {
         ]
     }
 
-    stage('Join AP and UE') {
-        build job: 'join_ap_ue', parameters: [string(name: 'version', value: "${version}"),
-                                              string(name: 'scenario', value: "${scenario}"),
-                                              string(name: 'ap_version', value: "${ap_version}"),
-                                              string(name: 'SRC_DIR', value: "${SRC_DIR}"),
-                                              string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                              string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                              string(name: 'SZ_IP', value: "${szIP}"),
-                                              string(name: 'AP_NUM', value: "${AP_NUM}"),
-                                              string(name: 'UE_NUM', value: "${UE_NUM}"),
-        ]
-    }
-
-    stage('Test Query API') {
-        build job: 'test_query', parameters: [string(name: 'version', value: "${version}"),
-                                              string(name: 'scenario', value: "${scenario}"),
-                                              string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                              string(name: 'SZ_IP', value: "${szIP}"),
-        ]
-    }
-
-    stage('Clean Env') {
-        build job: 'clean_env', parameters: [string(name: 'version', value: "${version}"),
-                                             string(name: 'scenario', value: "${scenario}"),
-                                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                             string(name: 'SZ_IP', value: "${szIP}"),
-        ]
-    }
+//    stage('Join AP and UE') {
+//        build job: 'join_ap_ue', parameters: [string(name: 'version', value: "${version}"),
+//                                              string(name: 'scenario', value: "${scenario}"),
+//                                              string(name: 'ap_version', value: "${ap_version}"),
+//                                              string(name: 'SRC_DIR', value: "${SRC_DIR}"),
+//                                              string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//                                              string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+//                                              string(name: 'SZ_IP', value: "${szIP}"),
+//                                              string(name: 'AP_NUM', value: "${AP_NUM}"),
+//                                              string(name: 'UE_NUM', value: "${UE_NUM}"),
+//        ]
+//    }
+//
+//    stage('Test Query API') {
+//        build job: 'test_query', parameters: [string(name: 'version', value: "${version}"),
+//                                              string(name: 'scenario', value: "${scenario}"),
+//                                              string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//                                              string(name: 'SZ_IP', value: "${szIP}"),
+//        ]
+//    }
+//
+//    stage('Clean Env') {
+//        build job: 'clean_env', parameters: [string(name: 'version', value: "${version}"),
+//                                             string(name: 'scenario', value: "${scenario}"),
+//                                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+//                                             string(name: 'SZ_IP', value: "${szIP}"),
+//        ]
+//    }
 }
