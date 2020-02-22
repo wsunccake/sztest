@@ -63,10 +63,10 @@ for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
 
   # create non proxy auth
   i=1
-  for auth_name in `cat $VAR_DIR/input/non_proxy_auth/$zone_name.inp`; do
+  for acct_name in `cat $VAR_DIR/input/non_proxy_acct/$zone_name.inp`; do
     echo "start time:`date`"
-    echo "$auth_name $radius_ip $zone_id"
-    ./create_non_proxy_auth_service.sh $auth_name $radius_ip 1812 $secret $zone_id | tee $VAR_DIR/output/non_proxy_auth/${zone_name}_${auth_name}.out
+    echo "$acct_name $radius_ip $zone_id"
+    ./create_non_proxy_acct_service.sh $auth_name $radius_ip 1813 $secret $zone_id | tee $VAR_DIR/output/non_proxy_acct/${zone_name}_${acct_name}.out
     echo "end time:`date`"
   done
 done
