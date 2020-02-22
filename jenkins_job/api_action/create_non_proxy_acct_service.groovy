@@ -44,7 +44,7 @@ mkdir -p $VAR_DIR/output/auth
 
 # work dir
 cd $API_PERF_DIR/public_api/$API_PERF_VER
-mkdir -p $VAR_DIR/output/non_proxy_auth
+mkdir -p $VAR_DIR/output/non_proxy_acct
 
 # radius
 secret=`cat $VAR_DIR/input/radius/secret`
@@ -66,7 +66,7 @@ for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
   for acct_name in `cat $VAR_DIR/input/non_proxy_acct/$zone_name.inp`; do
     echo "start time:`date`"
     echo "$acct_name $radius_ip $zone_id"
-    ./create_non_proxy_acct_service.sh $auth_name $radius_ip 1813 $secret $zone_id | tee $VAR_DIR/output/non_proxy_acct/${zone_name}_${acct_name}.out
+    ./create_non_proxy_acct_service.sh $acct_name $radius_ip 1813 $secret $zone_id | tee $VAR_DIR/output/non_proxy_acct/${zone_name}_${acct_name}.out
     echo "end time:`date`"
   done
 done
