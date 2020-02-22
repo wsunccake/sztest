@@ -19,13 +19,13 @@ node {
         ]
     }
 
-    stage('Analyze Domain') {
-        build job: 'statistics_performance', parameters: [string(name: 'version', value: "${version}"),
-                                                          string(name: 'scenario', value: "${scenario}"),
-                                                          string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                          string(name: 'VAR_DATA', value: "domains"),
-        ]
-    }
+//    stage('Analyze Domain') {
+//        build job: 'statistics_performance', parameters: [string(name: 'version', value: "${version}"),
+//                                                          string(name: 'scenario', value: "${scenario}"),
+//                                                          string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//                                                          string(name: 'VAR_DATA', value: "domains"),
+//        ]
+//    }
 
     stage('Create Zone') {
         build job: 'create_zone', parameters: [string(name: 'version', value: "${version}"),
@@ -36,11 +36,29 @@ node {
         ]
     }
 
-    stage('Analyze Zone') {
-        build job: 'statistics_performance', parameters: [string(name: 'version', value: "${version}"),
-                                                          string(name: 'scenario', value: "${scenario}"),
-                                                          string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                          string(name: 'VAR_DATA', value: "zones"),
+//    stage('Analyze Zone') {
+//        build job: 'statistics_performance', parameters: [string(name: 'version', value: "${version}"),
+//                                                          string(name: 'scenario', value: "${scenario}"),
+//                                                          string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//                                                          string(name: 'VAR_DATA', value: "zones"),
+//        ]
+//    }
+
+    stage('Create Non Proxy Auth Service') {
+        build job: 'create_non_proxy_auth_service', parameters: [string(name: 'version', value: "${version}"),
+                                                    string(name: 'scenario', value: "${scenario}"),
+                                                    string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                    string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                                    string(name: 'SZ_IP', value: "${SZ_IP}"),
+        ]
+    }
+
+    stage('Create Non Proxy Acct Service') {
+        build job: 'create_non_proxy_acct_service', parameters: [string(name: 'version', value: "${version}"),
+                                                    string(name: 'scenario', value: "${scenario}"),
+                                                    string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                    string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                                    string(name: 'SZ_IP', value: "${SZ_IP}"),
         ]
     }
 
@@ -62,13 +80,13 @@ node {
         ]
     }
 
-    stage('Pre-Provision AP') {
-        build job: 'create_ap', parameters: [string(name: 'version', value: "${version}"),
-                                             string(name: 'scenario', value: "${scenario}"),
-                                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                             string(name: 'SZ_IP', value: "${SZ_IP}"),
-        ]
-    }
+//    stage('Pre-Provision AP') {
+//        build job: 'create_ap', parameters: [string(name: 'version', value: "${version}"),
+//                                             string(name: 'scenario', value: "${scenario}"),
+//                                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+//                                             string(name: 'SZ_IP', value: "${SZ_IP}"),
+//        ]
+//    }
 
 }
