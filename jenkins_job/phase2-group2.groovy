@@ -3,11 +3,11 @@ def szIP
 node {
     properties([
             parameters([string(name: 'version', defaultValue: '1.0.0.0'),
-                        string(name: 'scenario', defaultValue: 'group2'),
+                        string(name: 'scenario', defaultValue: 'phase2-group2'),
                         string(name: 'ap_version', defaultValue: '2.0.0.0'),
                         string(name: 'SRC_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: ''),
                         string(name: 'VAR_DIR', defaultValue: '/usr/share/nginx/html/api_perf/${version}/${scenario}', description: ''),
-                        string(name: 'API_PERF_VER', defaultValue: 'v1_0', description: ''),
+                        string(name: 'API_PERF_VER', defaultValue: 'v9_1', description: ''),
                         string(name: 'AP_NUM', defaultValue: '2000', description: ''),
                         string(name: 'UE_NUM', defaultValue: '48000', description: ''),
             ])
