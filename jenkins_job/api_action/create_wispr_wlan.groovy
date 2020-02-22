@@ -56,9 +56,16 @@ for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
     echo "start time:`date`"
     wlan_name=`grep wispr_wlan $VAR_DIR/input/wlans/$zone_name.inp | sed -n ${n}p`
     hotspot_name=`sed -n ${n}p $VAR_DIR/input/hotspot/$zone_name.inp`
+    auth_name=`sed -n ${n}p $VAR_DIR/input/non_proxy_auth/$zone_name.inp`
+    auth_id=`awk -F\\" '/id/ {print \$4}' $VAR_DIR/output/non_proxy_auth/${zone_name}_${auth_name}.out`
+    acct_name=`sed -n ${n}p $VAR_DIR/input/non_proxy_acct/$zone_name.inp`
+    acct_id=`awk -F\\" '/id/ {print \$4}' $VAR_DIR/output/non_proxy_acct/${zone_name}_${acct_name}.out`
+
     
     echo "$wlan_name $zone_id $hotspot_name"
-    ./create_wispr_wlan.sh $wlan_name $zone_id $hotspot_name $auth_name $acct_name | tee $VAR_DIR/output/wlans/${zone_name}_${wlan_name}.out
+    echo "$auth_name, $auth_id"
+    echo "$acct_name, $acct_id"
+    ./create_wispr_wlan.sh $wlan_name $zone_id $hotspot_name $auth_id $acct_id | tee $VAR_DIR/output/wlans/${zone_name}_${wlan_name}.out
     echo "end time:`date`"
   done
   
