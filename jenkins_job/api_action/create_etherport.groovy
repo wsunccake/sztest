@@ -48,7 +48,7 @@ for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
   # create etherport
   for etherport_name in `cat $VAR_DIR/input/etherport/$zone_name.inp`; do
     echo "start time:`date`"
-    echo "etherport_name $zone_id"
+    echo "$etherport_name $zone_id"
     ./create_etherport.sh $etherport_name $zone_id | tee $VAR_DIR/output/etherport/${zone_name}_${etherport_name}.out
     echo "end time:`date`"
   done

@@ -80,6 +80,17 @@ node {
         ]
     }
 
+    stage('Create EtherPort') {
+        build job: 'create_etherport', parameters: [string(name: 'version', value: "${version}"),
+                                                    string(name: 'scenario', value: "${scenario}"),
+                                                    string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                    string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                                    string(name: 'SZ_IP', value: "${SZ_IP}"),
+        ]
+    }
+
+
+
 //    stage('Pre-Provision AP') {
 //        build job: 'create_ap', parameters: [string(name: 'version', value: "${version}"),
 //                                             string(name: 'scenario', value: "${scenario}"),
