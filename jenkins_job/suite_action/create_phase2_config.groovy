@@ -46,19 +46,19 @@ node {
 
     stage('Create Non Proxy Auth Service') {
         build job: 'create_non_proxy_auth_service', parameters: [string(name: 'version', value: "${version}"),
-                                                    string(name: 'scenario', value: "${scenario}"),
-                                                    string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                    string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                    string(name: 'SZ_IP', value: "${SZ_IP}"),
+                                                                 string(name: 'scenario', value: "${scenario}"),
+                                                                 string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                                 string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                                                 string(name: 'SZ_IP', value: "${SZ_IP}"),
         ]
     }
 
     stage('Create Non Proxy Acct Service') {
         build job: 'create_non_proxy_acct_service', parameters: [string(name: 'version', value: "${version}"),
-                                                    string(name: 'scenario', value: "${scenario}"),
-                                                    string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                    string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                    string(name: 'SZ_IP', value: "${SZ_IP}"),
+                                                                 string(name: 'scenario', value: "${scenario}"),
+                                                                 string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                                 string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                                                 string(name: 'SZ_IP', value: "${SZ_IP}"),
         ]
     }
 
@@ -89,7 +89,23 @@ node {
         ]
     }
 
+    stage('Create DHCP Pool') {
+        build job: 'create_dhcppool', parameters: [string(name: 'version', value: "${version}"),
+                                                   string(name: 'scenario', value: "${scenario}"),
+                                                   string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                   string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                                   string(name: 'SZ_IP', value: "${SZ_IP}"),
+        ]
+    }
 
+    stage('Create Client Isolation') {
+        build job: 'create_client_isolation', parameters: [string(name: 'version', value: "${version}"),
+                                                           string(name: 'scenario', value: "${scenario}"),
+                                                           string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                           string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                                           string(name: 'SZ_IP', value: "${SZ_IP}"),
+        ]
+    }
 
 //    stage('Pre-Provision AP') {
 //        build job: 'create_ap', parameters: [string(name: 'version', value: "${version}"),

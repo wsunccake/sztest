@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        stage('Create Hotspot') {
+        stage('Create DHCP Pool') {
             steps {
                 sh '''#!/bin/bash
 # expect work
@@ -58,7 +58,7 @@ for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
     primary_dns=${lines[6]}
     
     echo "start time:`date`"
-    echo "$dhcppool_name $zone_id"
+    echo "$dhcppool_name $zone_id $vlan_id $subnet_network $subnet_mask $start_ip $end_ip $primary_dns"
     ./create_dhcppool.sh $dhcppool_name $zone_id $vlan_id $subnet_network $subnet_mask $start_ip $end_ip $primary_dns \
     | tee $VAR_DIR/output/dhcppool/${zone_name}_${dhcppool_name}.out
     echo "end time:`date`"

@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        stage('Create EtherPort') {
+        stage('Create Client Isolation White List') {
             steps {
                 sh '''#!/bin/bash
 # expect work
@@ -34,7 +34,7 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 
 # work dir
 cd $API_PERF_DIR/public_api/$API_PERF_VER
-mkdir -p $VAR_DIR/output/etherport
+mkdir -p $VAR_DIR/output/client_isolation
 
 # run
 echo "start job:`date`"
@@ -45,11 +45,11 @@ for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
   echo "zone: $zone_name, $zone_id"
   ./login.sh admin "$ADMIN_PASSWORD"
 
-  # create etherport
-  for etherport_name in `cat $VAR_DIR/input/etherport/$zone_name.inp`; do
+  # create client isolation
+  for client_isolation_name in `cat $VAR_DIR/input/client_isolation/$zone_name.inp`; do
     echo "start time:`date`"
-    echo "$etherport_name $zone_id"
-    ./create_etherport.sh $etherport_name $zone_id | tee $VAR_DIR/output/etherport/${zone_name}_${etherport_name}.out
+    echo "$client_isolation_name $zone_id"
+    ./create_client_isolation.sh $client_isolation_name $zone_id | tee $VAR_DIR/output/client_isolation/${zone_name}_${client_isolation_name}.out
     echo "end time:`date`"
   done
 done
