@@ -125,6 +125,15 @@ node {
         ]
     }
 
+    stage('Create AP Registration Rule') {
+        build job: 'create_ap_rule', parameters: [string(name: 'version', value: "${version}"),
+                                                  string(name: 'scenario', value: "${scenario}"),
+                                                  string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                  string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                                  string(name: 'SZ_IP', value: "${SZ_IP}"),
+        ]
+    }
+
 //    stage('Pre-Provision AP') {
 //        build job: 'create_ap', parameters: [string(name: 'version', value: "${version}"),
 //                                             string(name: 'scenario', value: "${scenario}"),
