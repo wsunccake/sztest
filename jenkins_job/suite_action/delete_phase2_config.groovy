@@ -19,6 +19,15 @@ node {
         ]
     }
 
+    stage('Delete AP Registration Rule') {
+        build job: 'delete_ap_rule', parameters: [string(name: 'version', value: "${version}"),
+                                                  string(name: 'scenario', value: "${scenario}"),
+                                                  string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                  string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                                  string(name: 'SZ_IP', value: "${SZ_IP}"),
+        ]
+    }
+
     stage('Delete Zone') {
         build job: 'delete_zone', parameters: [string(name: 'version', value: "${version}"),
                                                string(name: 'scenario', value: "${scenario}"),
