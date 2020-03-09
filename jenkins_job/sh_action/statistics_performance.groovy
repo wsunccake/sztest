@@ -28,7 +28,7 @@ set -e
 echo "data dir: $VAR_DIR/output/$VAR_DATA"
 
 echo "find $VAR_DIR/output/$VAR_DATA -name \\*.out -exec grep -A1 'Response code: 201' {} \\; \\
-| awk '/Response time:/ {print \$3}' \\
+| awk '/Response time:/ {print \\\$3}' \\
 |  $API_PERF_DIR/util/statistics.awk"
 
 find $VAR_DIR/output/$VAR_DATA -name \\*.out -exec grep -A1 'Response code: 201' {} \\; \\
