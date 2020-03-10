@@ -223,4 +223,12 @@ node {
         ]
     }
 
+    stage('Analyze AP') {
+        build job: 'statistics_performance', parameters: [string(name: 'version', value: "${version}"),
+                                                          string(name: 'scenario', value: "${scenario}"),
+                                                          string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                          string(name: 'VAR_DATA', value: "aps"),
+        ]
+    }
+
 }
