@@ -269,10 +269,14 @@ node {
     }
 
     stage('Test Query API') {
-        build job: 'test_query', parameters: [string(name: 'version', value: "${params.version}"),
-                                              string(name: 'scenario', value: "${params.scenario}"),
-                                              string(name: 'VAR_DIR', value: "/usr/share/nginx/html/api_perf/${version}/${scenario}"),
-                                              string(name: 'SZ_IP', value: "${szIP}"),]
+        build job: 'query_api', parameters: [string(name: 'version', value: "${version}"),
+                                             string(name: 'scenario', value: "${scenario}"),
+                                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                             string(name: 'TASK_DIR', defaultValue: 'phase1', description: ''),
+                                             string(name: 'SZ_IP', value: "${szIP}"),
+
+        ]
     }
 
     try {
