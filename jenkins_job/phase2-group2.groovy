@@ -88,11 +88,12 @@ node {
 //    }
 //
     stage('Query API') {
-        build job: 'query_phase2_api', parameters: [string(name: 'version', value: "${version}"),
-                                                    string(name: 'scenario', value: "${scenario}"),
-                                                    string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                    string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                    string(name: 'SZ_IP', value: "${szIP}"),
+        build job: 'query_api', parameters: [string(name: 'version', value: "${version}"),
+                                             string(name: 'scenario', value: "${scenario}"),
+                                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                             string(name: 'TASK_DIR', defaultValue: 'phase2', description: ''),
+                                             string(name: 'SZ_IP', value: "${szIP}"),
 
         ]
     }
