@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        stage('Create Authentication') {
+        stage('Create Accounting') {
             steps {
                 sh '''#!/bin/bash
 # expect work
