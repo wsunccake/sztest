@@ -34,8 +34,8 @@ for var_file in ${VAR_FILES[*]}; do
   echo "data file: $VAR_DIR/output/response_time/$var_file -> ${var_file}.csv"
   echo "$API_PERF_DIR/util/statistics.awk $VAR_DIR/output/response_time/${var_file}.log | $API_PERF_DIR/util/post_created_data.awk"
   tmp_data=`$API_PERF_DIR/util/statistics.awk $VAR_DIR/output/response_time/${var_file}.log | $API_PERF_DIR/util/post_created_data.awk`
-  echo "$version,$tmp_data"
   echo "$version,$tmp_data" >> $DATA_DIR/create/${var_file}.csv
+  echo "$version,$tmp_data >> $DATA_DIR/create/${var_file}.csv"
 done
 '''
             }
@@ -59,8 +59,8 @@ for var_file in ${VAR_FILES[*]}; do
   | grep -Pzo '\\-[\\s\\S]+[\\-]' | grep -v '-' | grep -v 'session' | awk '{printf "%d,%d,%d,%d\\n", \\$5, \\$6, \\$7, \\$9}\'"
   tmp_data=`grep -Pzo 'Running teardowns[\\s\\S]+Percentage' $VAR_DIR/output/api_performance/${var_file}.log \\
   | grep -Pzo '\\-[\\s\\S]+[\\-]' | grep -v '-' | grep -v 'session' | awk '{printf "%d,%d,%d,%d\\n", \$5, \$6, \$7, \$9}'`
-  echo "$version,$tmp_data"
   echo "$version,$tmp_data" >> $DATA_DIR/query/${var_file#*_}.csv
+  echo "$version,$tmp_data >> $DATA_DIR/query/${var_file#*_}.csv"
 done
 '''
             }

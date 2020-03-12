@@ -231,4 +231,11 @@ node {
         ]
     }
 
+    stage('Arrange Data') {
+        build job: 'pickup_data', parameters: [string(name: 'version', value: "${version}"),
+                                               string(name: 'scenario', value: "${scenario}"),
+                                               string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+        ]
+    }
+
 }
