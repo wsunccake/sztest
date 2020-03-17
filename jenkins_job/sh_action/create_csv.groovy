@@ -74,8 +74,8 @@ for var_file in ${VAR_FILES[*]}; do
     | grep -Pzo '\\-[\\s\\S]+[\\-]' | grep -v '-' | grep -v 'session' | awk '{printf "%d,%d,%d,%d\\n", \\$5, \\$6, \\$7, \\$9}\'"
     tmp_data=`grep -Pzo 'Running teardowns[\\s\\S]+Percentage' $VAR_DIR/output/api_performance/${var_file}.log \\
     | grep -Pzo '\\-[\\s\\S]+[\\-]' | grep -v '-' | grep -v 'session' | awk '{printf "%d,%d,%d,%d\\n", \$5, \$6, \$7, \$9}'`
-    echo "$version,$tmp_data" >> $DATA_DIR/query/${var_file#*_}.csv
-    echo "$version,$tmp_data >> $DATA_DIR/query/${var_file#*_}.csv"
+    echo "$version,$tmp_data" >> $DATA_DIR/query/${var_file}.csv
+    echo "$version,$tmp_data >> $DATA_DIR/query/${var_file}.csv"
   fi
 done
 '''

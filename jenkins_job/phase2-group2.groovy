@@ -8,8 +8,16 @@ node {
                         string(name: 'SRC_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: ''),
                         string(name: 'VAR_DIR', defaultValue: '/usr/share/nginx/html/api_perf/${version}/${scenario}', description: ''),
                         string(name: 'API_PERF_VER', defaultValue: 'v9_1', description: ''),
-                        string(name: 'AP_NUM', defaultValue: '2000', description: ''),
-                        string(name: 'UE_NUM', defaultValue: '48000', description: ''),
+
+                        string(name: 'AP_NUM', defaultValue: '10000', description: ': group1: 6000, group2: 2000, group3: 2000'),
+                        string(name: 'UE_NUM', defaultValue: '100000', description: ' group1: 48000, group2: 48000, group3: 4000'),
+                        string(name: 'MADSZ_TGZ', defaultValue: 'madSZ-v5.2-39-u1804.tar.xz', description: ''),
+
+                        string(name: 'DATA_DIR', defaultValue: '/usr/share/nginx/html/api_perf/5.2.1/report/${scenario}', description: ''),
+
+                        string(name: 'NUM_CLIENT', defaultValue: '2', description: ''),
+                        string(name: 'HATCH_RATE', defaultValue: '1', description: ''),
+                        string(name: 'RUN_TIME', defaultValue: '20m', description: ''),
             ])
     ])
 
@@ -94,16 +102,29 @@ node {
                                              string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                                              string(name: 'TASK_DIR', value: 'phase2'),
                                              string(name: 'SZ_IP', value: "${szIP}"),
+                                             string(name: 'NUM_CLIENT', value: "${NUM_CLIENT}"),
+                                             string(name: 'HATCH_RATE', value: "${HATCH_RATE}"),
+                                             string(name: 'RUN_TIME', value: "${RUN_TIME}"),
 
         ]
     }
-//
-//    stage('Clean Env') {
-//        build job: 'clean_env', parameters: [string(name: 'version', value: "${version}"),
-//                                             string(name: 'scenario', value: "${scenario}"),
-//                                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-//                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-//                                             string(name: 'SZ_IP', value: "${szIP}"),
-//        ]
-//    }
+
+    stage('Create CSV') {
+        build job: 'create_csv', parameters: [string(name: 'version', value: "${version}"),
+                                              string(name: 'scenario', value: "${scenario}"),
+                                              string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                              string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                              string(name: 'DATA_DIR', value: "${DATA_DIR}"),
+
+        ]
+    }
+
+    stage('Clean Env') {
+        build job: 'clean_env', parameters: [string(name: 'version', value: "${version}"),
+                                             string(name: 'scenario', value: "${scenario}"),
+                                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                             string(name: 'SZ_IP', value: "${szIP}"),
+        ]
+    }
 }

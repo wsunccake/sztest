@@ -8,9 +8,8 @@ node {
                         string(name: 'SRC_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: ''),
                         string(name: 'VAR_DIR', defaultValue: '/usr/share/nginx/html/api_perf/${version}/${scenario}', description: ''),
                         string(name: 'API_PERF_VER', defaultValue: 'v9_0', description: ''),
-//                        string(name: 'AP_NUM', defaultValue: '10000', description: ''),
+
                         string(name: 'AP_NUM', defaultValue: '10000', description: ': group1: 6000, group2: 2000, group3: 2000'),
-//                        string(name: 'UE_NUM', defaultValue: '100000', description: ''),
                         string(name: 'UE_NUM', defaultValue: '100000', description: ' group1: 48000, group2: 48000, group3: 4000'),
                         string(name: 'DPSK_AMOUNT', defaultValue: "10", description: ''),
                         string(name: 'MADSZ_TGZ', defaultValue: 'madSZ-v5.2-39-u1804.tar.xz', description: ''),
