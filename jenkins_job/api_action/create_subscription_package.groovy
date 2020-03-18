@@ -38,6 +38,8 @@ mkdir -p $VAR_DIR/output/subscription_package
 
 # run
 echo "start job:`date`"
+
+# login
 ./login.sh admin "$ADMIN_PASSWORD"
 
   # create subscription_package
@@ -47,6 +49,9 @@ echo "start job:`date`"
     ./create_subscription_package.sh $subscription_package_name | tee $VAR_DIR/output/subscription_package/${subscription_package_name}.out
     echo "end time:`date`"
   done
+
+# logout
+./logout.sh
 
 echo "end job:`date`"
 '''

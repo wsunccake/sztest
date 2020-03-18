@@ -52,6 +52,9 @@ for domain_name in `cat $VAR_DIR/input/domains/domains.inp`; do
     ./create_zone.sh $zone_name $domain_id | tee $VAR_DIR/output/zones/$zone_name.out
     echo "end time:`date`"
   done
+  
+  # logout
+  ./logout.sh
 
 done
 echo "end job:`date`"

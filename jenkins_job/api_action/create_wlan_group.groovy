@@ -43,6 +43,8 @@ for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
   # get zone_id
   zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
   echo "zone: $zone_name, $zone_id"
+  
+  # login
   ./login.sh admin "$ADMIN_PASSWORD"
 
   # create wlan_group
@@ -52,6 +54,9 @@ for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
     ./create_wlan_group.sh $wlan_group_name $zone_id | tee $VAR_DIR/output/wlan_groups/${zone_name}_${wlan_group_name}.out
     echo "end time:`date`"
   done
+  
+  # logout
+  ./logout.sh
 
 done
 echo "end job:`date`"

@@ -45,10 +45,15 @@ mkdir -p $VAR_DIR/output/domains
 echo "start job:`date`"
 for domain_name in `cat $VAR_DIR/input/domains/domains.inp`; do
 
+  # login
   ./login.sh admin "$ADMIN_PASSWORD"
+  
   echo "start time:`date`"
   ./create_domain.sh $domain_name | tee $VAR_DIR/output/domains/$domain_name.out
   echo "end time:`date`"
+  
+  # logout
+  ./logout
 
 done
 echo "end job:`date`"
