@@ -6,7 +6,6 @@ pipeline {
 
         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: '')
         string(name: 'TASK_DIR', defaultValue: 'phase1', description: '')
-        string(name: 'NUM_CLIENT', defaultValue: '2', description: '')
         string(name: 'API_PERF_DIR', defaultValue: '/var/lib/jenkins/api_perf', description: '')
         string(name: 'API_PERF_VER', defaultValue: 'v9_1', description: '')
 
