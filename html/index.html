@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API Perf</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <script type="text/javascript" src="api_chart.js"></script>
+    <link href="pagination.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div id="scenario">
+    <label for="scenario">scenario</label>
+    <select id="scenarioSelect" v-model="selected" v-on:click="changeSelect">
+        <option v-for="option in options" v-bind:value="option.value">
+            {{ option.value }}
+        </option>
+    </select>
+</div>
+
+
+<div id="workdir">
+    <input id="workdirText" type="hidden" v-model="message" v-on:keyup="changeText">
+</div>
+
+<div id="container1" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="container2" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<script type="text/javascript">
+    // create data
+    let phase1CsvData1 = ['domains', 'zones', 'wlans', 'aps', 'wlan_groups', 'ap_groups'];
+    let phase2C1 = ['domains', 'zones', 'wlans', 'aps'];
+    let phase2C2 = ["non_proxy_acct", "non_proxy_auth", "hotspot", "guest_access"];
+    let phase2C3 = ["ap_rule", "client_isolation", "dhcppool", "etherport", "subscription_package"];
+    let phase2CsvData1 = [].concat(phase2C1, phase2C2 ,phase2C3);
+    let createCsvData = {"phase1": phase1CsvData1, "phase2": phase2CsvData1}
+
+    // query data
+    let phase1CsvData2 = ['query_wlan', 'query_dpsk', 'query_ap', 'rkszones_zoneId_wlan', 'rkszones', 'rkszones_id_apgroups',
+                          'rkszones_id_wlangroups', 'domain_id_subdomain', 'domain', 'aps'];
+    let phase2Q1 = ["query_criteria_wlan"];
+    let phase2Q2 = ["query_criteria_non_proxy_auth", "query_criteria_non_proxy_acct", "query_criteria_hotspot", "query_criteria_guest_access"];
+    let phase2Q3 = ["query_criteria_client_isolation", "query_criteria_etherport", "query_criteria_subscriber_package"];
+    let phase2CsvData2 = [].concat(phase2Q1, phase2Q2, phase2Q3);
+    let queryCsvData = {"phase1": phase1CsvData2, "phase2": phase2CsvData2}
+
+    function updateToDraw() {
+        let scenarioSelect = $('#scenarioSelect option:selected').val();
+        let workdirText = $('#workdirText').val();
+        if (workdirText == "") {
+            workdirText = scenarioSelect;
+        }
+        console.log(scenarioSelect, workdirText);
+
+        let createData = {containerId: 'container1',
+                          title: `${scenarioSelect} create api performance`,
+                          seriesData: createCsvData[scenario],
+                          prefixDir: `${workdirText}/create/`};
+        drawCreatedAPI(createData);
+
+        let queryData = {containerId: 'container2',
+                         title: `${scenarioSelect} create api performance`,
+                         seriesData: queryCsvData[scenario],
+                         prefixDir: `${workdirText}/query/`};
+        drawCreatedAPI(queryData);
+    };
+
+    // main
+    let scenarioVue = new Vue({
+        el: "#scenario",
+        data: {
+            selected: "phase1",
+            options: [
+                {"value": "phase1"},
+                {"value": "phase2"},
+            ],
+        },
+        methods: {
+            changeSelect: updateToDraw
+        }
+    });
+
+    let workdirVue = new Vue({
+        el: "#workdir",
+        data: {
+            message: ''
+        },
+        methods: {
+            changeText: updateToDraw
+        }
+    });
+
+    updateToDraw();
+
+    // $("#workdirText").val()
+    // $("#workdirText").val('phase1')
+    // changeSelected()
+</script>
+
+</body>
+</html>
+
