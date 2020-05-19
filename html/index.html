@@ -57,13 +57,13 @@
 
         let createData = {containerId: 'container1',
                           title: `${scenarioSelect} create api performance`,
-                          seriesData: createCsvData[scenario],
+                          seriesData: createCsvData[scenarioSelect],
                           prefixDir: `${workdirText}/create/`};
         drawCreatedAPI(createData);
 
         let queryData = {containerId: 'container2',
                          title: `${scenarioSelect} create api performance`,
-                         seriesData: queryCsvData[scenario],
+                         seriesData: queryCsvData[scenarioSelect],
                          prefixDir: `${workdirText}/query/`};
         drawCreatedAPI(queryData);
     };
