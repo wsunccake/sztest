@@ -53,7 +53,7 @@ for domain_name in `cat $VAR_DIR/input/domains/domains.inp`; do
   echo "end time:`date`"
   
   # logout
-  ./logout
+  ./logout.sh
 
 done
 echo "end job:`date`"
