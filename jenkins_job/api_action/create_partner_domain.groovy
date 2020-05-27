@@ -11,7 +11,6 @@ pipeline {
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
         string(name: 'NPROC', defaultValue: '2', description: '')
-        NPROC
     }
 
     stages {
