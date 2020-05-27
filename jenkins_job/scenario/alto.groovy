@@ -54,8 +54,8 @@ node {
         build job: 'fresh_install', parameters: [string(name: 'version', value: "${version}"),
                                                  string(name: 'scenario', value: "${scenario}"),
                                                  string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                 string(name: 'SZ_IP', value: "${SZ_IP}"),
-                                                 string(name: 'CLUSTER_NAME', value: "${CLUSTER_NAME}"),
+                                                 string(name: 'SZ_IP', value: "${szIP}"),
+                                                 string(name: 'CLUSTER_NAME', value: "alto-${scenario}"),
         ]
     }
 
@@ -64,7 +64,7 @@ node {
                                                          string(name: 'scenario', value: "${scenario}"),
                                                          string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                                                          string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                         string(name: 'SZ_IP', value: "${SZ_IP}"),
+                                                         string(name: 'SZ_IP', value: "${szIP}"),
         ]
     }
 
