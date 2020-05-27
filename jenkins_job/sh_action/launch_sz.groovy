@@ -5,6 +5,7 @@ pipeline {
         string(name: 'scenario', defaultValue: 'group0', description: '')
 
         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: '')
+        string(name: 'GCE_IMAGE', defaultValue: 'vscg-${version}', description: '')
     }
 
     stages {
@@ -22,7 +23,7 @@ pipeline {
                 sh '''#!/bin/bash
 source $VAR_DIR/input/gce/gce.sh
 
-GCE_IMAGE=vscg-`echo "$version" | sed s'/\\./-/'g`
+GCE_IMAGE=`echo "$GCE_IMAGE" | sed s'/\\./-/'g`
 vm_name=${GCE_IMAGE}-${ACCOUNT%%.*}-${RANDOM}
 
 gcloud compute instances create $vm_name --zone=$GCE_ZONE \\
