@@ -10,6 +10,7 @@ pipeline {
         string(name: 'API_PERF_VER', defaultValue: 'v9_0', description: '')
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
+        string(name: 'NPROC', defaultValue: '2', description: '')
     }
 
     stages {
@@ -42,18 +43,14 @@ cd $API_PERF_DIR/public_api/$API_PERF_VER
 mkdir -p $VAR_DIR/output/domains
 
 # run
-echo "start job:`date`"
-for domain_name in `cat $VAR_DIR/input/domains/domains.inp`; do
 
-  # login
-  ./login.sh admin "$ADMIN_PASSWORD"
+# login
+./login.sh admin "$ADMIN_PASSWORD"
   
-  echo "start time:`date`"
-  ./create_domain.sh $domain_name | tee $VAR_DIR/output/domains/$domain_name.out
-  echo "end time:`date`"
+cat $VAR_DIR/input/domains/domains.inp | xargs -P $NPROC -i sh -c "./create_domain.sh {} | tee $VAR_DIR/output/domains/{}.out"
   
-  # logout
-  ./logout.sh
+# logout
+./logout.sh
 
 done
 echo "end job:`date`"
