@@ -52,7 +52,6 @@ cat $VAR_DIR/input/domains/domains.inp | xargs -P $NPROC -i sh -c "./create_doma
 # logout
 ./logout.sh
 
-done
 echo "end job:`date`"
 '''
             }
