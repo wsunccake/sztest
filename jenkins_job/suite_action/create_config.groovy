@@ -14,14 +14,15 @@ node {
     currentBuild.displayName = "${params.version} - ${params.scenario} - #${currentBuild.number}"
 
     stage('Create Domain') {
-        build job: 'create_domain', parameters: [string(name: 'version', value: "${version}"),
-                                                 string(name: 'scenario', value: "${scenario}"),
-                                                 string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                 string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                 string(name: 'SZ_IP', value: "${SZ_IP}"),
-        ]
-
-
+        build job: 'create_domain',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${SZ_IP}"),
+                ],
+                propagate: false
     }
 
     stage('Analyze Domain') {
@@ -33,12 +34,15 @@ node {
     }
 
     stage('Create Zone') {
-        build job: 'create_zone', parameters: [string(name: 'version', value: "${version}"),
-                                               string(name: 'scenario', value: "${scenario}"),
-                                               string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                               string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                               string(name: 'SZ_IP', value: "${SZ_IP}"),
-        ]
+        build job: 'create_zone',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${SZ_IP}"),
+                ],
+                propagate: false
     }
 
     stage('Analyze Zone') {
@@ -50,12 +54,15 @@ node {
     }
 
     stage('Create Open WLAN') {
-        build job: 'create_open_wlan', parameters: [string(name: 'version', value: "${version}"),
-                                                    string(name: 'scenario', value: "${scenario}"),
-                                                    string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                    string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                    string(name: 'SZ_IP', value: "${SZ_IP}"),
-        ]
+        build job: 'create_open_wlan',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${SZ_IP}"),
+                ],
+                propagate: false
     }
 
     stage('Create DPSK WLAN') {
@@ -94,12 +101,15 @@ node {
     }
 
     stage('Create WLAN Group') {
-        build job: 'create_wlan_group', parameters: [string(name: 'version', value: "${version}"),
-                                                     string(name: 'scenario', value: "${scenario}"),
-                                                     string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                     string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                     string(name: 'SZ_IP', value: "${SZ_IP}"),
-        ]
+        build job: 'create_wlan_group',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${SZ_IP}"),
+                ],
+                propagate: false
     }
 
     stage('Analyze WLAN Group') {
@@ -111,12 +121,15 @@ node {
     }
 
     stage('Pre-Provision AP') {
-        build job: 'create_ap', parameters: [string(name: 'version', value: "${version}"),
-                                             string(name: 'scenario', value: "${scenario}"),
-                                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                             string(name: 'SZ_IP', value: "${SZ_IP}"),
-        ]
+        build job: 'create_ap',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${SZ_IP}"),
+                ],
+                propagate: false
     }
 
     stage('Analyze AP') {
@@ -128,19 +141,25 @@ node {
     }
 
     stage('Create AP Group') {
-        build job: 'create_ap_group', parameters: [string(name: 'version', value: "${version}"),
-                                                   string(name: 'scenario', value: "${scenario}"),
-                                                   string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                   string(name: 'SZ_IP', value: "${SZ_IP}"),
-        ]
+        build job: 'create_ap_group',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'SZ_IP', value: "${SZ_IP}"),
+                ],
+                propagate: false
     }
 
     stage('Analyze AP Group') {
-        build job: 'statistics_performance', parameters: [string(name: 'version', value: "${version}"),
-                                                          string(name: 'scenario', value: "${scenario}"),
-                                                          string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                          string(name: 'VAR_DATA', value: "ap_groups"),
-        ]
+        build job: 'statistics_performance',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'VAR_DATA', value: "ap_groups"),
+                ],
+                propagate: false
     }
 
     stage('Arrange Data') {

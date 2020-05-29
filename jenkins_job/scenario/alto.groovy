@@ -59,13 +59,30 @@ node {
         ]
     }
 
+    try {
+        stage('Configure PinPoint') {
+            build job: 'setup-pinpoint', parameters: [string(name: 'version', value: "${version}"),
+                                                      string(name: 'scenario', value: "${scenario}"),
+                                                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                                                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                                                      string(name: 'SZ_IP', value: "${szIP}"),
+                                                      string(name: 'CLUSTER_NAME', value: "alto-${scenario}"),
+            ]
+        }
+    } catch (Exception e) {
+        echo "Stage ${currentBuild.result}, but we continue"
+    }
+
     stage('Create Partner Domain') {
-        build job: 'create_partner_domain', parameters: [string(name: 'version', value: "${version}"),
-                                                         string(name: 'scenario', value: "${scenario}"),
-                                                         string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                         string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                         string(name: 'SZ_IP', value: "${szIP}"),
-        ]
+        build job: 'create_partner_domain',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ],
+                propagate: false
     }
 
 //    stage('Join AP and UE') {
