@@ -48,7 +48,7 @@ for domain_name in `cat $VAR_DIR/input/domains/domains.inp`; do
   ./login.sh admin "$ADMIN_PASSWORD"
   
   # create zone
-  cat $VAR_DIR/input/l2acl/$domain_name.inp | xargs -P $NPROC -i sh -c "./create_l2acl.sh {} $domain_id | tee $VAR_DIR/output/l2acl/{}.out"
+  cat $VAR_DIR/input/l2acl/$domain_name.inp | xargs -P $NPROC -i sh -c "./create_l2acl.sh {} $domain_id | tee $VAR_DIR/output/l2acl/${domain_name}_{}.out"
   
   # logout
   ./logout.sh
