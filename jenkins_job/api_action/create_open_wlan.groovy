@@ -82,7 +82,6 @@ echo "end job:`date`"
                         currentBuild.result = 'UNSTABLE'
                     }
                 }
-
             }
         }
 

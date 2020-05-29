@@ -10,6 +10,7 @@ pipeline {
         string(name: 'API_PERF_VER', defaultValue: 'v9_0', description: '')
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
+        string(name: 'NPROC', defaultValue: '2', description: '')
     }
 
     stages {
@@ -48,12 +49,7 @@ for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
   ./login.sh admin "$ADMIN_PASSWORD"
 
   # create wlan_group
-  for wlan_group_name in `cat $VAR_DIR/input/wlan_groups/$zone_name.inp`; do
-    echo "start time:`date`"
-    echo "$wlan_group_name $zone_id"
-    ./create_wlan_group.sh $wlan_group_name $zone_id | tee $VAR_DIR/output/wlan_groups/${zone_name}_${wlan_group_name}.out
-    echo "end time:`date`"
-  done
+  cat $VAR_DIR/input/wlan_groups/$zone_name.inp | xargs -P $NPROC -i sh -c "./create_wlan_group.sh {} $zone_id | tee $VAR_DIR/output/wlan_groups/${zone_name}_{}.out"
   
   # logout
   ./logout.sh
@@ -63,5 +59,31 @@ echo "end job:`date`"
 '''
             }
         }
+
+        stage('Check Response') {
+            steps {
+                script {
+                    def cmd1 = ["bash", "-c", "grep 'Response code:' ${VAR_DIR}/output/wlan_groups/*.out | wc -l"]
+                    def proc1 = Runtime.getRuntime().exec((String[]) cmd1.toArray())
+                    def totalResponse = proc1.text.trim() as Integer
+
+                    def cmd2 = ["bash", "-c", "grep 'Response code: 201' ${VAR_DIR}/output/wlan_groups/*.out | wc -l"]
+                    def proc2 = Runtime.getRuntime().exec((String[]) cmd2.toArray())
+                    def successfulResponse = proc2.text.trim() as Integer
+
+                    println "total: ${totalResponse}"
+                    println "successful: ${successfulResponse}"
+
+                    if (successfulResponse == totalResponse) {
+                        currentBuild.result = 'SUCCESS'
+                    } else if (successfulResponse == 0) {
+                        currentBuild.result = 'FAILURE'
+                    } else {
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
+
     }
 }
