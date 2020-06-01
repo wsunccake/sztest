@@ -85,6 +85,30 @@ node {
                 propagate: false
     }
 
+    stage('Create L2ACL') {
+        build job: 'create_l2acl',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ],
+                propagate: false
+    }
+
+    stage('Create L3ACP') {
+        build job: 'create_l3acp',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ],
+                propagate: false
+    }
+
 //    stage('Join AP and UE') {
 //        build job: 'join_ap_ue', parameters: [string(name: 'version', value: "${version}"),
 //                                              string(name: 'scenario', value: "${scenario}"),
