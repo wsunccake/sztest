@@ -85,6 +85,18 @@ node {
 //                propagate: false
 //    }
 //
+//    stage('Create Zone') {
+//        build job: 'create_zone',
+//                parameters: [
+//                        string(name: 'version', value: "${version}"),
+//                        string(name: 'scenario', value: "${scenario}"),
+//                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+//                        string(name: 'SZ_IP', value: "${szIP}"),
+//                ],
+//                propagate: false
+//    }
+//
 //    stage('Create L2ACL') {
 //        build job: 'create_l2acl',
 //                parameters: [
