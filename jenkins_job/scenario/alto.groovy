@@ -145,8 +145,32 @@ node {
                 propagate: false
     }
 
-    stage('Create LBS Partner Domain') {
+    stage('Create LBS Per Partner Domain') {
         build job: 'create_lbs_per_partner_domain',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ],
+                propagate: false
+    }
+
+    stage('Create Wifi Calling Polciy Per Partner Domain') {
+        build job: 'create_wifi_calling_policy_per_partner_domain',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ],
+                propagate: false
+    }
+
+    stage('Create Device Polciy Per Partner Domain') {
+        build job: 'create_device_policy_per_partner_domain',
                 parameters: [
                         string(name: 'version', value: "${version}"),
                         string(name: 'scenario', value: "${scenario}"),
