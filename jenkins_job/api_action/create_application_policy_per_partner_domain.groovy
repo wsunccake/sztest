@@ -70,11 +70,11 @@ echo "end job:`date`"
         stage('Check Response') {
             steps {
                 script {
-                    def cmd1 = ["bash", "-c", "grep 'Response code:' ${VAR_DIR}/output/application_policy/*.out | wc -l"]
+                    def cmd1 = ["bash", "-c", "find ${VAR_DIR}/output/application_policy -name \\*.out -exec grep 'Response code:' {} \\; | wc -l"]
                     def proc1 = Runtime.getRuntime().exec((String[]) cmd1.toArray())
                     def totalResponse = proc1.text.trim() as Integer
 
-                    def cmd2 = ["bash", "-c", "grep 'Response code: 201' ${VAR_DIR}/output/application_policy/*.out | wc -l"]
+                    def cmd2 = ["bash", "-c", "find ${VAR_DIR}/output/application_policy -name \\*.out -exec grep 'Response code: 201' {} \\; | wc -l"]
                     def proc2 = Runtime.getRuntime().exec((String[]) cmd2.toArray())
                     def successfulResponse = proc2.text.trim() as Integer
 
