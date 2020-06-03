@@ -59,68 +59,105 @@ node {
         ]
     }
 
-    try {
-        stage('Configure PinPoint') {
-            build job: 'setup-pinpoint', parameters: [string(name: 'version', value: "${version}"),
-                                                      string(name: 'scenario', value: "${scenario}"),
-                                                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                      string(name: 'SZ_IP', value: "${szIP}"),
-                                                      string(name: 'CLUSTER_NAME', value: "alto-${scenario}"),
-            ]
-        }
-    } catch (Exception e) {
-        echo "Stage ${currentBuild.result}, but we continue"
+//    try {
+//        stage('Configure PinPoint') {
+//            build job: 'setup-pinpoint', parameters: [string(name: 'version', value: "${version}"),
+//                                                      string(name: 'scenario', value: "${scenario}"),
+//                                                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//                                                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+//                                                      string(name: 'SZ_IP', value: "${szIP}"),
+//                                                      string(name: 'CLUSTER_NAME', value: "alto-${scenario}"),
+//            ]
+//        }
+//    } catch (Exception e) {
+//        echo "Stage ${currentBuild.result}, but we continue"
+//    }
+
+    stage('Create Partner Domain') {
+        build job: 'create_partner_domain',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ],
+                propagate: false
     }
 
-//    stage('Create Partner Domain') {
-//        build job: 'create_partner_domain',
-//                parameters: [
-//                        string(name: 'version', value: "${version}"),
-//                        string(name: 'scenario', value: "${scenario}"),
-//                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-//                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-//                        string(name: 'SZ_IP', value: "${szIP}"),
-//                ],
-//                propagate: false
-//    }
-//
-//    stage('Create Zone Per Partner Domain') {
-//        build job: 'create_zone_per_partner_domain',
-//                parameters: [
-//                        string(name: 'version', value: "${version}"),
-//                        string(name: 'scenario', value: "${scenario}"),
-//                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-//                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-//                        string(name: 'SZ_IP', value: "${szIP}"),
-//                ],
-//                propagate: false
-//    }
-//
-//    stage('Create Authentication Per Partner Domain') {
-//        build job: 'create_auth_service_per_partner_domain',
-//                parameters: [
-//                        string(name: 'version', value: "${version}"),
-//                        string(name: 'scenario', value: "${scenario}"),
-//                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-//                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-//                        string(name: 'SZ_IP', value: "${szIP}"),
-//                ],
-//                propagate: false
-//    }
-//
-//    stage('Create Accounting Per Partner Domain') {
-//        build job: 'create_acct_service_per_partner_domain',
-//                parameters: [
-//                        string(name: 'version', value: "${version}"),
-//                        string(name: 'scenario', value: "${scenario}"),
-//                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-//                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-//                        string(name: 'SZ_IP', value: "${szIP}"),
-//                ],
-//                propagate: false
-//    }
-//
+    stage('Create Zone Per Partner Domain') {
+        build job: 'create_zone_per_partner_domain',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ],
+                propagate: false
+    }
+
+    stage('Create Authentication Per Partner Domain') {
+        build job: 'create_auth_service_per_partner_domain',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ],
+                propagate: false
+    }
+
+    stage('Create Accounting Per Partner Domain') {
+        build job: 'create_acct_service_per_partner_domain',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ],
+                propagate: false
+    }
+
+    stage('Create Application Policy Per Partner Domain') {
+        build job: 'create_application_policy_per_partner_domain',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ],
+                propagate: false
+    }
+
+    stage('Create User Defined Per Partner Domain') {
+        build job: 'create_user_defined_per_partner_domain',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ],
+                propagate: false
+    }
+
+    stage('Create LBS Partner Domain') {
+        build job: 'create_lbs_per_partner_domain',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ],
+                propagate: false
+    }
+
+
 //    stage('Create L2ACL Per Partner Domain') {
 //        build job: 'create_l2acl',
 //                parameters: [
