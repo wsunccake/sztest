@@ -85,8 +85,8 @@ node {
 //                propagate: false
 //    }
 //
-//    stage('Create Zone') {
-//        build job: 'create_zone',
+//    stage('Create Zone Per Partner Domain') {
+//        build job: 'create_zone_per_partner_domain',
 //                parameters: [
 //                        string(name: 'version', value: "${version}"),
 //                        string(name: 'scenario', value: "${scenario}"),
@@ -97,7 +97,31 @@ node {
 //                propagate: false
 //    }
 //
-//    stage('Create L2ACL') {
+//    stage('Create Authentication Per Partner Domain') {
+//        build job: 'create_auth_service_per_partner_domain',
+//                parameters: [
+//                        string(name: 'version', value: "${version}"),
+//                        string(name: 'scenario', value: "${scenario}"),
+//                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+//                        string(name: 'SZ_IP', value: "${szIP}"),
+//                ],
+//                propagate: false
+//    }
+//
+//    stage('Create Accounting Per Partner Domain') {
+//        build job: 'create_acct_service_per_partner_domain',
+//                parameters: [
+//                        string(name: 'version', value: "${version}"),
+//                        string(name: 'scenario', value: "${scenario}"),
+//                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+//                        string(name: 'SZ_IP', value: "${szIP}"),
+//                ],
+//                propagate: false
+//    }
+//
+//    stage('Create L2ACL Per Partner Domain') {
 //        build job: 'create_l2acl',
 //                parameters: [
 //                        string(name: 'version', value: "${version}"),
@@ -109,7 +133,7 @@ node {
 //                propagate: false
 //    }
 //
-//    stage('Create L3ACP') {
+//    stage('Create L3ACP Per Partner Domain') {
 //        build job: 'create_l3acp',
 //                parameters: [
 //                        string(name: 'version', value: "${version}"),
