@@ -30,11 +30,7 @@ def checkResponseStatus(String outputDir, String returnCode = '201') {
 }
 
 def statisticizeResponse(String outputDir, String returnCode = '201', String utilCmd='statistics.awk') {
-  def cmd = ["bash", "-c", """find ${outputDir} -name \\*.out -exec grep -A1 'Response code: ${returnCode}' {} \\; \\
-| awk '/Response time:/ {print \$3}' \\                                                       
-|  ${utilCmd}
-"""                                                                                           
-  ]
+  def cmd = ["bash", "-c", "find ${outputDir} -name \\*.out -exec grep -A1 'Response code: ${returnCode}' {} \\; | awk '/Response time:/ {print \$3}' | ${utilCmd} "]
   def proc = Runtime.getRuntime().exec((String[]) cmd.toArray())
   content = proc.text
   println content
