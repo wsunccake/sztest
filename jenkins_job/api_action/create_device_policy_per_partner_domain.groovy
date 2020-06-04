@@ -72,7 +72,7 @@ echo "end job:`date`"
                     def proc1 = Runtime.getRuntime().exec((String[]) cmd1.toArray())
                     def totalResponse = proc1.text.trim() as Integer
 
-                    def cmd2 = ["bash", "-c", "grep 'Response code: 200' ${VAR_DIR}/output/device_policy/*.out | wc -l"]
+                    def cmd2 = ["bash", "-c", "grep 'Response code: 201' ${VAR_DIR}/output/device_policy/*.out | wc -l"]
                     def proc2 = Runtime.getRuntime().exec((String[]) cmd2.toArray())
                     def successfulResponse = proc2.text.trim() as Integer
 
