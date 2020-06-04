@@ -33,5 +33,7 @@ def statisticizeResponse(String outputDir, String returnCode = '201', String uti
   def cmd = ["bash", "-c", "find ${outputDir} -name \\*.out -exec grep -A1 'Response code: ${returnCode}' {} \\; | awk '/Response time:/ {print \$3}' | ${utilCmd} "]
   def proc = Runtime.getRuntime().exec((String[]) cmd.toArray())
   content = proc.text
+  
+  println cmd
   println content
 }
