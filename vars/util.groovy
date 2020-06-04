@@ -4,13 +4,16 @@ def checkResponseStatus(String outputDir, String returnCode = '201') {
   
   def proc1 = Runtime.getRuntime().exec((String[]) cmd1.toArray())
   def totalResponse = proc1.text.trim() as Integer
+
+  println cmd1
+  println "total: ${totalResponse}"
   
 //  def cmd2 = ["bash", "-c", "grep 'Response code: ${returnCode}' ${outputDir}/*.out | wc -l"]
   def cmd2 = ["bash", "-c", "find ${outputDir} -name \\*.out -exec grep 'Response code: ${returnCode}' {} \\; | wc -l"]
   def proc2 = Runtime.getRuntime().exec((String[]) cmd2.toArray())
   def successfulResponse = proc2.text.trim() as Integer
 
-  println "total: ${totalResponse}"
+  println cmd2
   println "successful: ${successfulResponse}"
   
   def result = 'FAILURE'
@@ -24,4 +27,15 @@ def checkResponseStatus(String outputDir, String returnCode = '201') {
   }
   
   return result
+}
+
+def statisticizeResponse(String outputDir, String returnCode = '201', String utilCmd='statistics.awk') {
+  def cmd = ["bash", "-c", """find ${outputDir} -name \\*.out -exec grep -A1 'Response code: ${returnCode}' {} \\; \\
+| awk '/Response time:/ {print \$3}' \\                                                       
+|  ${utilCmd}
+"""                                                                                           
+  ]
+  def proc = Runtime.getRuntime().exec((String[]) cmd.toArray())
+  content = proc.text
+  println content
 }
