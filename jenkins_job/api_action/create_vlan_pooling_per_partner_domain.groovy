@@ -11,7 +11,7 @@ pipeline {
         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: '')
         string(name: 'EXPECT_DIR', defaultValue: '/var/lib/jenkins/expect', description: '')
         string(name: 'API_PERF_DIR', defaultValue: '/var/lib/jenkins/api_perf', description: '')
-        string(name: 'API_PERF_VER', defaultValue: 'v9_1', description: '')
+        string(name: 'API_PERF_VER', defaultValue: 'v9_0', description: '')
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
         string(name: 'NPROC', defaultValue: '2', description: '')
@@ -27,16 +27,11 @@ pipeline {
             }
         }
 
-        stage('Create LBS Per Partner Domain') {
+        stage('Create VLAN Pooling Per Partner Domain') {
             steps {
                 sh '''#!/bin/bash
 # expect work
 source $EXPECT_DIR/sz/var/expect-var.sh
-
-# setup sz ip
-if [ -z $SZ_IP ]; then
-  SZ_IP=`sed -n 1p $VAR_DIR/input/sz/sz.inp`
-fi 
 
 export SZ_IP=$SZ_IP
 echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
@@ -44,23 +39,20 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 
 # work dir
 cd $API_PERF_DIR/public_api/$API_PERF_VER
-mkdir -p $VAR_DIR/output/lbs
-
-radius_port=1813
-radius_secret=1234
+mkdir -p $VAR_DIR/output/vlan_pooling
 
 # run
 echo "start job:`date`"
 for domain_name in `cat $VAR_DIR/input/partner_domains/domains.inp`; do
 
   # get domain_id
-  domain_id=`awk -F\\" '/id/{print \\$4}' $VAR_DIR/output/partner_domains/$domain_name.out`
+  domain_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/partner_domains/$domain_name.out`
   echo "domain: $domain_name, $domain_id"
   # login
   ./login.sh admin "$ADMIN_PASSWORD"
   
   # create zone
-  cat $VAR_DIR/input/lbs/$domain_name.inp | xargs -P $NPROC -i sh -c "./create_lbs.sh {} $domain_id | tee $VAR_DIR/output/lbs/${domain_name}_{}.out"
+  cat $VAR_DIR/input/l3acp/$domain_name.inp | xargs -P $NPROC -i sh -c "./create_vlan_pooling.sh {} $domain_id | tee $VAR_DIR/output/vlan_pooling/${domain_name}_{}.out"
   
   # logout
   ./logout.sh
@@ -74,7 +66,7 @@ echo "end job:`date`"
         stage('Check Response') {
             steps {
                 script {
-                    def result = util.checkResponseStatus("${VAR_DIR}/output/lbs", "200")
+                    def result = util.checkResponseStatus "${VAR_DIR}/output/vlan_pooling"
                     println result
                     currentBuild.result = result
                 }
@@ -84,7 +76,7 @@ echo "end job:`date`"
         stage('Statistic Response') {
             steps {
                 script {
-                    util.statisticizeResponse("${VAR_DIR}/output/lbs", "200", "statistics.awk")
+                    util.statisticizeResponse "${VAR_DIR}/output/vlan_pooling"
                 }
             }
         }
