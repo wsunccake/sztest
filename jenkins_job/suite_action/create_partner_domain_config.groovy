@@ -89,6 +89,19 @@ node {
                 propagate: false
     }
 
+    stage('Create L3ACP Per Partner Domain') {
+        build job: 'create_l3acp_per_partner_domain',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${SZ_IP}"),
+                        string(name: 'NPROC', value: "${NPROC}"),
+                ],
+                propagate: false
+    }
+
     stage('Create LBS Per Partner Domain') {
         build job: 'create_lbs_per_partner_domain',
                 parameters: [
