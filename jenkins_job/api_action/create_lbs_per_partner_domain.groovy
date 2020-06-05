@@ -23,7 +23,7 @@ pipeline {
             }
         }
 
-        stage('Create User Defined Per Partner Domain') {
+        stage('Create LBS Per Partner Domain') {
             steps {
                 sh '''#!/bin/bash
 # expect work
@@ -70,27 +70,20 @@ echo "end job:`date`"
         stage('Check Response') {
             steps {
                 script {
-                    def cmd1 = ["bash", "-c", "grep 'Response code:' ${VAR_DIR}/output/lbs/*.out | wc -l"]
-                    def proc1 = Runtime.getRuntime().exec((String[]) cmd1.toArray())
-                    def totalResponse = proc1.text.trim() as Integer
-
-                    def cmd2 = ["bash", "-c", "grep 'Response code: 200' ${VAR_DIR}/output/lbs/*.out | wc -l"]
-                    def proc2 = Runtime.getRuntime().exec((String[]) cmd2.toArray())
-                    def successfulResponse = proc2.text.trim() as Integer
-
-                    println "total: ${totalResponse}"
-                    println "successful: ${successfulResponse}"
-
-                    if (successfulResponse == totalResponse) {
-                        currentBuild.result = 'SUCCESS'
-                    } else if (successfulResponse == 0) {
-                        currentBuild.result = 'FAILURE'
-                    } else {
-                        currentBuild.result = 'UNSTABLE'
-                    }
+                    def result = util.checkResponseStatus "${VAR_DIR}/output/lbs"
+                    println result
+                    currentBuild.result = result
                 }
-
             }
         }
+
+        stage('Statistic Response') {
+            steps {
+                script {
+                    util.statisticizeResponse "${VAR_DIR}/output/lbs"
+                }
+            }
+        }
+
     }
 }
