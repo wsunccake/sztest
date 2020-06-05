@@ -122,7 +122,7 @@ node {
                         string(name: 'scenario', value: "${scenario}"),
                         string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                         string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                        string(name: 'SZ_IP', value: "${szIP}"),
+                        string(name: 'SZ_IP', value: "${SZ_IP}"),
                         string(name: 'NPROC', value: "${NPROC}"),
                 ],
                 propagate: false

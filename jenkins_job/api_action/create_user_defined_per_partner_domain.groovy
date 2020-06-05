@@ -1,3 +1,7 @@
+library identifier: 'dynamic-libary@master', retriever: modernSCM(
+        [$class: 'GitSCMSource',
+         remote: 'https://github.com/wsunccake/sztest.git'])
+
 pipeline {
     agent any
     parameters {
