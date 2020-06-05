@@ -52,7 +52,7 @@ for domain_name in `cat $VAR_DIR/input/partner_domains/domains.inp`; do
   ./login.sh admin "$ADMIN_PASSWORD"
   
   # create zone
-  cat $VAR_DIR/input/l3acp/$domain_name.inp | xargs -P $NPROC -i sh -c "./create_l3acp.sh {} $domain_id | tee $VAR_DIR/output/l3acp/{}.out"
+  cat $VAR_DIR/input/l3acp/$domain_name.inp | xargs -P $NPROC -i sh -c "./create_l3acp.sh {} $domain_id | tee $VAR_DIR/output/l3acp/${domain_name}_{}.out"
   
   # logout
   ./logout.sh
