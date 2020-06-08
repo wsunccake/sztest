@@ -6,6 +6,7 @@ pipeline {
 
         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: '')
         string(name: 'GCE_IMAGE', defaultValue: 'vscg-${version}', description: '')
+        string(name: 'SZ_FILE', defaultValue: 'sz.inp', description: '')
     }
 
     stages {
@@ -36,7 +37,8 @@ gcloud compute instances create $vm_name --zone=$GCE_ZONE \\
 sz_ip=`gcloud compute instances describe $vm_name | awk '/networkIP/ {print \$2}'`
 
 mkdir -p $VAR_DIR/input/sz
-echo -e "${vm_name}\\t${sz_ip}" > $VAR_DIR/input/sz/sz.inp
+echo -e "${vm_name}\\t${sz_ip}" > $VAR_DIR/input/sz/$SZ_FILE
+echo -e "${vm_name}\\t${sz_ip}" >> $VAR_DIR/input/sz/cluster.inp
 
 for i in `seq 20`; do
   echo "$i: ping -c3 -W5 ${sz_ip}"
