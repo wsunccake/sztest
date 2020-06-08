@@ -52,7 +52,7 @@ for domain_name in `cat $VAR_DIR/input/partner_domains/domains.inp`; do
   ./login.sh admin "$ADMIN_PASSWORD"
   
   # create zone
-  cat $VAR_DIR/input/l3acp/$domain_name.inp | xargs -P $NPROC -i sh -c "./create_vlan_pooling.sh {} $domain_id | tee $VAR_DIR/output/vlan_pooling/${domain_name}_{}.out"
+  cat $VAR_DIR/input/vlan_pooling/$domain_name.inp | xargs -P $NPROC -i sh -c "./create_vlan_pooling.sh {} $domain_id | tee $VAR_DIR/output/vlan_pooling/${domain_name}_{}.out"
   
   # logout
   ./logout.sh
