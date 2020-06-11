@@ -60,7 +60,8 @@ for domain_name in `cat $VAR_DIR/input/partner_domains/domains.inp`; do
   ./login.sh admin "$ADMIN_PASSWORD"
   
   # create zone
-  cat $VAR_DIR/input/proxy_auth/$domain_name.inp | xargs -P $NPROC -i sh -c "./create_auth_service.sh {} {} $radius_port $radius_secret $domain_id | tee $VAR_DIR/output/proxy_auth/${domain_name}_{}.out"
+  # cat $VAR_DIR/input/proxy_auth/$domain_name.inp | xargs -P $NPROC -i sh -c "./create_auth_service.sh {} {} $radius_port $radius_secret $domain_id | tee $VAR_DIR/output/proxy_auth/${domain_name}_{}.out"
+  cat -n $VAR_DIR/input/proxy_auth/$domain_name.inp | xargs -P $NPROC -n 2 sh -c './create_auth_service.sh $1.$0 $1 $radius_port $radius_secret $domain_id | tee $VAR_DIR/output/proxy_auth/${domain_name}_$1.$0.out'
   
   # logout
   ./logout.sh
