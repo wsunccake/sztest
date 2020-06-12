@@ -58,7 +58,7 @@ export radius_secret=1234
 # run
 echo "start job:`date`"
 for name in `cat $VAR_DIR/input/zones/zones.inp`; do
-  export zone_name=name
+  export zone_name=$name
   
   # get zone_id
   export zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
