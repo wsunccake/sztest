@@ -61,7 +61,7 @@ for name in `cat $VAR_DIR/input/zones/zones.inp`; do
   export zone_name=$name
   
   # get zone_id
-  export zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
+  export export zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
   echo "zone: $zone_name, $zone_id"
   
   # login
