@@ -46,15 +46,16 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 cd $API_PERF_DIR/public_api/$API_PERF_VER
 mkdir -p $VAR_DIR/output/proxy_acct
 
-radius_port=1813
-radius_secret=1234
+export radius_port=1813
+export radius_secret=1234
 
 # run
 echo "start job:`date`"
-for domain_name in `cat $VAR_DIR/input/partner_domains/domains.inp`; do
+for name in `cat $VAR_DIR/input/partner_domains/domains.inp`; do
 
+  export domain_name=name
   # get domain_id
-  domain_id=`awk -F\\" '/id/{print \\$4}' $VAR_DIR/output/partner_domains/$domain_name.out`
+  export domain_id=`awk -F\\" '/id/{print \\$4}' $VAR_DIR/output/partner_domains/$domain_name.out`
   echo "domain: $domain_name, $domain_id"
   # login
   ./login.sh admin "$ADMIN_PASSWORD"
