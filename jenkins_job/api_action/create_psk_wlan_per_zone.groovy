@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-        stage('Create Authentication Per Zone') {
+        stage('Create PSK WLAN Per Zone') {
             steps {
                 sh '''#!/bin/bash
 # expect work
@@ -44,7 +44,7 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 
 # work dir
 cd $API_PERF_DIR/public_api/$API_PERF_VER
-mkdir -p $VAR_DIR/output/non_proxy_auth
+mkdir -p $VAR_DIR/output/psk_wlans
 
 # radius
 export radius_port=1812
@@ -63,7 +63,7 @@ for name in `cat $VAR_DIR/input/zones/zones.inp`; do
   ./login.sh admin "$ADMIN_PASSWORD"
 
   # create non proxy auth
-  cat -n $VAR_DIR/input/non_proxy_auth/$zone_name.inp | xargs -P $NPROC -n 2 sh -c './create_non_proxy_auth_service.sh $1.$0 $1 $radius_port $radius_secret $zone_id | tee $VAR_DIR/output/non_proxy_auth/${zone_name}_$1.out'
+  grep psk $VAR_DIR/input/wlans/$zone_name.inp | xargs -P $NPROC -i sh -c "./create_open_wlan_with_wpa2_and_aes.sh {} $zone_id | tee $VAR_DIR/output/psk_wlans/${zone_name}_{}.out"
   
   # logout
   ./logout.sh
@@ -77,7 +77,7 @@ echo "end job:`date`"
         stage('Check Response') {
             steps {
                 script {
-                    def result = util.checkResponseStatus "${VAR_DIR}/output/non_proxy_auth"
+                    def result = util.checkResponseStatus "${VAR_DIR}/output/psk_wlans"
                     println result
                     currentBuild.result = result
                 }
@@ -87,7 +87,7 @@ echo "end job:`date`"
         stage('Statistic Response') {
             steps {
                 script {
-                    util.statisticizeResponse "${VAR_DIR}/output/non_proxy_auth"
+                    util.statisticizeResponse "${VAR_DIR}/output/psk_wlans"
                 }
             }
         }

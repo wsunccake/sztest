@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-        stage('Create Accounting') {
+        stage('Create Accounting Per Zone') {
             steps {
                 sh '''#!/bin/bash
 # expect work
@@ -50,34 +50,20 @@ mkdir -p $VAR_DIR/output/non_proxy_acct
 export radius_port=1813
 export radius_secret=1234
 
-#secret=`cat $VAR_DIR/input/radius/secret`
-#radus_num=`wc -l $VAR_DIR/input/radius/radius.inp | awk '{print \$1}'`
-#radius_ip=`sed -n ${i}p $VAR_DIR/input/radius/radius.inp | awk '{print \$2}'`
-#radius_ip=`sed -n 1p $VAR_DIR/input/radius/radius.inp | awk '{print \$2}'`
-
 # run
 echo "start job:`date`"
 for name in `cat $VAR_DIR/input/zones/zones.inp`; do
   export zone_name=$name
-  
+
   # get zone_id
   export zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
   echo "zone: $zone_name, $zone_id"
-  
+
   # login
   ./login.sh admin "$ADMIN_PASSWORD"
 
   # create non proxy auth
-  #cat -n $VAR_DIR/input/proxy_acct/$domain_name.inp | xargs -P $NPROC -n 2 sh -c './create_acct_service.sh $1.$0 $1 $radius_port $radius_secret $domain_id | tee $VAR_DIR/output/proxy_acct/${domain_name}_$1.$0.out'
   cat -n $VAR_DIR/input/non_proxy_acct/$zone_name.inp | xargs -P $NPROC -n 2 sh -c './create_non_proxy_acct_service.sh $1.$0 $1 $radius_port $radius_secret $zone_id | tee $VAR_DIR/output/proxy_acct/${zone_name}_$1.$0.out'
-
-#  i=1
-#  for acct_name in `cat $VAR_DIR/input/non_proxy_acct/$zone_name.inp`; do
-#    echo "start time:`date`"
-#    echo "$acct_name $radius_ip $zone_id"
-#    ./create_non_proxy_acct_service.sh $acct_name $radius_ip 1813 $secret $zone_id | tee $VAR_DIR/output/non_proxy_acct/${zone_name}_${acct_name}.out
-#    echo "end time:`date`"
-#  done
   
   # logout
   ./logout.sh
