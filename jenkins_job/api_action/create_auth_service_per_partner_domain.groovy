@@ -53,7 +53,7 @@ export radius_secret=1234
 echo "start job:`date`"
 for name in `cat $VAR_DIR/input/partner_domains/domains.inp`; do
 
-  export domain_name=name
+  export domain_name=$name
   # get domain_id
   export domain_id=`awk -F\\" '/id/{print \\$4}' $VAR_DIR/output/partner_domains/$domain_name.out`
   echo "domain: $domain_name, $domain_id"
