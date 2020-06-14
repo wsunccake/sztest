@@ -166,5 +166,31 @@ node {
                 ],
                 propagate: false
     }
+    
+    stage('Create Non Proxy Auth Per Zone') {
+        build job: 'create_non_proxy_auth_service_per_zone',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${SZ_IP}"),
+                        string(name: 'NPROC', value: "${NPROC}"),
+                ],
+                propagate: false
+    }
+
+    stage('Create PSK WLAN Per Zone') {
+        build job: 'create_psk_wlan_per_zone',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${SZ_IP}"),
+                        string(name: 'NPROC', value: "${NPROC}"),
+                ],
+                propagate: false
+    }
 
 }
