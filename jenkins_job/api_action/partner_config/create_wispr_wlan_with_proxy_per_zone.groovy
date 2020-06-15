@@ -49,29 +49,34 @@ mkdir -p $VAR_DIR/output/wispr_wlans
 
 # run
 echo "start job:`date`"
-for name in `cat $VAR_DIR/input/zones/zones.inp`; do
-  export zone_name=$name
+for dname in `cat $VAR_DIR/input/partner_domains/domains.inp`; do
+  export domain_name=$dname
+  echo "domain: $domain_name"
 
-  # get zone_id
-  export zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
-  echo "zone: $zone_name, $zone_id"
+  for zname in `cat $VAR_DIR/input/zones/$domain_name.inp`; do
+    export zone_name=$zname
 
-  n=1
-  export hotspot_name=`sed -n 1p $VAR_DIR/input/hotspot/$zone_name.inp`
-  export auth_ip=`sed -n ${n}p $VAR_DIR/input/proxy_auth/$zone_name.inp`
-  export auth_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/proxy_auth/${zone_name}_${auth_ip}.${n}.out`
-  export acct_ip=`sed -n ${n}p $VAR_DIR/input/proxy_acct/$zone_name.inp`
-  export acct_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/proxy_acct/${zone_name}_${acct_ip}.${n}.out`
+    # get zone_id
+    export zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
+    echo "zone: $zone_name, $zone_id"
 
-  # login
-  ./login.sh admin "$ADMIN_PASSWORD"
+    n=1
+    export hotspot_name=`sed -n 1p $VAR_DIR/input/hotspot/$zone_name.inp`
+    export auth_ip=`sed -n ${n}p $VAR_DIR/input/proxy_auth/$domain_name.inp`
+    export auth_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/proxy_auth/${domain_name}_${auth_ip}.${n}.out`
+    export acct_ip=`sed -n ${n}p $VAR_DIR/input/proxy_acct/$domain_name.inp`
+    export acct_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/proxy_acct/${domain_name}_${acct_ip}.${n}.out`
 
-  # create non proxy auth
-  grep wispropen $VAR_DIR/input/wlans/$zone_name.inp | xargs -P $NPROC -i sh -c "./create_wispr_wlan_with_proxy.sh {} $zone_id $hotspot_name $auth_id $acct_id | tee $VAR_DIR/output/wispr_wlans/${zone_name}_{}.out"
+    # login
+    ./login.sh admin "$ADMIN_PASSWORD"
+
+    # create non proxy auth
+    grep wispropen $VAR_DIR/input/wlans/$zone_name.inp | xargs -P $NPROC -i sh -c "./create_wispr_wlan_with_proxy.sh {} $zone_id $hotspot_name $auth_id $acct_id | tee $VAR_DIR/output/wispr_wlans/${zone_name}_{}.out"
   
-  # logout
-  ./logout.sh
+    # logout
+    ./logout.sh
 
+  done
 done
 echo "end job:`date`"
 '''
