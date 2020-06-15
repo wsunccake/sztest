@@ -63,7 +63,7 @@ for name in `cat $VAR_DIR/input/zones/zones.inp`; do
   ./login.sh admin "$ADMIN_PASSWORD"
 
   # create non proxy auth
-  cat -n $VAR_DIR/input/non_proxy_auth/$zone_name.inp | xargs -P $NPROC -n 2 sh -c './create_non_proxy_auth_service.sh auth$1.$0 $1 $radius_port $radius_secret $zone_id | tee $VAR_DIR/output/non_proxy_auth/${zone_name}_$1.out'
+  cat -n $VAR_DIR/input/non_proxy_auth/$zone_name.inp | xargs -P $NPROC -n 2 sh -c './create_non_proxy_auth_service.sh auth$1.$0 $1 $radius_port $radius_secret $zone_id | tee $VAR_DIR/output/non_proxy_auth/${zone_name}_$1.$0.out'
   
   # logout
   ./logout.sh

@@ -56,11 +56,12 @@ for name in `cat $VAR_DIR/input/zones/zones.inp`; do
   export zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
   echo "zone: $zone_name, $zone_id"
 
+  n=1
   export hotspot_name=`sed -n 1p $VAR_DIR/input/hotspot/$zone_name.inp`
-  export auth_ip=`sed -n 1p $VAR_DIR/input/non_proxy_auth/$zone_name.inp`
-  export auth_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/non_proxy_auth/${zone_name}_${auth_ip}.out`
+  export auth_ip=`sed -n ${n}p $VAR_DIR/input/non_proxy_auth/$zone_name.inp`
+  export auth_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/non_proxy_auth/${zone_name}_${auth_ip}.${n}.out`
   export acct_ip=`sed -n ${n}p $VAR_DIR/input/non_proxy_acct/$zone_name.inp`
-  export acct_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/non_proxy_acct/${zone_name}_${acct_ip}.out`
+  export acct_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/non_proxy_acct/${zone_name}_${acct_ip}.${n}.out`
 
   # login
   ./login.sh admin "$ADMIN_PASSWORD"
