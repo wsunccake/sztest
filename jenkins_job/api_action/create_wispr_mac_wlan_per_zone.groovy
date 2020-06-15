@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-        stage('Create PSK WLAN Per Zone') {
+        stage('Create WISPr MAC WLAN Per Zone') {
             steps {
                 sh '''#!/bin/bash
 # expect work
@@ -44,7 +44,7 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 
 # work dir
 cd $API_PERF_DIR/public_api/$API_PERF_VER
-mkdir -p $VAR_DIR/output/psk_wlans
+mkdir -p $VAR_DIR/output/wispr_mac_wlans
 
 
 # run
@@ -56,11 +56,17 @@ for name in `cat $VAR_DIR/input/zones/zones.inp`; do
   export zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
   echo "zone: $zone_name, $zone_id"
 
+  export hotspot_name=`sed -n 1p $VAR_DIR/input/hotspot/$zone_name.inp`
+  export auth_ip=`sed -n 1p $VAR_DIR/input/non_proxy_auth/$zone_name.inp`
+  export auth_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/non_proxy_auth/${zone_name}_${auth_ip}.out`
+  export acct_ip=`sed -n ${n}p $VAR_DIR/input/non_proxy_acct/$zone_name.inp`
+  export acct_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/non_proxy_acct/${zone_name}_${acct_ip}.out`
+
   # login
   ./login.sh admin "$ADMIN_PASSWORD"
 
   # create non proxy auth
-  grep psk $VAR_DIR/input/wlans/$zone_name.inp | xargs -P $NPROC -i sh -c "./create_open_wlan_with_wpa2_and_aes.sh {} $zone_id | tee $VAR_DIR/output/psk_wlans/${zone_name}_{}.out"
+  grep wisprmac $VAR_DIR/input/wlans/$zone_name.inp | xargs -P $NPROC -i sh -c "./create_wispr_mac_wlan.sh {} $zone_id $hotspot_name $auth_id $acct_id | tee $VAR_DIR/output/wispr_mac_wlans/${zone_name}_{}.out"
   
   # logout
   ./logout.sh
@@ -74,7 +80,7 @@ echo "end job:`date`"
         stage('Check Response') {
             steps {
                 script {
-                    def result = util.checkResponseStatus "${VAR_DIR}/output/psk_wlans"
+                    def result = util.checkResponseStatus "${VAR_DIR}/output/wispr_mac_wlans"
                     println result
                     currentBuild.result = result
                 }
@@ -84,7 +90,7 @@ echo "end job:`date`"
         stage('Statistic Response') {
             steps {
                 script {
-                    util.statisticizeResponse "${VAR_DIR}/output/psk_wlans"
+                    util.statisticizeResponse "${VAR_DIR}/output/wispr_mac_wlans"
                 }
             }
         }
