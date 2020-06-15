@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-        stage('Create WISPr MAC WLAN Per Zone') {
+        stage('Create WISPr MAC WLAN With Proxy Per Zone') {
             steps {
                 sh '''#!/bin/bash
 # expect work
@@ -58,16 +58,16 @@ for name in `cat $VAR_DIR/input/zones/zones.inp`; do
 
   n=1
   export hotspot_name=`sed -n 1p $VAR_DIR/input/hotspot/$zone_name.inp`
-  export auth_ip=`sed -n ${n}p $VAR_DIR/input/non_proxy_auth/$zone_name.inp`
-  export auth_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/non_proxy_auth/${zone_name}_${auth_ip}.${n}.out`
-  export acct_ip=`sed -n ${n}p $VAR_DIR/input/non_proxy_acct/$zone_name.inp`
-  export acct_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/non_proxy_acct/${zone_name}_${acct_ip}.${n}.out`
+  export auth_ip=`sed -n ${n}p $VAR_DIR/input/proxy_auth/$zone_name.inp`
+  export auth_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/proxy_auth/${zone_name}_${auth_ip}.${n}.out`
+  export acct_ip=`sed -n ${n}p $VAR_DIR/input/proxy_acct/$zone_name.inp`
+  export acct_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/proxy_acct/${zone_name}_${acct_ip}.${n}.out`
 
   # login
   ./login.sh admin "$ADMIN_PASSWORD"
 
   # create non proxy auth
-  grep wisprmac $VAR_DIR/input/wlans/$zone_name.inp | xargs -P $NPROC -i sh -c "./create_wispr_mac_wlan.sh {} $zone_id $hotspot_name $auth_id $acct_id | tee $VAR_DIR/output/wispr_mac_wlans/${zone_name}_{}.out"
+  grep wisprmac $VAR_DIR/input/wlans/$zone_name.inp | xargs -P $NPROC -i sh -c "./create_wispr_mac_wlan_with_proxy.sh {} $zone_id $hotspot_name $auth_id $acct_id | tee $VAR_DIR/output/wispr_mac_wlans/${zone_name}_{}.out"
   
   # logout
   ./logout.sh
