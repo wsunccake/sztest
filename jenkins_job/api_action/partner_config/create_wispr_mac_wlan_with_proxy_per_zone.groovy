@@ -50,7 +50,7 @@ mkdir -p $VAR_DIR/output/wispr_mac_wlans
 # run
 echo "start job:`date`"
 for dname in `cat $VAR_DIR/input/partner_domains/domains.inp`; do`
-  export domain_main=$dmain
+  export domain_name=$dmain
   echo "domain: $domain_name"
 
   for zname in `cat $VAR_DIR/input/zones/$domain_name.inp`; do
