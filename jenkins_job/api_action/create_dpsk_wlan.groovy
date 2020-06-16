@@ -63,5 +63,24 @@ echo "end job:`date`"
 '''
             }
         }
+
+        stage('Check Response') {
+            steps {
+                script {
+                    def result = util.checkResponseStatus "${VAR_DIR}/output/wlans"
+                    println result
+                    currentBuild.result = result
+                }
+            }
+        }
+
+        stage('Statistic Response') {
+            steps {
+                script {
+                    util.statisticizeResponse "${VAR_DIR}/output/wlans"
+                }
+            }
+        }
+
     }
 }
