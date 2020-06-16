@@ -66,7 +66,7 @@ for zname in `cat $VAR_DIR/input/zones/zones.inp`; do
   ./login.sh admin "$ADMIN_PASSWORD"
 
   # create non proxy auth
-  grep std8021x $VAR_DIR/input/wlans/$zone_name.inp | xargs -P $NPROC -i sh -c "./create_8021x_wlan_with_non_proxy.sh {} $zone_id | tee $VAR_DIR/output/8021x_wlans/${zone_name}_{}.out"
+  grep std8021x $VAR_DIR/input/wlans/$zone_name.inp | xargs -P $NPROC -i sh -c "./create_8021x_wlan_with_non_proxy.sh {} $zone_id $auth_id $acct_id | tee $VAR_DIR/output/8021x_wlans/${zone_name}_{}.out"
   
   # logout
   ./logout.sh
