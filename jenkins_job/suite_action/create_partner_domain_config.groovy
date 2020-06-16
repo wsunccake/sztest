@@ -206,6 +206,19 @@ node {
                 propagate: false
     }
 
+    stage('Create 802.1x WLAN With Non Proxy Per Zone') {
+        build job: 'create_8021x_wlan_with_non_proxy_per_zone',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${SZ_IP}"),
+                        string(name: 'NPROC', value: "${NPROC}"),
+                ],
+                propagate: false
+    }
+
     stage('Create Hotspot Per Zone') {
         build job: 'create_hotspot_per_zone',
                 parameters: [

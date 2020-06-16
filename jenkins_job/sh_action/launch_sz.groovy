@@ -27,11 +27,17 @@ source $VAR_DIR/input/gce/gce.sh
 GCE_IMAGE=`echo "$GCE_IMAGE" | sed s'/\\./-/'g`
 vm_name=${GCE_IMAGE}-${ACCOUNT%%.*}-${RANDOM}
 
+echo "ggcloud compute instances create $vm_name --zone=$GCE_ZONE \\
+  --image-project=$GCE_IMAGE_PROJECT --image=$GCE_IMAGE \\
+  --custom-cpu=$GCE_CPU --custom-memory=$GCE_MEM \\
+  --boot-disk-size=$GCE_DISK_SIZE --boot-disk-type=$GCE_DISK_TYPE \\
+  --tags=$GCE_TAG --labels=$GCE_LABELS"
+
 gcloud compute instances create $vm_name --zone=$GCE_ZONE \\
 --image-project=$GCE_IMAGE_PROJECT --image=$GCE_IMAGE \\
 --custom-cpu=$GCE_CPU --custom-memory=$GCE_MEM \\
 --boot-disk-size=$GCE_DISK_SIZE --boot-disk-type=$GCE_DISK_TYPE \\
---tags=$GCE_TAG
+--tags=$GCE_TAG --labels=$GCE_LABELS
 
 
 sz_ip=`gcloud compute instances describe $vm_name | awk '/networkIP/ {print \$2}'`

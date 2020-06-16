@@ -10,14 +10,9 @@ node {
                         string(name: 'VAR_DIR', defaultValue: '/usr/share/nginx/html/api_perf/${version}/${scenario}', description: ''),
                         string(name: 'API_PERF_VER', defaultValue: 'v9_1', description: ''),
 
-                        string(name: 'NPROC', defaultValue: '2', description: ''),
-
                         string(name: 'DATA_DIR', defaultValue: '/usr/share/nginx/html/api_perf/5.2.1/report/${scenario}', description: ''),
 
-                        string(name: 'NUM_CLIENT', defaultValue: '2', description: ''),
-                        string(name: 'HATCH_RATE', defaultValue: '1', description: ''),
-                        string(name: 'RUN_TIME', defaultValue: '20m', description: ''),
-
+                        string(name: 'NPROC', defaultValue: '8', description: ''),
                         string(name: 'GCE_IMAGE', defaultValue: 'vscg-cloud-${version}', description: '')
             ])
     ])
@@ -109,31 +104,6 @@ node {
                                                                 string(name: 'NPROC', value: "${NPROC}"),
         ]
     }
-
-
-//    stage('Create L2ACL Per Partner Domain') {
-//        build job: 'create_l2acl',
-//                parameters: [
-//                        string(name: 'version', value: "${version}"),
-//                        string(name: 'scenario', value: "${scenario}"),
-//                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-//                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-//                        string(name: 'SZ_IP', value: "${szIP}"),
-//                ],
-//                propagate: false
-//    }
-//
-//    stage('Create L3ACP Per Partner Domain') {
-//        build job: 'create_l3acp',
-//                parameters: [
-//                        string(name: 'version', value: "${version}"),
-//                        string(name: 'scenario', value: "${scenario}"),
-//                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-//                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-//                        string(name: 'SZ_IP', value: "${szIP}"),
-//                ],
-//                propagate: false
-//    }
 
 
     stage('Clean Env') {

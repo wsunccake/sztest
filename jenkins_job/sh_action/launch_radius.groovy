@@ -58,12 +58,12 @@ launch_radius() {
     echo "gcloud compute instances create $vm_name --zone=$GCE_ZONE \\
     --machine-type=n1-standard-2 --image-project=$RADIUS_IMAGE_PROJECT --image=$RADIUS_IMAGE \\
     --boot-disk-size=50GB --boot-disk-type=pd-ssd \\
-    --tags=$GCE_TAG"
+    --tags=$GCE_TAG --labels=$GCE_LABELS"
 
     gcloud compute instances create $vm_name --zone=$GCE_ZONE \\
     --machine-type=n1-standard-2 --image-project=$RADIUS_IMAGE_PROJECT --image=$RADIUS_IMAGE \\
     --boot-disk-size=50GB --boot-disk-type=pd-ssd \\
-    --tags=$GCE_TAG
+    --tags=$GCE_TAG --labels=$GCE_LABELS
 
     radius_ip=`gcloud compute instances describe $vm_name | awk '/networkIP/ {print \$2}'`
 
