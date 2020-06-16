@@ -27,11 +27,16 @@ pipeline {
             }
         }
 
-        stage('Create Hotspot Per Zone') {
+        stage('Create 802.1x WLAN With Non Proxy Per Zone') {
             steps {
                 sh '''#!/bin/bash
 # expect work
 source $EXPECT_DIR/sz/var/expect-var.sh
+
+# setup sz ip
+if [ -z $SZ_IP ]; then
+  SZ_IP=`sed -n 1p $VAR_DIR/input/sz/sz.inp`
+fi 
 
 export SZ_IP=$SZ_IP
 echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
@@ -39,22 +44,29 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 
 # work dir
 cd $API_PERF_DIR/public_api/$API_PERF_VER
-mkdir -p $VAR_DIR/output/hotspot
+mkdir -p $VAR_DIR/output/8021x_wlans
+
 
 # run
 echo "start job:`date`"
-for name in `cat $VAR_DIR/input/zones/zones.inp`; do
-  export zone_name=$name
+for zname in `cat $VAR_DIR/input/zones/zones.inp`; do
+  export zone_name=$zname
 
-# get zone_id
+  # get zone_id
   export zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
   echo "zone: $zone_name, $zone_id"
   
+  n=1
+  export auth_ip=`sed -n ${n}p $VAR_DIR/input/non_proxy_auth/$zone_name.inp`
+  export auth_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/non_proxy_auth/${zone_name}_${auth_ip}.${n}.out`
+  export acct_ip=`sed -n ${n}p $VAR_DIR/input/non_proxy_acct/$zone_name.inp`
+  export acct_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/non_proxy_acct/${zone_name}_${acct_ip}.${n}.out`
+
   # login
   ./login.sh admin "$ADMIN_PASSWORD"
 
-  # create hotspot
-  cat $VAR_DIR/input/hotspot/$zone_name.inp | xargs -i -P $NPROC sh -c "./create_hotspot.sh {} $zone_id | tee $VAR_DIR/output/hotspot/${zone_name}_{}.out"
+  # create non proxy auth
+  grep std8021x $VAR_DIR/input/wlans/$zone_name.inp | xargs -P $NPROC -i sh -c "./create_8021x_wlan_with_non_proxy.sh {} $zone_id | tee $VAR_DIR/output/8021x_wlans/${zone_name}_{}.out"
   
   # logout
   ./logout.sh
@@ -68,7 +80,7 @@ echo "end job:`date`"
         stage('Check Response') {
             steps {
                 script {
-                    def result = util.checkResponseStatus "${VAR_DIR}/output/hotspot"
+                    def result = util.checkResponseStatus "${VAR_DIR}/output/8021x_wlans"
                     println result
                     currentBuild.result = result
                 }
@@ -78,7 +90,7 @@ echo "end job:`date`"
         stage('Statistic Response') {
             steps {
                 script {
-                    util.statisticizeResponse "${VAR_DIR}/output/hotspot"
+                    util.statisticizeResponse "${VAR_DIR}/output/8021x_wlans"
                 }
             }
         }
