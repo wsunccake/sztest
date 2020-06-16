@@ -40,5 +40,4 @@ def statisticizeResponse(String outputDir, String returnCode = '201', String uti
   def cmd0 = ["bash", "-c", "find ${outputDir} -name \\*.out -exec grep -H -E 'Response time|Response code' {} \\; >& ${outputDir}/response.txt"]
   def proc0 = Runtime.getRuntime().exec((String[]) cmd0.toArray())
   println cmd0
-  println proc0.text
 }
