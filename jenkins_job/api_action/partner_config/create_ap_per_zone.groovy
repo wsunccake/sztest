@@ -65,8 +65,7 @@ for f in `ls $TMP_DIR/in_*`; do
   ./login.sh admin "$ADMIN_PASSWORD"
   
   # create ap per zone
-#  cat $VAR_DIR/input/aps/$zone_name.inp | xargs -P $NPROC -i sh -c "./create_ap.sh {} '' '' $zone_id | tee $VAR_DIR/output/aps/{}.out"
-  cat $f | xargs -n5 -P $NPROC -i sh -c './create_ap.sh $4 "" "" $2 | tee $VAR_DIR/output/aps/$1.out'
+  cat $f | xargs -n5 -P $NPROC sh -c './create_ap.sh $4 "" "" $2 | tee $VAR_DIR/output/aps/$4.out'
     
   # logout
   ./logout.sh
