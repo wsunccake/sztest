@@ -8,6 +8,8 @@ node {
                         string(name: 'AP_NUM', defaultValue: '1', description: ''),
                         string(name: 'UE_NUM', defaultValue: '1', description: ''),
                         string(name: 'DPSK_AMOUNT', defaultValue: "1", description: ''),
+
+                        string(name: 'NPROC', defaultValue: '8', description: ''),
             ])
     ])
 
@@ -21,6 +23,7 @@ node {
                         string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                         string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                         string(name: 'SZ_IP', value: "${SZ_IP}"),
+                        string(name: 'NPROC', value: "${NPROC}"),
                 ],
                 propagate: false
     }
@@ -41,6 +44,7 @@ node {
                         string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                         string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                         string(name: 'SZ_IP', value: "${SZ_IP}"),
+                        string(name: 'NPROC', value: "${NPROC}"),
                 ],
                 propagate: false
     }
@@ -61,6 +65,7 @@ node {
                         string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                         string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                         string(name: 'SZ_IP', value: "${SZ_IP}"),
+                        string(name: 'NPROC', value: "${NPROC}"),
                 ],
                 propagate: false
     }
@@ -108,6 +113,7 @@ node {
                         string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                         string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                         string(name: 'SZ_IP', value: "${SZ_IP}"),
+                        string(name: 'NPROC', value: "${NPROC}"),
                 ],
                 propagate: false
     }
@@ -128,6 +134,7 @@ node {
                         string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                         string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                         string(name: 'SZ_IP', value: "${SZ_IP}"),
+                        string(name: 'NPROC', value: "${NPROC}"),
                 ],
                 propagate: false
     }
@@ -141,12 +148,13 @@ node {
     }
 
     stage('Create AP Group') {
-        build job: 'create_ap_group',
+        build job: 'create_ap_group_per_zone',
                 parameters: [
                         string(name: 'version', value: "${version}"),
                         string(name: 'scenario', value: "${scenario}"),
                         string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                         string(name: 'SZ_IP', value: "${SZ_IP}"),
+                        string(name: 'NPROC', value: "${NPROC}"),
                 ],
                 propagate: false
     }

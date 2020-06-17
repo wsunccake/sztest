@@ -5,7 +5,7 @@ node {
                         string(name: 'VAR_DIR', defaultValue: '/usr/share/nginx/html/api_perf/${version}/${scenario}', description: ''),
                         string(name: 'API_PERF_VER', defaultValue: 'v9_0', description: ''),
                         string(name: 'SZ_IP', defaultValue: '1.2.3.4', description: ''),
-                        string(name: 'NPROC', defaultValue: '2', description: ''),
+                        string(name: 'NPROC', defaultValue: '8', description: ''),
             ])
     ])
 
@@ -247,6 +247,19 @@ node {
 
     stage('Create WISPr WLAN With Proxy Per Zone') {
         build job: 'create_wispr_wlan_with_proxy_per_zone',
+                parameters: [
+                        string(name: 'version', value: "${version}"),
+                        string(name: 'scenario', value: "${scenario}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                        string(name: 'SZ_IP', value: "${SZ_IP}"),
+                        string(name: 'NPROC', value: "${NPROC}"),
+                ],
+                propagate: false
+    }
+
+    stage('AP Pre-Provision Per Zone') {
+        build job: 'create_ap_per_zone',
                 parameters: [
                         string(name: 'version', value: "${version}"),
                         string(name: 'scenario', value: "${scenario}"),
