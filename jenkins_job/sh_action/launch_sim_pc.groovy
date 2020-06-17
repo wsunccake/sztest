@@ -29,6 +29,9 @@ source $VAR_DIR/input/gce/gce.sh
 
 check_pingable() {
   local host_ip=$1
+  local i
+  local is_ping
+
   for i in `seq 20`; do
     echo "$i: ping -c3 -W5 ${host_ip}"
     ping -c3 -W5 ${host_ip}
