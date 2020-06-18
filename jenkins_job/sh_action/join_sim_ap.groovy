@@ -8,6 +8,7 @@ pipeline {
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
         string(name: 'AP_VER', defaultValue: '', description: '')
+        string(name: 'AP_MODEL', defaultValue: 'R710', description: '')
     }
 
     stages {
@@ -28,13 +29,15 @@ set -e
 create_ap_cfg() {
   local apsim_cfg=$1
 
-  sed s/SZ_IP/$SZ_IP/ ${apsim_cfg}.template > $apsim_cfg
-  sed -i s/AP_VER/$AP_VER/ $apsim_cfg
+  sed s/SZIP=.*/SZIP=$SZ_IP/ ${apsim_cfg}.template > $apsim_cfg
+  sed -i s/FWVER=.*/FWVER=$AP_VER/ $apsim_cfg
+  sed -i s/MODEL=.*/MODEL=$AP_MODEL/ $apsim_cfg
 }
 
 
 join_sim_ap() {
   local apsim_cfg=$1
+  local sim_pc=$2
   
   echo "start to join ap time:`date`"
 
@@ -69,15 +72,16 @@ for sim_config_dir in `seq $sim_number`; do
   sim_pc=`sed -n ${sim_config_dir}p $SIM_INPUT | awk '{print \$2}'`
   if [ -d $sim_config_dir ]; then
     echo "$sim_pc config"
-    sed s/SZ_IP/$SZ_IP/ $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg.template > $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg
-    sed -i s/AP_VER/$AP_VER/ $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg
+    create_ap_cfg $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg
+#    sed s/SZ_IP/$SZ_IP/ $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg.template > $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg
+#    sed -i s/AP_VER/$AP_VER/ $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg
     
     echo "start time:`date`"
-    
-    echo "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg"
-    scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg
-    echo "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'"
-    ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'
+    join_sim_ap $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg $sim_pc
+#    echo "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg"
+#    scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $VAR_DIR/input/sim/$sim_config_dir/apsim.cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg
+#    echo "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'"
+#    ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'
     
     echo "end time:`date`"
   else
