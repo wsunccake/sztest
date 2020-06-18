@@ -11,6 +11,7 @@ pipeline {
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
         string(name: 'DPSK_AMOUNT', defaultValue: '1', description: '')
+        string(name: 'NPROC', defaultValue: '2', description: '')
     }
 
     stages {
@@ -36,33 +37,63 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 cd $API_PERF_DIR/public_api/$API_PERF_VER
 mkdir -p $VAR_DIR/output/wlans/dpsk
 
-# run
-echo "start job:`date`"
-for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
+NEW_INPUT=zone_wlan_dpsk_batch.inp
+INPUT_NUMBER=1000
+TMP_DIR=`mktemp -d`
+echo "TMP DIR: $TMP_DIR"
 
+for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
   # get zone_id
   zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
-  echo "zone: $zone_name, $zone_id"
-  
-  # login
-  ./login.sh admin "$ADMIN_PASSWORD"
 
-  # get wlan_id
   for wlan_name in `grep dpsk $VAR_DIR/input/wlans/$zone_name.inp`; do
-    wlan_id=`awk -F\\" '/"id":/{print \\$4}' $VAR_DIR/output/wlans/${zone_name}_${wlan_name}.out`
-    echo "start time:`date`"
-    echo "$wlan_id $zone_id"
-    ./create_dpsk_batch.sh $DPSK_AMOUNT $zone_id $wlan_id | tee $VAR_DIR/output/wlans/dpsk/${zone_name}_${wlan_name}.out
-    echo "end time:`date`"
-  done
-  
-  # logout
-  ./logout.sh
+    if [ ! -z $zone_id ]; then
+      wlan_id=`awk -F\\" '/"id":/{print \$4}' $VAR_DIR/output/wlans/${zone_name}_${wlan_name}.out`
+      echo "zone: $zone_name $zone_id wlan_name: $wlan_name $wlan_id" >> $TMP_DIR/$NEW_INPUT
+    fi
+  done    
 
 done
+
+split -l $INPUT_NUMBER $TMP_DIR/$NEW_INPUT $TMP_DIR/in_
+cp -fv $TMP_DIR/$NEW_INPUT $VAR_DIR/input/wlans/.
+
+# run
+echo "start job:`date`"
+for f in `ls $TMP_DIR/in_*`; do
+  # login
+  ./login.sh admin "$ADMIN_PASSWORD"
+  
+  # create ap per zone
+  cat $f | xargs -n5 -P $NPROC sh -c './create_dpsk_batch.sh $DPSK_AMOUNT $2 $5 | tee $VAR_DIR/output/wlans/dpsk/$1_$4.out'
+    
+  # logout
+  ./logout.sh
+done
 echo "end job:`date`"
+
+rm -rf $TMP_DIR
 '''
             }
         }
+
+        stage('Check Response') {
+            steps {
+                script {
+                    def result = util.checkResponseStatus "${VAR_DIR}/output/wlans/dpsk"
+                    println result
+                    currentBuild.result = result
+                }
+            }
+        }
+
+        stage('Statistic Response') {
+            steps {
+                script {
+                    util.statisticizeResponse "${VAR_DIR}/output/wlans/dpsk"
+                }
+            }
+        }
+
     }
 }

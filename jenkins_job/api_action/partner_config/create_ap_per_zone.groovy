@@ -41,22 +41,25 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 cd $API_PERF_DIR/public_api/$API_PERF_VER
 mkdir -p $VAR_DIR/output/aps
 
-TMP_DIR=`mktemp -d`
+NEW_INPUT=zone_ap_mac.inp
 INPUT_NUMBER=1000
+TMP_DIR=`mktemp -d`
 echo "TMP DIR: $TMP_DIR"
 
 for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
   # get zone_id
   zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
+
   for ap_mac in `cat $VAR_DIR/input/aps/$zone_name.inp`; do
     if [ ! -z $zone_id ]; then
-      echo "zone: $zone_name $zone_id ap_mac: $ap_mac" >> $TMP_DIR/zone_ap_mac.inp
+      echo "zone: $zone_name $zone_id ap_mac: $ap_mac" >> $TMP_DIR/$NEW_INPUT
     fi
   done
+
 done
 
-split -l $INPUT_NUMBER $TMP_DIR/zone_ap_mac.inp $TMP_DIR/in_
-cp -fv $TMP_DIR/zone_ap_mac.inp $VAR_DIR/input/aps/.
+split -l $INPUT_NUMBER $TMP_DIR/$NEW_INPUT $TMP_DIR/in_
+cp -fv $TMP_DIR/$NEW_INPUT $VAR_DIR/input/aps/.
 
 # run
 echo "start job:`date`"

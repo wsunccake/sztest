@@ -41,8 +41,9 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 cd $API_PERF_DIR/public_api/$API_PERF_VER
 mkdir -p $VAR_DIR/output/zones
 
-TMP_DIR=`mktemp -d`
+NEW_INPUT=domain_zone.inp
 INPUT_NUMBER=1000
+TMP_DIR=`mktemp -d`
 echo "TMP DIR: $TMP_DIR"
 
 for domain_name in `cat $VAR_DIR/input/domains/domains.inp`; do
@@ -52,13 +53,13 @@ for domain_name in `cat $VAR_DIR/input/domains/domains.inp`; do
   # create zone
   for zone_name in `cat $VAR_DIR/input/zones/$domain_name.inp`; do
     if [ ! -z $domain_id ]; then
-      echo "domain: $domain_name $domain_id zone: $zone_name" >> $TMP_DIR/domain_zone.inp
+      echo "domain: $domain_name $domain_id zone: $zone_name" >> $TMP_DIR/$NEW_INPUT
     fi
   done
 done
 
-split -l $INPUT_NUMBER $TMP_DIR/domain_zone.inp $TMP_DIR/in_
-cp -fv $TMP_DIR/domain_zone.inp $VAR_DIR/input/zones/.
+split -l $INPUT_NUMBER $TMP_DIR/$NEW_INPUT $TMP_DIR/in_
+cp -fv $TMP_DIR/$NEW_INPUT $VAR_DIR/input/zones/.
 
 # run
 echo "start job:`date`"
