@@ -71,12 +71,14 @@ node {
     }
 
     stage('Create DPSK WLAN') {
-        build job: 'create_dpsk_wlan', parameters: [string(name: 'version', value: "${version}"),
-                                                    string(name: 'scenario', value: "${scenario}"),
-                                                    string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                    string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                    string(name: 'SZ_IP', value: "${SZ_IP}"),
-        ]
+        build job: 'create_dpsk_wlan',
+                parameters: [string(name: 'version', value: "${version}"),
+                             string(name: 'scenario', value: "${scenario}"),
+                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                             string(name: 'SZ_IP', value: "${SZ_IP}"),
+                ],
+                propagate: false
     }
 
     stage('Analyze WLAN') {
@@ -88,13 +90,15 @@ node {
     }
 
     stage('Create DPSK ') {
-        build job: 'create_dpsk_batch', parameters: [string(name: 'version', value: "${version}"),
-                                                     string(name: 'scenario', value: "${scenario}"),
-                                                     string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                     string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                     string(name: 'SZ_IP', value: "${SZ_IP}"),
-                                                     string(name: 'DPSK_AMOUNT', value: "${DPSK_AMOUNT}"),
-        ]
+        build job: 'create_dpsk_batch',
+                parameters: [string(name: 'version', value: "${version}"),
+                             string(name: 'scenario', value: "${scenario}"),
+                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                             string(name: 'SZ_IP', value: "${SZ_IP}"),
+                             string(name: 'DPSK_AMOUNT', value: "${DPSK_AMOUNT}"),
+                ],
+                propagate: false
     }
 
     stage('Analyze DPSK') {
