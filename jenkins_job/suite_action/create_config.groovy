@@ -131,7 +131,7 @@ node {
     }
 
     stage('Pre-Provision AP') {
-        build job: 'create_ap',
+        build job: 'create_ap_per_zone',
                 parameters: [
                         string(name: 'version', value: "${version}"),
                         string(name: 'scenario', value: "${scenario}"),
@@ -152,7 +152,7 @@ node {
     }
 
     stage('Create AP Group') {
-        build job: 'create_ap_group_per_zone',
+        build job: 'create_ap_group',
                 parameters: [
                         string(name: 'version', value: "${version}"),
                         string(name: 'scenario', value: "${scenario}"),
