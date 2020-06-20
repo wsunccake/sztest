@@ -24,7 +24,7 @@ pipeline {
         stage('Join AP') {
             steps {
                 sh '''#!/bin/bash
-set -e
+# set -e
 
 create_ap_cfg() {
   local apsim_cfg=$1
@@ -38,13 +38,14 @@ create_ap_cfg() {
 join_sim_ap() {
   local apsim_cfg=$1
   local sim_pc=$2
+  local ssh_timeout=10
   
   echo "start to join ap time:`date`"
 
-  echo "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $apsim_cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg"
-  scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $apsim_cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg
-  echo "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'"
-  ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'
+  echo "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=$ssh_timeout $apsim_cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg"
+  scp -o UserKnownHostsFile=/dev/null -o ConnectTimeout=$ssh_timeout -o StrictHostKeyChecking=no $apsim_cfg $SIM_USER@$sim_pc:/tmp/apsim.cfg
+  echo "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=$ssh_timeout  $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'"
+  ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=$ssh_timeout $SIM_USER@$sim_pc 'sudo /root/run_sim.sh /tmp/apsim.cfg'
   
   echo "start to join ap time:`date`"
 }

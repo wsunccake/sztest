@@ -46,17 +46,27 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 cd $API_PERF_DIR/public_api/$API_PERF_VER
 mkdir -p $VAR_DIR/output/domains
 
+NEW_INPUT=domains.inp
+INPUT_NUMBER=1000
+TMP_DIR=`mktemp -d`
+echo "TMP DIR: $TMP_DIR"
+
+cp $VAR_DIR/input/domains/domains.inp $TMP_DIR/$NEW_INPUT
+split -l $INPUT_NUMBER $TMP_DIR/$NEW_INPUT $TMP_DIR/in_
+
 # run
-
-# login
-./login.sh admin "$ADMIN_PASSWORD"
+for f in `ls $TMP_DIR/in_*`; do
+  # login
+  ./login.sh admin "$ADMIN_PASSWORD"
   
-cat $VAR_DIR/input/domains/domains.inp | xargs -P $NPROC -i sh -c "./create_domain.sh {} | tee $VAR_DIR/output/domains/{}.out"
+  cat $f | xargs -P $NPROC -i sh -c "./create_domain.sh {} | tee $VAR_DIR/output/domains/{}.out"
   
-# logout
-./logout.sh
-
+  # logout
+  ./logout.sh
+done
 echo "end job:`date`"
+
+rm -rf $TMP_DIR
 '''
             }
         }

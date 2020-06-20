@@ -20,7 +20,7 @@ pipeline {
         stage('Associate UE') {
             steps {
                 sh '''#!/bin/bash
-set -e
+#set -e
 
 SIM_INPUT=$VAR_DIR/input/sim/sim.inp
 SIM_USER="jenkins"
