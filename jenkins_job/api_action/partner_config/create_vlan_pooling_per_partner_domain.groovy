@@ -41,24 +41,41 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 cd $API_PERF_DIR/public_api/$API_PERF_VER
 mkdir -p $VAR_DIR/output/vlan_pooling
 
-# run
-echo "start job:`date`"
-for domain_name in `cat $VAR_DIR/input/partner_domains/domains.inp`; do
+NEW_INPUT=partner_domain_vlan_pooling.inp
+INPUT_NUMBER=1000
+TMP_DIR=`mktemp -d`
+echo "TMP DIR: $TMP_DIR"
 
+for domain_name in `cat $VAR_DIR/input/partner_domains/domains.inp`; do
   # get domain_id
   domain_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/partner_domains/$domain_name.out`
-  echo "domain: $domain_name, $domain_id"
+  
+  # create vlan_pooling
+  for name in `cat $VAR_DIR/input/vlan_pooling/$domain_name.inp`; do
+    if [ ! -z $domain_id ]; then
+      echo "domain: $domain_name $domain_id vlan_pooling: $name" >> $TMP_DIR/$NEW_INPUT
+    fi
+  done
+done
+
+split -l $INPUT_NUMBER $TMP_DIR/$NEW_INPUT $TMP_DIR/in_
+cp -fv $TMP_DIR/$NEW_INPUT $VAR_DIR/input/vlan_pooling/.
+
+# run
+echo "start job:`date`"
+for f in `ls $TMP_DIR/in_*`; do
   # login
   ./login.sh admin "$ADMIN_PASSWORD"
   
-  # create zone
-  cat $VAR_DIR/input/vlan_pooling/$domain_name.inp | xargs -P $NPROC -i sh -c "./create_vlan_pooling.sh {} $domain_id | tee $VAR_DIR/output/vlan_pooling/${domain_name}_{}.out"
-  
+  # create vlan_pooling
+  cat $f | xargs -n5 -P $NPROC sh -c './create_vlan_pooling.sh $4 $2 | tee $VAR_DIR/output/vlan_pooling/$2_$4.out'
+    
   # logout
   ./logout.sh
-
 done
 echo "end job:`date`"
+
+rm -rfv $TMP_DIR
 '''
             }
         }

@@ -46,39 +46,56 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 cd $API_PERF_DIR/public_api/$API_PERF_VER
 mkdir -p $VAR_DIR/output/wispr_wlans
 
+NEW_INPUT=zone_wispr_wlan.inp
+INPUT_NUMBER=1000
+TMP_DIR=`mktemp -d`
+echo "TMP DIR: $TMP_DIR"
+
+for domain_name in `cat $VAR_DIR/input/partner_domains/domains.inp`; do
+  # get domain_id
+  domain_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/partner_domains/$domain_name.out`
+  
+  if [ ! -z $domain_id ]; then
+    for zone_name in `cat $VAR_DIR/input/zones/$domain_name.inp`; do
+      # get zone_id
+      zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
+      
+      if [ ! -z $zone_id ]; then      
+        for name in `grep wispropen $VAR_DIR/input/wlans/$zone_name.inp`; do
+          n=1
+          hotspot_name=`sed -n 1p $VAR_DIR/input/hotspot/$zone_name.inp`
+          auth_ip=`sed -n ${n}p $VAR_DIR/input/proxy_auth/$domain_name.inp`
+          auth_id=`awk -F\\" '/id/ {print \$4}' $VAR_DIR/output/proxy_auth/${domain_name}_${auth_ip}.${n}.out`
+          acct_ip=`sed -n ${n}p $VAR_DIR/input/proxy_acct/$domain_name.inp`
+          acct_id=`awk -F\\" '/id/ {print \$4}' $VAR_DIR/output/proxy_acct/${domain_name}_${acct_ip}.${n}.out`
+          
+          echo "zone: $zone_name $zone_id wlan: $name hotspot: $hotspot_name proxy_auth: $auth_id proxy_acct: $acct_id" >> $TMP_DIR/$NEW_INPUT
+        done
+      fi
+
+    done
+  fi
+
+done
+
+split -l $INPUT_NUMBER $TMP_DIR/$NEW_INPUT $TMP_DIR/in_
+cp -fv $TMP_DIR/$NEW_INPUT $VAR_DIR/input/wlans/.
 
 # run
 echo "start job:`date`"
-for dname in `cat $VAR_DIR/input/partner_domains/domains.inp`; do
-  export domain_name=$dname
-  echo "domain: $domain_name"
-
-  for zname in `cat $VAR_DIR/input/zones/$domain_name.inp`; do
-    export zone_name=$zname
-
-    # get zone_id
-    export zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
-    echo "zone: $zone_name, $zone_id"
-
-    n=1
-    export hotspot_name=`sed -n 1p $VAR_DIR/input/hotspot/$zone_name.inp`
-    export auth_ip=`sed -n ${n}p $VAR_DIR/input/proxy_auth/$domain_name.inp`
-    export auth_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/proxy_auth/${domain_name}_${auth_ip}.${n}.out`
-    export acct_ip=`sed -n ${n}p $VAR_DIR/input/proxy_acct/$domain_name.inp`
-    export acct_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/proxy_acct/${domain_name}_${acct_ip}.${n}.out`
-
-    # login
-    ./login.sh admin "$ADMIN_PASSWORD"
-
-    # create non proxy auth
-    grep wispropen $VAR_DIR/input/wlans/$zone_name.inp | xargs -P $NPROC -i sh -c "./create_wispr_wlan_with_proxy.sh {} $zone_id $hotspot_name $auth_id $acct_id | tee $VAR_DIR/output/wispr_wlans/${zone_name}_{}.out"
+for f in `ls $TMP_DIR/in_*`; do
+  # login
+  ./login.sh admin "$ADMIN_PASSWORD"
   
-    # logout
-    ./logout.sh
-
-  done
+  # create wlan
+  cat $f | xargs -n11 -P $NPROC sh -c './create_wispr_wlan_with_proxy.sh $4 $2 $6 $8 $10 | tee $VAR_DIR/output/wispr_wlans/$1_$4.out'
+    
+  # logout
+  ./logout.sh
 done
 echo "end job:`date`"
+
+rm -rfv $TMP_DIR
 '''
             }
         }

@@ -46,33 +46,55 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 cd $API_PERF_DIR/public_api/$API_PERF_VER
 mkdir -p $VAR_DIR/output/8021x_wlans
 
+NEW_INPUT=zone_std8021x_wlan.inp
+INPUT_NUMBER=1000
+TMP_DIR=`mktemp -d`
+echo "TMP DIR: $TMP_DIR"
+
+for domain_name in `cat $VAR_DIR/input/partner_domains/domains.inp`; do
+  # get domain_id
+  domain_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/partner_domains/$domain_name.out`
+  
+  if [ ! -z $domain_id ]; then
+    for zone_name in `cat $VAR_DIR/input/zones/$domain_name.inp`; do
+      # get zone_id
+      zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
+      
+      if [ ! -z $zone_id ]; then      
+        for name in `grep std8021x $VAR_DIR/input/wlans/$zone_name.inp`; do
+          n=1
+          auth_ip=`sed -n ${n}p $VAR_DIR/input/non_proxy_auth/$zone_name.inp`
+          auth_id=`awk -F\\" '/id/ {print \$4}' $VAR_DIR/output/non_proxy_auth/${zone_name}_${auth_ip}.${n}.out`
+          acct_ip=`sed -n ${n}p $VAR_DIR/input/non_proxy_acct/$zone_name.inp`
+          acct_id=`awk -F\\" '/id/ {print \$4}' $VAR_DIR/output/non_proxy_acct/${zone_name}_${acct_ip}.${n}.out`
+          
+          echo "zone: $zone_name $zone_id wlan: $name non_proxy_auth: $auth_id non_proxy_acct: $acct_id" >> $TMP_DIR/$NEW_INPUT
+        done
+      fi
+
+    done
+  fi
+
+done
+
+split -l $INPUT_NUMBER $TMP_DIR/$NEW_INPUT $TMP_DIR/in_
+cp -fv $TMP_DIR/$NEW_INPUT $VAR_DIR/input/wlans/.
 
 # run
 echo "start job:`date`"
-for zname in `cat $VAR_DIR/input/zones/zones.inp`; do
-  export zone_name=$zname
-
-  # get zone_id
-  export zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
-  echo "zone: $zone_name, $zone_id"
-  
-  n=1
-  export auth_ip=`sed -n ${n}p $VAR_DIR/input/non_proxy_auth/$zone_name.inp`
-  export auth_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/non_proxy_auth/${zone_name}_${auth_ip}.${n}.out`
-  export acct_ip=`sed -n ${n}p $VAR_DIR/input/non_proxy_acct/$zone_name.inp`
-  export acct_id=`awk -F\\" '/id/ {print \\$4}' $VAR_DIR/output/non_proxy_acct/${zone_name}_${acct_ip}.${n}.out`
-
+for f in `ls $TMP_DIR/in_*`; do
   # login
   ./login.sh admin "$ADMIN_PASSWORD"
-
-  # create non proxy auth
-  grep std8021x $VAR_DIR/input/wlans/$zone_name.inp | xargs -P $NPROC -i sh -c "./create_8021x_wlan_with_non_proxy.sh {} $zone_id $auth_id $acct_id | tee $VAR_DIR/output/8021x_wlans/${zone_name}_{}.out"
   
+  # create ap per zone
+  cat $f | xargs -n9 -P $NPROC sh -c './create_8021x_wlan_with_non_proxy.sh $4 $2 $6 $8 | tee $VAR_DIR/output/8021x_wlans/$1_$4.out'
+    
   # logout
   ./logout.sh
-
 done
 echo "end job:`date`"
+
+rm -rfv $TMP_DIR
 '''
             }
         }

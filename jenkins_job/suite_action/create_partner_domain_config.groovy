@@ -154,7 +154,7 @@ node {
                 propagate: false
     }
 
-    stage('Create Device Polciy Per Partner Domain') {
+    stage('Create Device Policy Per Partner Domain') {
         build job: 'create_device_policy_per_partner_domain',
                 parameters: [
                         string(name: 'version', value: "${version}"),

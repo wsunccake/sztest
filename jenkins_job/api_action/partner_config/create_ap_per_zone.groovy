@@ -75,7 +75,7 @@ for f in `ls $TMP_DIR/in_*`; do
 done
 echo "end job:`date`"
 
-rm -rf $TMP_DIR
+rm -rfv $TMP_DIR
 '''
             }
         }

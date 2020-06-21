@@ -15,6 +15,9 @@ pipeline {
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
         string(name: 'NPROC', defaultValue: '2', description: '')
+
+        string(name: 'RADIUS_PORT', defaultValue: '1812', description: '')
+        string(name: 'RADIUS_SECRET', defaultValue: '1234', description: '')
     }
 
     stages {
@@ -46,30 +49,46 @@ echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 cd $API_PERF_DIR/public_api/$API_PERF_VER
 mkdir -p $VAR_DIR/output/non_proxy_auth
 
-# radius
-export radius_port=1812
-export radius_secret=1234
+export radius_port=$RADIUS_PORT
+export radius_secret=$RADIUS_SECRET
+
+NEW_INPUT=partner_domain_non_proxy_auth.inp
+INPUT_NUMBER=1000
+TMP_DIR=`mktemp -d`
+echo "TMP DIR: $TMP_DIR"
+
+for zone_name in `cat $VAR_DIR/input/zones/zones.inp`; do
+  # get zone_id
+  export zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
+
+  # create non proxy auth
+  i=1
+  for radius_ip in `cat $VAR_DIR/input/non_proxy_auth/$zone_name.inp`; do
+    if [ ! -z $zone_id ]; then
+      echo "zone: $zone_name $zone_id non_proxy_auth: $radius_ip $i" >> $TMP_DIR/$NEW_INPUT
+      i=`expr $i + 1`
+    fi
+  done
+done
+
+split -l $INPUT_NUMBER $TMP_DIR/$NEW_INPUT $TMP_DIR/in_
+cp -fv $TMP_DIR/$NEW_INPUT $VAR_DIR/input/non_proxy_auth/.
 
 # run
 echo "start job:`date`"
-for name in `cat $VAR_DIR/input/zones/zones.inp`; do
-  export zone_name=$name
-
-  # get zone_id
-  export zone_id=`awk -F\\" '/id/{print \$4}' $VAR_DIR/output/zones/$zone_name.out`
-  echo "zone: $zone_name, $zone_id"
-
+for f in `ls $TMP_DIR/in_*`; do
   # login
   ./login.sh admin "$ADMIN_PASSWORD"
-
-  # create non proxy auth
-  cat -n $VAR_DIR/input/non_proxy_auth/$zone_name.inp | xargs -P $NPROC -n 2 sh -c './create_non_proxy_auth_service.sh auth$1.$0 $1 $radius_port $radius_secret $zone_id | tee $VAR_DIR/output/non_proxy_auth/${zone_name}_$1.$0.out'
   
+  # create auth
+  cat $f | xargs -n6 -P $NPROC sh -c './create_non_proxy_auth_service.sh acct$4.$5 $4 $radius_port $radius_secret $2 | tee $VAR_DIR/output/non_proxy_auth/$2_$4.$5.out'
+    
   # logout
   ./logout.sh
-
 done
 echo "end job:`date`"
+
+rm -rfv $TMP_DIR
 '''
             }
         }
