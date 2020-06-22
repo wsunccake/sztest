@@ -73,7 +73,7 @@ for f in `ls $TMP_DIR/in_*`; do
   ./login.sh admin "$ADMIN_PASSWORD"
   
   # create device_policy
-  cat $f | xargs -n5 -P $NPROC sh -c './create_domain_device_policy.sh $4 $2 | tee $VAR_DIR/output/device_policy/$2_$4.out'
+  cat $f | xargs -n5 -P $NPROC sh -c './create_domain_device_policy.sh $4 $2 | tee $VAR_DIR/output/device_policy/$1_$4.out'
     
   # logout
   ./logout.sh

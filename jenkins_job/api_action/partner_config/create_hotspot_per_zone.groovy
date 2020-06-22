@@ -76,7 +76,7 @@ for f in `ls $TMP_DIR/in_*`; do
   ./login.sh admin "$ADMIN_PASSWORD"
   
   # create ap per zone
-  cat $f | xargs -n5 -P $NPROC sh -c './create_hotspot.sh $4 $2 | tee $VAR_DIR/output/hotspot/$1_$4.out\'
+  cat $f | xargs -n5 -P $NPROC sh -c './create_hotspot.sh $4 $2 | tee $VAR_DIR/output/hotspot/$1_$4.out'
     
   # logout
   ./logout.sh

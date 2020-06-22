@@ -68,7 +68,7 @@ for f in `ls $TMP_DIR/in_*`; do
   ./login.sh admin "$ADMIN_PASSWORD"
   
   # create l3acp
-  cat $f | xargs -n5 -P $NPROC sh -c './create_l3acp.sh $4 $2 | tee $VAR_DIR/output/l3acp/$2_$4.out'
+  cat $f | xargs -n5 -P $NPROC sh -c './create_l3acp.sh $4 $2 | tee $VAR_DIR/output/l3acp/$1_$4.out'
     
   # logout
   ./logout.sh

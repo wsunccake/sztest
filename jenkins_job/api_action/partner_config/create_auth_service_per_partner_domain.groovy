@@ -81,7 +81,7 @@ for f in `ls $TMP_DIR/in_*`; do
   ./login.sh admin "$ADMIN_PASSWORD"
   
   # create auth
-  cat $f | xargs -n6 -P $NPROC sh -c './create_auth_service.sh $4.$5 $4 $radius_port $radius_secret $2 | tee $VAR_DIR/output/proxy_auth/$2_$4.$5.out'
+  cat $f | xargs -n6 -P $NPROC sh -c './create_auth_service.sh $4.$5 $4 $radius_port $radius_secret $2 | tee $VAR_DIR/output/proxy_auth/$1_$4.$5.out'
     
   # logout
   ./logout.sh

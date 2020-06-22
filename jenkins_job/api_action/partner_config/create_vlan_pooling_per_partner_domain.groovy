@@ -68,7 +68,7 @@ for f in `ls $TMP_DIR/in_*`; do
   ./login.sh admin "$ADMIN_PASSWORD"
   
   # create vlan_pooling
-  cat $f | xargs -n5 -P $NPROC sh -c './create_vlan_pooling.sh $4 $2 | tee $VAR_DIR/output/vlan_pooling/$2_$4.out'
+  cat $f | xargs -n5 -P $NPROC sh -c './create_vlan_pooling.sh $4 $2 | tee $VAR_DIR/output/vlan_pooling/$1_$4.out'
     
   # logout
   ./logout.sh
