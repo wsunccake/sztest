@@ -3,10 +3,10 @@
 ###
 ### for mac
 ###
-
-realpath() {
-    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
-}
+#
+#realpath() {
+#    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+#}
 
 
 ###
@@ -24,15 +24,15 @@ source $LIB_DIR/gen_tool.sh
 ###
 
 DOMAINS=${DOMAINS:=5}
-ZONES_PER_DOMAIN=${ZONES_PER_DOMAIN:=10}
-OPEN_WLANS_PER_ZONE=${OPEN_WLANS_PER_ZONE:=5}
+ZONES_PER_DOMAIN=${ZONES_PER_DOMAIN:=1}
+OPEN_WLANS_PER_ZONE=${OPEN_WLANS_PER_ZONE:=1}
 DPSK_WLANS_PER_ZONE=${DPSK_WLANS_PER_ZONE:=1}
 APS_PER_ZONE=${APS_PER_ZONE:=1}
 UES_PER_AP=${UES_PER_AP:=1}
-AP_GROUPS_PER_ZONE=${AP_GROUPS_PER_ZONE:=5}
-WLAN_GROUPS_PER_ZONE=${WLAN_GROUPS_PER_ZONE:=5}
+AP_GROUPS_PER_ZONE=${AP_GROUPS_PER_ZONE:=1}
+WLAN_GROUPS_PER_ZONE=${WLAN_GROUPS_PER_ZONE:=1}
 
-SIM_PC=${SIM_PC:=10}
+SIM_PC=${SIM_PC:=1}
 SIM_AP_START_MAC_NUM=${SIM_AP_START_MAC_NUM:=6576734208}
 SIM_AP_START_IP=${SIM_AP_START_IP:=11.10.0.1}
 SIM_UE_START_MAC_NUM=${SIM_UE_START_MAC_NUM:=557003571200}
@@ -42,11 +42,15 @@ DOMAIN_FIRST=${DOMAIN_FIRST:=1}
 ZONE_FIRST=${ZONE_FIRST:=1}
 OPEN_WLAN_FIRST=${OPEN_WLAN_FIRST:=1}
 DPSK_WLAN_FIRST=${DPSK_WLAN_FIRST:=1}
+AP_GROUPS_FIRST=${AP_GROUPS_FIRST:=1}
+WLAN_GROUPS_FIRST=${WLAN_GROUPS_FIRST:=1}
 
 DOMAIN_LAST=`expr $DOMAIN_FIRST + $DOMAINS - 1`
 ZONE_LAST=`expr $ZONE_FIRST + $ZONES_PER_DOMAIN - 1`
 OPEN_WLAN_LAST=`expr $OPEN_WLAN_FIRST + $OPEN_WLANS_PER_ZONE - 1`
 DPSK_WLAN_LAST=`expr $DPSK_WLAN_FIRST + $DPSK_WLANS_PER_ZONE - 1`
+AP_GROUPS_LAST=`expr $AP_GROUPS_FIRST + $AP_GROUPS_PER_ZONE - 1`
+WLAN_GROUPS_LAST=`expr $WLAN_GROUPS_FIRST + $WLAN_GROUPS_PER_ZONE - 1`
 
 #DOMAIN_PREFIX=g1_
 #ZONE_PREFIX=g1_
@@ -68,6 +72,9 @@ APS=`expr $DOMAINS \* $ZONES_PER_DOMAIN \* $APS_PER_ZONE`
 UES=`expr $APS \* $UES_PER_AP`
 
 
+###
+### generate sim ap cfg
+###
 
 create_ap_mac_file() {
  # mac_interval 134
@@ -83,7 +90,7 @@ create_apsim_cfg_template() {
   local start_ap_ip=$3
   local start_ap_mac=$4
 
-  ap_num=`expr $APS / $SIM_PC`
+  local ap_num=`expr $APS / $SIM_PC`
 
   cat << EOF > $output_file
 # Set the configurations manually now until we have the cli
@@ -352,9 +359,9 @@ create_sim_ap() {
   local start_ap_mac=`convert_decimal_to_mac $SIM_AP_START_MAC_NUM`
 
   for sim_num in `seq $SIM_PC`; do
-    tmpi=`expr $sim_num - 1`
-    start_ap_index=`expr 100 + $ap_interval \* $tmpi`
-    start_ap_ip=`echo ${SIM_AP_START_IP} | awk -F. "{printf \"%s.%s.%s.%s\", \\$1, \\$2 + $tmpi, \\$3, \\$4}"`
+    local tmpi=`expr $sim_num - 1`
+    local start_ap_index=`expr 100 + $ap_interval \* $tmpi`
+    local start_ap_ip=`echo ${SIM_AP_START_IP} | awk -F. "{printf \"%s.%s.%s.%s\", \\$1, \\$2 + $tmpi, \\$3, \\$4}"`
 
     mkdir -p sim/${sim_num}
 #    echo "create_apsim_cfg_template sim/${sim_num}/apsim.cfg.template ${start_ap_index} ${start_ap_ip} ${start_ap_mac}"
@@ -363,13 +370,17 @@ create_sim_ap() {
 }
 
 
+###
+### generate sim ue cfg
+###
+
 create_ue_conf() {
   local output_file=$1
   local start_ue_mac=$2
   local start_ue_ip=$3
 
-  ue_num=`expr $UES / $SIM_PC`
-  total_wlan_profile=`expr $OPEN_WLANS_PER_ZONE + $DPSK_WLANS_PER_ZONE`
+  local ue_num=`expr $UES / $SIM_PC`
+  local total_wlan_profile=`expr $OPEN_WLANS_PER_ZONE + $DPSK_WLANS_PER_ZONE`
 
   cat << EOF > $output_file
 #
@@ -627,7 +638,7 @@ EOF
 
 #  for wlan_num in `seq $OPEN_WLANS_PER_ZONE`; do
   for wlan_num in `seq $OPEN_WLAN_FIRST $OPEN_WLAN_LAST`; do
-    open_wlan_name="open_wlan_${wlan_num}"
+    local open_wlan_name="open_wlan_${wlan_num}"
     cat << EOF >> sim/${sim_num}/ue_open.conf
 wlan_ssid=$open_wlan_name
 auth_type=1
@@ -639,7 +650,7 @@ EOF
 
 #  for wlan_num in `seq $DPSK_WLANS_PER_ZONE`; do
   for wlan_num in `seq $DPSK_WLAN_FIRST $DPSK_WLAN_LAST`; do
-    dpsk_wlan_name="dpsk_wlan_${wlan_num}"
+    local dpsk_wlan_name="dpsk_wlan_${wlan_num}"
     cat << EOF >> sim/${sim_num}/ue_open.conf
 wlan_ssid=$dpsk_wlan_name
 auth_type=1
@@ -654,9 +665,9 @@ EOF
 
 create_sim_ue() {
   for sim_num in `seq $SIM_PC`; do
-    tmpi=`expr $sim_num - 1`
-    start_ue_mac=`echo ${SIM_UE_START_MAC} | awk -F: "{printf \"%s:%s:%s:%s:%s:%s\", \\$1, \\$2 + $tmpi, \\$3, \\$4, \\$5, \\$6}"`
-    start_ue_ip=`echo ${SIM_UE_START_IP} | awk -F. "{printf \"%s.%s.%s.%s\", \\$1, \\$2 + $tmpi, \\$3, \\$4}"`
+    local tmpi=`expr $sim_num - 1`
+    local start_ue_mac=`echo ${SIM_UE_START_MAC} | awk -F: "{printf \"%s:%s:%s:%s:%s:%s\", \\$1, \\$2 + $tmpi, \\$3, \\$4, \\$5, \\$6}"`
+    local start_ue_ip=`echo ${SIM_UE_START_IP} | awk -F. "{printf \"%s.%s.%s.%s\", \\$1, \\$2 + $tmpi, \\$3, \\$4}"`
 
     mkdir -p sim/${sim_num}
     create_ue_conf sim/${sim_num}/ue_open.conf $start_ue_mac $start_ue_ip
@@ -664,53 +675,29 @@ create_sim_ue() {
 }
 
 
-create_open_wlan_per_zone() {
+###
+### gernerate function per zone
+###
+
+create_wlan_per_zone() {
   local zone_name=$1
 
-#  for wlan_num in `seq $OPEN_WLANS_PER_ZONE`; do
-  for wlan_num in `seq $OPEN_WLAN_FIRST $OPEN_WLAN_LAST`; do
-    open_wlan_name="open_wlan_${wlan_num}"
-    echo "${open_wlan_name}" >> $WLAN_DIR/wlans.inp
-    # same wlan name in different zone
-    echo "${open_wlan_name}" >> $WLAN_DIR/${zone_name}.inp
-  done
+  # open wlan
+  create_attribute_per_feature $zone_name $WLAN_DIR wlans open_wlan_ $OPEN_WLAN_FIRST $OPEN_WLAN_LAST
+
+  # dpsk wlan
+  create_attribute_per_feature $zone_name $WLAN_DIR wlans dpsk_wlan_ $DPSK_WLAN_FIRST $DPSK_WLAN_LAST
 }
 
 
-create_dpsk_wlan_per_zone() {
+create_group_per_zone() {
   local zone_name=$1
 
-#  for wlan_num in `seq $DPSK_WLANS_PER_ZONE`; do
-  for wlan_num in `seq $DPSK_WLAN_FIRST $DPSK_WLAN_LAST`; do
-    dpsk_wlan_name="dpsk_wlan_${wlan_num}"
-    echo "${dpsk_wlan_name}" >> $WLAN_DIR/wlans.inp
-    # same wlan name in different zone
-    echo "${dpsk_wlan_name}" >> $WLAN_DIR/${zone_name}.inp
-  done
-}
+  # ap group
+  create_attribute_per_feature $zone_name $AP_GROUP_DIR ap_groups ap_group_ $AP_GROUPS_FIRST $AP_GROUPS_LAST
 
-
-create_ap_group_per_zone() {
-  local zone_name=$1
-
-  for ap_group_num in `seq $AP_GROUPS_PER_ZONE`; do
-    ap_group_name="ap_group_${ap_group_num}"
-    echo "${ap_group_name}" >> $AP_GROUP_DIR/ap_groups.inp
-    # same ap group name in different zone
-    echo "${ap_group_name}" >> $AP_GROUP_DIR/${zone_name}.inp
-  done
-}
-
-
-create_wlan_group_per_zone() {
-  local zone_name=$1
-
-  for wlan_group_num in `seq $WLAN_GROUPS_PER_ZONE`; do
-    wlan_group_name="wlan_group_${wlan_group_num}"
-    echo "${wlan_group_name}" >> $WLAN_GROUP_DIR/wlan_groups.inp
-    # same wlan group name in different zone
-    echo "${wlan_group_name}" >> $WLAN_GROUP_DIR/${zone_name}.inp
-  done
+  # wlan group
+  create_attribute_per_feature $zone_name $WLAN_GROUP_DIR wlan_groups wlan_group_ $WLAN_GROUPS_FIRST $WLAN_GROUPS_LAST
 }
 
 
@@ -728,8 +715,6 @@ create_sim_ap
 create_sim_ue
 
 ap_index_start=1
-
-
 for domain_num in `seq $DOMAIN_FIRST $DOMAIN_LAST`; do
 #  domain_name="${DOMAIN_PREFIX}domain${domain_num}"
   domain_name="domain${domain_num}"
@@ -742,23 +727,16 @@ for domain_num in `seq $DOMAIN_FIRST $DOMAIN_LAST`; do
     echo "${zone_name}" >> $ZONE_DIR/zones.inp
     echo "${zone_name}" >> $ZONE_DIR/${domain_name}.inp
 
-    # open wlan per zone
-    create_open_wlan_per_zone ${zone_name}
-
-    # dpsk wlan per zone
-    create_dpsk_wlan_per_zone ${zone_name}
+    # open wlan, dpsk wlan
+    create_wlan_per_zone ${zone_name}
 
     # ap per zone
     ap_index_end=`expr $ap_index_start + $APS_PER_ZONE - 1`
     sed -n ${ap_index_start},${ap_index_end}p $AP_DIR/macs.inp > $AP_DIR/${zone_name}.inp
     ap_index_start=`expr $ap_index_start + $APS_PER_ZONE`
 
-    # ap group per zone
-    create_ap_group_per_zone ${zone_name}
-
-    # wlan group per zone
-    create_wlan_group_per_zone ${zone_name}
-
+    # ap group, wlan group
+    create_group_per_zone ${zone_name}
   done
 done
 

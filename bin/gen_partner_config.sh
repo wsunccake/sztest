@@ -3,10 +3,10 @@
 ###
 ### for mac
 ###
-
-realpath() {
-    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
-}
+#
+#realpath() {
+#    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+#}
 
 
 ###
@@ -1067,3 +1067,4 @@ for domain_num in `seq -w $DOMAIN_FIRST $DOMAIN_LAST`; do
 done
 
 mv -fv ${AP_DIR}/macs.inp.org ${AP_DIR}/macs.inp
+
