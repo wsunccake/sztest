@@ -521,7 +521,7 @@ ap_assoc_mode=2
 
 # How UE find a WLAN (0:random, 1:sequence, 2:balance)
 #                    (3:random+simple, 4:sequence+simple, 5:balance+simple)
-wlan_assoc_mode=1
+wlan_assoc_mode=2
 
 # Time that STA (UE) associate with an AP (in sec)
 # this factor simulates how long UE connects to AP

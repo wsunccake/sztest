@@ -724,7 +724,7 @@ sta_online_start_cnt=500
 # Time that STA (UE) associate with an AP (in sec)
 # this factor simulates how long UE connects to AP
 # total oneline time = sta_online_duration + rand() % online_jiffies
-sta_online_duration=900
+sta_online_duration=7200
 
 # Jiffies for each STA (UE) online time.
 online_jiffies=0
