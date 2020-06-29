@@ -15,102 +15,79 @@ node {
     currentBuild.displayName = "${params.version} - ${params.scenario} - #${currentBuild.number}"
 
     stage('Launch SimPC') {
-        build job: 'launch_sim_pc', parameters: [string(name: 'version', value: "${version}"),
-                                                 string(name: 'scenario', value: "${scenario}"),
-                                                 string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                 string(name: 'MADSZ_TGZ', value: "${MADSZ_TGZ}"),
-        ]
+        build job: 'launch_sim_pc',
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                      string(name: 'MADSZ_TGZ', value: "${MADSZ_TGZ}"),
+              ],
+              propagate: false
     }
 
 
     stage('Join AP') {
-        build job: 'join_sim_ap', parameters: [string(name: 'version', value: "${version}"),
-                                               string(name: 'scenario', value: "${scenario}"),
-                                               string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                               string(name: 'SZ_IP', value: "${SZ_IP}"),
-                                               string(name: 'AP_VER', value: "${ap_version}"),
-        ]
+        build job: 'join_sim_ap',
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                      string(name: 'SZ_IP', value: "${SZ_IP}"),
+                      string(name: 'AP_VER', value: "${ap_version}"),
+              ],
+              propagate: false
     }
 
     stage('Count On Line AP') {
-        build job: 'monitor_ap', parameters: [string(name: 'version', value: "${version}"),
-                                              string(name: 'scenario', value: "${scenario}"),
-                                              string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                              string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                              string(name: 'SZ_IP', value: "${SZ_IP}"),
-                                              string(name: 'AP_NUM', value: "${AP_NUM}"),
-                                              string(name: 'WAITING_TIME', value: "2400")
-        ]
+        build job: 'monitor_ap',
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                      string(name: 'SZ_IP', value: "${SZ_IP}"),
+                      string(name: 'AP_NUM', value: "${AP_NUM}"),
+                      string(name: 'WAITING_TIME', value: "2400")
+              ],
+              propagate: false
     }
-//    try {
-//        stage('Count On Line AP') {
-//            build job: 'monitor_ap', parameters: [string(name: 'version', value: "${version}"),
-//                                                  string(name: 'scenario', value: "${scenario}"),
-//                                                  string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-//                                                  string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-//                                                  string(name: 'SZ_IP', value: "${SZ_IP}"),
-//                                                  string(name: 'AP_NUM', value: "${AP_NUM}"),
-//                                                  string(name: 'WAITING_TIME', value: "2400")
-//            ]
-//        }
-//    } catch (Exception e) {
-//        echo "Stage ${currentBuild.result}, but we continue"
-//    }
 
     stage('Count Update-To-Date AP') {
-        build job: 'monitor_ap_update-to-date', parameters: [string(name: 'version', value: "${version}"),
-                                                             string(name: 'scenario', value: "${scenario}"),
-                                                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                             string(name: 'SZ_IP', value: "${SZ_IP}"),
-                                                             string(name: 'AP_NUM', value: "${AP_NUM}"),
-                                                             string(name: 'WAITING_TIME', value: "18000"),
-        ]
+        build job: 'monitor_ap_update-to-date',
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                      string(name: 'SZ_IP', value: "${SZ_IP}"),
+                      string(name: 'AP_NUM', value: "${AP_NUM}"),
+                      string(name: 'WAITING_TIME', value: "18000"),
+              ],
+              propagate: false
     }
-//    try {
-//        stage('Count Update-To-Date AP') {
-//            build job: 'monitor_ap_update-to-date', parameters: [string(name: 'version', value: "${version}"),
-//                                                                 string(name: 'scenario', value: "${scenario}"),
-//                                                                 string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-//                                                                 string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-//                                                                 string(name: 'SZ_IP', value: "${SZ_IP}"),
-//                                                                 string(name: 'AP_NUM', value: "${AP_NUM}"),
-//                                                                 string(name: 'WAITING_TIME', value: "7800"),
-//            ]
-//        }
-//    } catch (Exception e) {
-//        echo "Stage ${currentBuild.result}, but we continue"
-//    }
 
     stage('Associate UE') {
-        build job: 'associate_sim_ue', parameters: [string(name: 'version', value: "${version}"),
-                                                    string(name: 'scenario', value: "${scenario}"),
-                                                    string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-        ]
+        build job: 'associate_sim_ue',
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+              ],
+              propagate: false
     }
 
     stage('Count UE') {
-        build job: 'monitor_client', parameters: [string(name: 'version', value: "${version}"),
-                                                  string(name: 'scenario', value: "${scenario}"),
-                                                  string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                  string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                  string(name: 'SZ_IP', value: "${SZ_IP}"),
-                                                  string(name: 'UE_NUM', value: "${UE_NUM}"),
-                                                  string(name: 'WAITING_TIME', value: "7200"),
-        ]
+        build job: 'monitor_client',
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                      string(name: 'SZ_IP', value: "${SZ_IP}"),
+                      string(name: 'UE_NUM', value: "${UE_NUM}"),
+                      string(name: 'WAITING_TIME', value: "7200"),
+              ],
+              propagate: false
     }
-//    try {
-//        stage('Count UE') {
-//            build job: 'monitor_client', parameters: [string(name: 'version', value: "${version}"),
-//                                                      string(name: 'scenario', value: "${scenario}"),
-//                                                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-//                                                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-//                                                      string(name: 'SZ_IP', value: "${SZ_IP}"),
-//                                                      string(name: 'UE_NUM', value: "${UE_NUM}"),
-//                                                      string(name: 'WAITING_TIME', value: "1800"),
-//            ]
-//        }
-//    } catch (Exception e) {
-//        echo "Stage ${currentBuild.result}, but we continue"
-//    }
+
 }

@@ -17,85 +17,90 @@ node {
 
     stage('Create Domain') {
         build job: 'create_domain',
-                parameters: [
-                        string(name: 'version', value: "${version}"),
-                        string(name: 'scenario', value: "${scenario}"),
-                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                        string(name: 'SZ_IP', value: "${SZ_IP}"),
-                        string(name: 'NPROC', value: "${NPROC}"),
-                ],
-                propagate: false
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                      string(name: 'SZ_IP', value: "${SZ_IP}"),
+                      string(name: 'NPROC', value: "${NPROC}"),
+              ],
+              propagate: false
     }
 
     stage('Create Zone') {
         build job: 'create_zone',
-                parameters: [
-                        string(name: 'version', value: "${version}"),
-                        string(name: 'scenario', value: "${scenario}"),
-                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                        string(name: 'SZ_IP', value: "${SZ_IP}"),
-                        string(name: 'NPROC', value: "${NPROC}"),
-                ],
-                propagate: false
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                      string(name: 'SZ_IP', value: "${SZ_IP}"),
+                      string(name: 'NPROC', value: "${NPROC}"),
+              ],
+              propagate: false
     }
 
     stage('Create Open WLAN') {
         build job: 'create_open_wlan',
-                parameters: [
-                        string(name: 'version', value: "${version}"),
-                        string(name: 'scenario', value: "${scenario}"),
-                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                        string(name: 'SZ_IP', value: "${SZ_IP}"),
-                        string(name: 'NPROC', value: "${NPROC}"),
-                ],
-                propagate: false
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                      string(name: 'SZ_IP', value: "${SZ_IP}"),
+                      string(name: 'NPROC', value: "${NPROC}"),
+              ],
+              propagate: false
     }
 
     stage('Create DPSK WLAN') {
         build job: 'create_dpsk_wlan',
-                parameters: [string(name: 'version', value: "${version}"),
-                             string(name: 'scenario', value: "${scenario}"),
-                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                             string(name: 'SZ_IP', value: "${SZ_IP}"),
-                ],
-                propagate: false
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                      string(name: 'SZ_IP', value: "${SZ_IP}"),
+              ],
+              propagate: false
     }
 
     stage('Create DPSK ') {
         build job: 'create_dpsk_batch',
-                parameters: [string(name: 'version', value: "${version}"),
-                             string(name: 'scenario', value: "${scenario}"),
-                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                             string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                             string(name: 'SZ_IP', value: "${SZ_IP}"),
-                             string(name: 'DPSK_AMOUNT', value: "${DPSK_AMOUNT}"),
-                ],
-                propagate: false
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                      string(name: 'SZ_IP', value: "${SZ_IP}"),
+                      string(name: 'DPSK_AMOUNT', value: "${DPSK_AMOUNT}"),
+              ],
+              propagate: false
     }
 
     stage('Analyze DPSK') {
-        build job: 'statistics_performance', parameters: [string(name: 'version', value: "${version}"),
-                                                          string(name: 'scenario', value: "${scenario}"),
-                                                          string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                          string(name: 'VAR_DATA', value: "wlans/dpsk"),
-        ]
+        build job: 'statistics_performance',
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                      string(name: 'VAR_DATA', value: "wlans/dpsk"),
+              ],
+              propagate: false
     }
 
     stage('Create WLAN Group') {
         build job: 'create_wlan_group',
-                parameters: [
-                        string(name: 'version', value: "${version}"),
-                        string(name: 'scenario', value: "${scenario}"),
-                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                        string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                        string(name: 'SZ_IP', value: "${SZ_IP}"),
-                        string(name: 'NPROC', value: "${NPROC}"),
-                ],
-                propagate: false
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                      string(name: 'SZ_IP', value: "${SZ_IP}"),
+                      string(name: 'NPROC', value: "${NPROC}"),
+              ],
+              propagate: false
     }
 
     stage('Pre-Provision AP') {
@@ -113,21 +118,24 @@ node {
 
     stage('Create AP Group') {
         build job: 'create_ap_group',
-                parameters: [
-                        string(name: 'version', value: "${version}"),
-                        string(name: 'scenario', value: "${scenario}"),
-                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                        string(name: 'SZ_IP', value: "${SZ_IP}"),
-                        string(name: 'NPROC', value: "${NPROC}"),
-                ],
-                propagate: false
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                      string(name: 'SZ_IP', value: "${SZ_IP}"),
+                      string(name: 'NPROC', value: "${NPROC}"),
+              ],
+              propagate: false
     }
 
     stage('Arrange Data') {
-        build job: 'pickup_data', parameters: [string(name: 'version', value: "${version}"),
-                                               string(name: 'scenario', value: "${scenario}"),
-                                               string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-        ]
+        build job: 'pickup_data',
+              parameters: [
+                      string(name: 'version', value: "${version}"),
+                      string(name: 'scenario', value: "${scenario}"),
+                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+              ],
+              propagate: false
     }
 
 }
