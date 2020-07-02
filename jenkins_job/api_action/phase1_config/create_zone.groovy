@@ -33,8 +33,9 @@ source ./util/test_api/phase1.sh
 setup_api_util_var
 export -f create_zone
 
+echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME, SZ_VERSION: $SZ_VERSION"
+
 # work dir
-cd $API_PERF_DIR/public_api/$API_PERF_VER
 mkdir -p $VAR_DIR/output/zones
 
 NEW_INPUT=domain_zone.inp
@@ -64,7 +65,7 @@ for f in `ls $TMP_DIR/in_*`; do
   pubapi_login $SZ_USERNAME $SZ_PASSWORD
   
   # create ap per zone
-  cat $f | xargs -n5 -P $NPROC sh -c './create_zone $4 $2 | tee $VAR_DIR/output/zones/$4.out'
+  cat $f | xargs -n5 -P $NPROC sh -c 'create_zone $4 $2 | tee $VAR_DIR/output/zones/$4.out'
     
   # logout
   pubapi_logout

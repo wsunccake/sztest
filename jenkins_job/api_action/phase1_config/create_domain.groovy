@@ -36,7 +36,6 @@ export -f create_domain
 echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME, SZ_VERSION: $SZ_VERSION"
 
 # work dir
-cd $API_PERF_DIR/public_api/$API_PERF_VER
 mkdir -p $VAR_DIR/output/domains
 
 NEW_INPUT=domains.inp
