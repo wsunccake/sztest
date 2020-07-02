@@ -5,6 +5,7 @@ library identifier: 'dynamic-libary@master', retriever: modernSCM(
 pipeline {
     agent any
     parameters {
+        string(name: 'SZ_VERSION', defaultValue: '1.0.0.0', description: '')
         string(name: 'version', defaultValue: '1.0.0.0', description: '')
         string(name: 'scenario', defaultValue: 'group0', description: '')
 
@@ -15,6 +16,7 @@ pipeline {
 
         string(name: 'SZ_IP', defaultValue: '', description: '')
         string(name: 'NPROC', defaultValue: '2', description: '')
+        string(name: 'API_VERSION', defaultValue: '', description: '')
     }
 
     stages {
@@ -30,6 +32,7 @@ pipeline {
         stage('Create Domain') {
             steps {
                 sh '''#!/bin/bash
+source $VAR_DIR/input/default/api_util_var.sh
 source ./util/api_util.sh
 source ./util/test_api/phase1.sh
 
