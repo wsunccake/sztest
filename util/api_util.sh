@@ -1,14 +1,12 @@
 #!/bin/bash
 
+
 ###
 ### pubapi
 ###
 
 pubapi_get() {
   eval "declare -A api_data="${1#*=}
-
-  CURL_TIMEOUT=${CURL_TIMEOUT:=30}
-  COOKIE=${COOKIE:=/tmp/cookie-$SZ_IP}
 
   local method=GET
   local url=${api_data['url']}
@@ -21,7 +19,7 @@ pubapi_get() {
   curl --insecure \
        --silent \
        --max-time "${CURL_TIMEOUT}" \
-       --cookie "${COOKIE}" \
+       --cookie "${SZ_COOKIE}" \
        --write-out "\nResponse code: %{http_code}\nResponse time: %{time_total}\n" \
        --request "${method}"\
        --header "content-type: application/json" \
@@ -44,7 +42,7 @@ pubapi_post() {
   curl --insecure \
        --silent \
        --max-time "${CURL_TIMEOUT}" \
-       --cookie "${COOKIE}" \
+       --cookie "${SZ_COOKIE}" \
        --write-out "\nResponse code: %{http_code}\nResponse time: %{time_total}\n" \
        --request "${method}"\
        --header "content-type: application/json" \
@@ -61,19 +59,8 @@ pubapi_login() {
   local username=$1
   local password=$2
 
-  PROTOCOL=${PROTOCOL:=https}
-  SZ_IP=${SZ_IP:=127.0.0.1}
-  SZ_PORT=${SZ_PORT:=8443}
-  CURL_TIMEOUT=${CURL_TIMEOUT:=30}
-  COOKIE=${COOKIE:=/tmp/cookie-$SZ_IP}
-
-  if [ -z $API_VERSION ]; then
-    echo "no found var: API_VERSION"
-    exit 1
-  fi
-
   local method="POST"
-  local url="${PROTOCOL}://${SZ_IP}:${SZ_PORT}/wsg/api/public/${API_VERSION}/session"
+  local url="${PUBAPI_BASE_URL}/session"
   local data="{
     \"username\": \"${username}\",
     \"password\": \"${password}\"
@@ -87,7 +74,7 @@ pubapi_login() {
   curl --insecure \
        --silent \
        --max-time "${CURL_TIMEOUT}" \
-       --cookie-jar "${COOKIE}" \
+       --cookie-jar "${SZ_COOKIE}" \
        --write-out "\nResponse code: %{http_code}\nResponse time: %{time_total}\n" \
        --request "${method}"\
        --header "content-type: application/json" \
@@ -97,19 +84,8 @@ pubapi_login() {
 
 
 pubapi_logout() {
-  PROTOCOL=${PROTOCOL:=https}
-  SZ_IP=${SZ_IP:=127.0.0.1}
-  SZ_PORT=${SZ_PORT:=8443}
-  CURL_TIMEOUT=${CURL_TIMEOUT:=30}
-  COOKIE=${COOKIE:=/tmp/cookie-$SZ_IP}
-
-  if [ -z $API_VERSION ]; then
-    echo "no found var: API_VERSION"
-    exit 1
-  fi
-
   local method="DELETE"
-  local url="${PROTOCOL}://${SZ_IP}:${SZ_PORT}/wsg/api/public/${API_VERSION}/session"
+  local url="${PUBAPI_BASE_URL}/session"
 
   echo "Request method: ${method}"
   echo "Request URL: ${url}"
@@ -131,7 +107,7 @@ pubapi_logout() {
 ###
 
 get_domain() {
-  declare -A api_data=(['url']=${PROTOCOL}://${SZ_IP}:${SZ_PORT}/wsg/api/public/${API_VERSION}/domains)
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/domains)
   pubapi_get "$(declare -p api_data)"
 }
 
@@ -139,13 +115,13 @@ get_domain() {
 get_all_domain() {
   local tmp_entity=$(mktemp domain-$SZ_IP-XXXXXXXXXX --tmpdir=/tmp)
 
-  declare -A api_data=(['url']=${PROTOCOL}://${SZ_IP}:${SZ_PORT}/wsg/api/public/${API_VERSION}/domains)
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/domains)
   local total_count=`pubapi_get "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.totalCount'`
 
   local list_size=100
   for index in $(seq 0 $list_size $total_count); do
     local paging_url="index=${index}&listSize=${list_size}"
-    declare -A api_data=(['url']=${PROTOCOL}://${SZ_IP}:${SZ_PORT}/wsg/api/public/${API_VERSION}/domains?${paging_url})
+    declare -A api_data=(['url']=${PUBAPI_BASE_URL}/domains?${paging_url})
     pubapi_get "$(declare -p api_data)" \
     | sed -n 's/Response body: //p' \
     | jq --raw-output '.list[] | .id, .name' \
@@ -158,7 +134,7 @@ get_all_domain() {
 query_all_wlan() {
   local tmp_entity=$(mktemp wlan-$SZ_IP-XXXXXXXXXX --tmpdir=/tmp)
 
-  declare -A api_data=(['url']=${PROTOCOL}://${SZ_IP}:${SZ_PORT}/wsg/api/public/${API_VERSION}/query/wlan ['data']='{"attributes": ["*"]}')
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/query/wlan ['data']='{"attributes": ["*"]}')
   local total_count=`pubapi_post "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.totalCount'`
 
   local list_size=100
@@ -171,12 +147,12 @@ query_all_wlan() {
 }"
     page=$(($page + 1))
 
-    declare -A api_data=(['url']=${PROTOCOL}://${SZ_IP}:${SZ_PORT}/wsg/api/public/${API_VERSION}/query/wlan ['data']=$data)
+    declare -A api_data=(['url']=${PUBAPI_BASE_URL}/query/wlan ['data']=$data)
     pubapi_post "$(declare -p api_data)" \
     | sed -n 's/Response body: //p' \
-    | jq --raw-output '.list[] | .wlanId, .zoneId' \
+    | jq --raw-output '.list[] | .wlanId, .name, .zoneId, .zoneName' \
     | tr -d \" \
-    | paste - - -d '|' \
+    | paste - - - - -d '|' \
     | tee -a "${tmp_entity}"
   done
 }
