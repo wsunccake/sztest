@@ -25,6 +25,6 @@ create_zone() {
     }
 }"
 
-  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/zones ['data']=$data)
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/rkszones ['data']=$data)
   pubapi_post "$(declare -p api_data)"
 }
