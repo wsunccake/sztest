@@ -30,15 +30,21 @@ pipeline {
         stage('Create Domain') {
             steps {
                 sh '''#!/bin/bash
+source ./util/api_util.sh
+source ./util/test_api/phase1.sh
+
+setup_api_util_var
+export -f create_domain
+
 # expect work
-source $EXPECT_DIR/sz/var/expect-var.sh
+#source $EXPECT_DIR/sz/var/expect-var.sh
 
 # setup sz ip
 if [ -z $SZ_IP ]; then
   SZ_IP=`sed -n 1p $VAR_DIR/input/sz/sz.inp`
 fi 
 
-export SZ_IP=$SZ_IP
+#export SZ_IP=$SZ_IP
 echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
 #env
 
@@ -57,12 +63,12 @@ split -l $INPUT_NUMBER $TMP_DIR/$NEW_INPUT $TMP_DIR/in_
 # run
 for f in `ls $TMP_DIR/in_*`; do
   # login
-  ./login.sh admin "$ADMIN_PASSWORD"
+#  ./login.sh admin "$ADMIN_PASSWORD"
   
-  cat $f | xargs -P $NPROC -i sh -c "./create_domain.sh {} | tee $VAR_DIR/output/domains/{}.out"
+  cat $f | xargs -P $NPROC -i sh -c "create_domain {} | tee $VAR_DIR/output/domains/{}.out"
   
   # logout
-  ./logout.sh
+#  ./logout.sh
 done
 echo "end job:`date`"
 
