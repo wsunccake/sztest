@@ -6,14 +6,8 @@ pipeline {
     agent any
     parameters {
         string(name: 'SZ_VERSION', defaultValue: '1.0.0.0', description: '')
-        string(name: 'version', defaultValue: '1.0.0.0', description: '')
-        string(name: 'scenario', defaultValue: 'group0', description: '')
-
+        string(name: 'SCENARIO', defaultValue: 'group0', description: '')
         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: '')
-        string(name: 'EXPECT_DIR', defaultValue: '/var/lib/jenkins/expect', description: '')
-        string(name: 'API_PERF_DIR', defaultValue: '/var/lib/jenkins/api_perf', description: '')
-        string(name: 'API_PERF_VER', defaultValue: 'v9_0', description: '')
-
         string(name: 'SZ_IP', defaultValue: '', description: '')
         string(name: 'NPROC', defaultValue: '2', description: '')
         string(name: 'API_VERSION', defaultValue: '', description: '')
@@ -23,7 +17,7 @@ pipeline {
         stage('Update Build Name') {
             steps {
                 script {
-                    currentBuild.displayName = "${version} - ${scenario} - #${currentBuild.number}"
+                    currentBuild.displayName = "${SZ_VERSION} - ${SCENARIO} - #${currentBuild.number}"
                 }
 
             }
@@ -39,17 +33,7 @@ source ./util/test_api/phase1.sh
 setup_api_util_var
 export -f create_domain
 
-# expect work
-#source $EXPECT_DIR/sz/var/expect-var.sh
-
-# setup sz ip
-if [ -z $SZ_IP ]; then
-  SZ_IP=`sed -n 1p $VAR_DIR/input/sz/sz.inp`
-fi 
-
-#export SZ_IP=$SZ_IP
-echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
-#env
+echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME, SZ_VERSION: $SZ_VERSION"
 
 # work dir
 cd $API_PERF_DIR/public_api/$API_PERF_VER
@@ -66,12 +50,12 @@ split -l $INPUT_NUMBER $TMP_DIR/$NEW_INPUT $TMP_DIR/in_
 # run
 for f in `ls $TMP_DIR/in_*`; do
   # login
-#  ./login.sh admin "$ADMIN_PASSWORD"
+  pubapi_login $SZ_USERNAME $SZ_PASSWORD
   
   cat $f | xargs -P $NPROC -i sh -c "create_domain {} | tee $VAR_DIR/output/domains/{}.out"
   
   # logout
-#  ./logout.sh
+  pubapi_logout
 done
 echo "end job:`date`"
 

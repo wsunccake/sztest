@@ -30,12 +30,12 @@ pipeline {
         stage('Create Zone') {
             steps {
                 sh '''#!/bin/bash
-# expect work
-source $EXPECT_DIR/sz/var/expect-var.sh
+source $VAR_DIR/input/default/api_util_var.sh
+source ./util/api_util.sh
+source ./util/test_api/phase1.sh
 
-export SZ_IP=$SZ_IP
-echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
-#env
+setup_api_util_var
+export -f create_zone
 
 # work dir
 cd $API_PERF_DIR/public_api/$API_PERF_VER
@@ -65,13 +65,13 @@ cp -fv $TMP_DIR/$NEW_INPUT $VAR_DIR/input/zones/.
 echo "start job:`date`"
 for f in `ls $TMP_DIR/in_*`; do
   # login
-  ./login.sh admin "$ADMIN_PASSWORD"
+  pubapi_login $SZ_USERNAME $SZ_PASSWORD
   
   # create ap per zone
-  cat $f | xargs -n5 -P $NPROC sh -c './create_zone.sh $4 $2 | tee $VAR_DIR/output/zones/$4.out'
+  cat $f | xargs -n5 -P $NPROC sh -c './create_zone $4 $2 | tee $VAR_DIR/output/zones/$4.out'
     
   # logout
-  ./logout.sh
+  pubapi_logout
 done
 echo "end job:`date`"
 
