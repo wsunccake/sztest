@@ -5,23 +5,19 @@ library identifier: 'dynamic-libary@master', retriever: modernSCM(
 pipeline {
     agent any
     parameters {
-        string(name: 'version', defaultValue: '1.0.0.0', description: '')
-        string(name: 'scenario', defaultValue: 'group0', description: '')
-
+        string(name: 'SZ_VERSION', defaultValue: '1.0.0.0', description: '')
+        string(name: 'SCENARIO', defaultValue: 'group0', description: '')
         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: '')
-        string(name: 'EXPECT_DIR', defaultValue: '/var/lib/jenkins/expect', description: '')
-        string(name: 'API_PERF_DIR', defaultValue: '/var/lib/jenkins/api_perf', description: '')
-        string(name: 'API_PERF_VER', defaultValue: 'v9_0', description: '')
-
         string(name: 'SZ_IP', defaultValue: '', description: '')
         string(name: 'NPROC', defaultValue: '2', description: '')
+        string(name: 'API_VERSION', defaultValue: '', description: '')
     }
 
     stages {
         stage('Update Build Name') {
             steps {
                 script {
-                    currentBuild.displayName = "${version} - ${scenario} - #${currentBuild.number}"
+                    currentBuild.displayName = "${SZ_VERSION} - ${SCENARIO} - #${currentBuild.number}"
                 }
 
             }
