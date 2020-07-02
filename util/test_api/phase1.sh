@@ -14,7 +14,7 @@ create_domain() {
 
 create_zone() {
   local name=$1
-  local domain_id
+  local domain_id=$2
   domain_id=${domain_id:="${DEFAULT_DOMAIN_UUID}"}
   local data="{
     \"domainId\": \"$domain_id\",
