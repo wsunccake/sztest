@@ -157,3 +157,12 @@ query_all_wlan() {
   done
 }
 
+
+###
+### export function
+###
+
+export -f pubapi_get
+export -f pubapi_post
+export -f pubapi_login
+export -f pubapi_logout
