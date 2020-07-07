@@ -89,6 +89,22 @@ create_wlan_group() {
 }
 
 
+create_ap() {
+  local mac=$1
+  local serial=$2
+  local model=$3
+  local zone_id=$4
+  local data="{
+    \"mac\": \"${mac}\",
+    \"zoneId\": \"${zone_id}\",
+    \"serial\": \"${serial}\",
+    \"model\": \"${model}\"
+}"
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/aps ['data']=$data)
+  pubapi_post "$(declare -p api_data)"
+}
+
+
 create_ap_group() {
   local name=$1
   local zone_id=$2
@@ -110,4 +126,5 @@ export -f create_open_wlan
 export -f create_dpsk_wlan
 export -f create_dpsk_batch
 export -f create_wlan_group
+export -f create_ap
 export -f create_ap_group
