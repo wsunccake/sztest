@@ -26,16 +26,24 @@ pipeline {
         stage('Create Zone') {
             steps {
                 sh '''#!/bin/bash
-source $VAR_DIR/input/default/api_util_var.sh
-source ./util/api_util.sh
-source ./util/test_api/phase1.sh
+###
+### setup var
+###
+
+SZTEST_HOME=`pwd`
+source $VAR_DIR/input/default/setup_var.sh
+source $SZTEST_HOME/util/api_util.sh
+source $SZTEST_HOME/util/test_api/phase1.sh
 
 setup_api_util_var
-export -f create_zone
 
 echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME, SZ_VERSION: $SZ_VERSION"
 
-# work dir
+
+###
+### gen input
+###
+
 mkdir -p $VAR_DIR/output/zones
 
 NEW_INPUT=domain_zone.inp
@@ -58,7 +66,11 @@ done
 split -l $INPUT_NUMBER $TMP_DIR/$NEW_INPUT $TMP_DIR/in_
 cp -fv $TMP_DIR/$NEW_INPUT $VAR_DIR/input/zones/.
 
-# run
+
+###
+### run api
+###
+
 echo "start job:`date`"
 for f in `ls $TMP_DIR/in_*`; do
   # login

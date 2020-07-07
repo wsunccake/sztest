@@ -5,23 +5,19 @@ library identifier: 'dynamic-libary@master', retriever: modernSCM(
 pipeline {
     agent any
     parameters {
-        string(name: 'version', defaultValue: '1.0.0.0', description: '')
-        string(name: 'scenario', defaultValue: 'group0', description: '')
-
+        string(name: 'SZ_VERSION', defaultValue: '1.0.0.0', description: '')
+        string(name: 'SCENARIO', defaultValue: 'group0', description: '')
         string(name: 'VAR_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${scenario}', description: '')
-        string(name: 'EXPECT_DIR', defaultValue: '/var/lib/jenkins/expect', description: '')
-        string(name: 'API_PERF_DIR', defaultValue: '/var/lib/jenkins/api_perf', description: '')
-        string(name: 'API_PERF_VER', defaultValue: 'v9_0', description: '')
-
         string(name: 'SZ_IP', defaultValue: '', description: '')
         string(name: 'NPROC', defaultValue: '2', description: '')
+        string(name: 'API_VERSION', defaultValue: '', description: '')
     }
 
     stages {
         stage('Update Build Name') {
             steps {
                 script {
-                    currentBuild.displayName = "${version} - ${scenario} - #${currentBuild.number}"
+                    currentBuild.displayName = "${SZ_VERSION} - ${SCENARIO} - #${currentBuild.number}"
                 }
 
             }
@@ -30,19 +26,24 @@ pipeline {
         stage('Create AP Group') {
             steps {
                 sh '''#!/bin/bash
-# expect work
-source $EXPECT_DIR/sz/var/expect-var.sh
+###
+### setup var
+###
 
-# setup sz ip
-if [ -z $SZ_IP ]; then
-  SZ_IP=`sed -n 1p $VAR_DIR/input/sz/sz.inp`
-fi 
+SZTEST_HOME=`pwd`
+source $VAR_DIR/input/default/setup_var.sh
+source $SZTEST_HOME/util/api_util.sh
+source $SZTEST_HOME/util/test_api/phase1.sh
 
-export SZ_IP=$SZ_IP
-echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME"
-#env
+setup_api_util_var
 
-# work dir
+echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME, SZ_VERSION: $SZ_VERSION"
+
+
+###
+### gen input
+###
+
 cd $API_PERF_DIR/public_api/$API_PERF_VER
 mkdir -p $VAR_DIR/output/ap_groups
 
@@ -66,17 +67,21 @@ done
 split -l $INPUT_NUMBER $TMP_DIR/$NEW_INPUT $TMP_DIR/in_
 cp -fv $TMP_DIR/$NEW_INPUT $VAR_DIR/input/ap_groups/.
 
-# run
+
+###
+### run api
+###
+
 echo "start job:`date`"
 for f in `ls $TMP_DIR/in_*`; do
   # login
-  ./login.sh admin "$ADMIN_PASSWORD"
+  pubapi_login $SZ_USERNAME $SZ_PASSWORD
   
   # create ap per zone
   cat $f | xargs -n5 -P $NPROC sh -c './create_ap_group.sh $4 $2 | tee $VAR_DIR/output/ap_groups/$1_$4.out'
     
   # logout
-  ./logout.sh
+  pubapi_logout
 done
 echo "end job:`date`"
 

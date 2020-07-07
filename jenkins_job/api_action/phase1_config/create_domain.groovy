@@ -26,16 +26,24 @@ pipeline {
         stage('Create Domain') {
             steps {
                 sh '''#!/bin/bash
-source $VAR_DIR/input/default/api_util_var.sh
-source ./util/api_util.sh
-source ./util/test_api/phase1.sh
+###
+### setup var
+###
+
+SZTEST_HOME=`pwd`
+source $VAR_DIR/input/default/setup_var.sh
+source $SZTEST_HOME/util/api_util.sh
+source $SZTEST_HOME/util/test_api/phase1.sh
 
 setup_api_util_var
-export -f create_domain
 
 echo "SZ_IP: $SZ_IP, SZ_NAME: $SZ_NAME, SZ_VERSION: $SZ_VERSION"
 
-# work dir
+
+###
+### gen input
+###
+
 mkdir -p $VAR_DIR/output/domains
 
 NEW_INPUT=domains.inp
@@ -46,7 +54,11 @@ echo "TMP DIR: $TMP_DIR"
 cp $VAR_DIR/input/domains/domains.inp $TMP_DIR/$NEW_INPUT
 split -l $INPUT_NUMBER $TMP_DIR/$NEW_INPUT $TMP_DIR/in_
 
-# run
+
+###
+### run api
+###
+
 for f in `ls $TMP_DIR/in_*`; do
   # login
   pubapi_login $SZ_USERNAME $SZ_PASSWORD
