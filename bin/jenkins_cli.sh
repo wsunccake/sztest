@@ -18,7 +18,7 @@ source $LIB_DIR/jenkins_util.sh
 JENKINS_IP=${JENKINS_IP:=127.0.0.1}
 JENKINS_PORT=${JENKINS_PORT:=8080}
 JENKINS_JAR=${JENKINS_JAR:=jenkins-cli.jar}
-GIT_REPO=${GIT_REPO:-https://github.com/wsunccake/sztest-pipeline}
+GIT_REPO=${GIT_REPO:-https://github.com/wsunccake/sztest_pipeline}
 GIT_BRANCH=${GIT_BRANCH:-master}
 
 export JENKINS_USER_ID=${JENKINS_USER_ID:-"username"}
@@ -48,6 +48,9 @@ argument
   list-job
   create-job <job_name> <pipeline_file>
   delete-job <job_name>
+
+  build <job_name>
+  stop-builds <job_name>
 
 environment variable
   JENKINS_IP:         jenkins server ip, default 127.0.0.1
@@ -152,6 +155,16 @@ case $ACTION in
   "delete-job")
     JOB_NAME=$2
     delete-job $JOB_NAME
+  ;;
+
+  "build")
+    JOB_NAME=$2
+    build $JOB_NAME
+  ;;
+
+  "stop-builds")
+    JOB_NAME=$2
+    stop-builds $JOB_NAME
   ;;
 
   *)

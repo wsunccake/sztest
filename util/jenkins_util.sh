@@ -73,13 +73,19 @@ delete-job() {
 }
 
 
-build_job() {
-    for v in ${VIEWS[*]}; do
-        for j in `find ${UTIL_PATH}/../jenkins_job/${v} -name *.groovy -exec basename {} \;`; do
-            echo "java -jar jenkins-cli.jar -s ${JENKINS_URL} build ${j%%.*}"
-            java -jar jenkins-cli.jar -s ${JENKINS_URL} build ${j%%.*}
-        done
-    done
+build() {
+  local name=$1
+
+  echo "java -jar $JENKINS_JAR -s $JENKINS_URL build $name"
+  java -jar $JENKINS_JAR -s $JENKINS_URL build $name
+}
+
+
+stop-builds() {
+  local name=$1
+
+  echo "java -jar $JENKINS_JAR -s $JENKINS_URL stop-builds $name"
+  java -jar $JENKINS_JAR -s $JENKINS_URL stop-builds $name
 }
 
 
