@@ -51,6 +51,37 @@ pubapi_post() {
 }
 
 
+pubapi_put() {
+  eval "declare -A input="${1#*=}
+
+  local method=PUT
+  local url=${api_data['url']}
+  local file=${api_data['file']}
+  local data=${api_data['data']}
+
+  echo "Request method: ${method}"
+  echo "Request URL: ${url}"
+
+  if [ -z $data ]; then
+    data="@${file}"
+    echo "Request body: `jq '.' ${file}`"
+  else
+    echo "Request body: ${data}"
+  fi
+
+  echo -n 'Response body: '
+  curl --insecure \
+       --silent \
+       --max-time "${CURL_TIMEOUT}" \
+       --cookie "${SZ_COOKIE}" \
+       --write-out "\nResponse code: %{http_code}\nResponse time: %{time_total}\n" \
+       --request "${method}"\
+       --header "content-type: application/json" \
+       --data "${data}" \
+       "${url}"
+}
+
+
 ###
 ### pubapi login and logout
 ###
@@ -164,5 +195,6 @@ query_all_wlan() {
 
 export -f pubapi_get
 export -f pubapi_post
+export -f pubapi_put
 export -f pubapi_login
 export -f pubapi_logout
