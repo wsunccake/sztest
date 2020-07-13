@@ -31,9 +31,10 @@ pipeline {
                 sh '''#!/bin/bash
 cd ${API_PERF_DIR}/util/locust_test
 source venv/bin/activate
-export ZONE_ID_FILE=${VAR_DIR}/output/id/zones.log
-export DOMAIN_ID_FILE=${VAR_DIR}/output/id/domains.log
-echo "DOMAIN_ID_FILE: ${VAR_DIR}/output/id/domains.log, ZONE_ID_FILE: ${VAR_DIR}/output/id/zones.log"
+export DOMAIN_ID_FILE=${VAR_DIR}/output/id/domain_ids.log
+export AP_ZONE_DOMAIN_ID_FILE=${VAR_DIR}/output/id/ap_zone_domain_id.log
+echo "DOMAIN_ID_FILE: $DOMAIN_ID_FILE"
+echo "AP_ZONE_DOMAIN_ID_FILE: $AP_ZONE_DOMAIN_ID_FILE"
 
 mkdir -p ${VAR_DIR}/output/api_performance
 
