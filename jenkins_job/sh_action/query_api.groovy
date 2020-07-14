@@ -37,7 +37,7 @@ echo "DOMAIN_ID_FILE: $DOMAIN_ID_FILE"
 echo "AP_ZONE_DOMAIN_ID_FILE: $AP_ZONE_DOMAIN_ID_FILE"
 
 # partner-update
-parnter_test_functions=(l2acl l3acp wifi_calling device_policy lbs application_policy_v2 user_defined proxy_auth proxy_acct vlan_pooling)
+partner_test_functions=(l2acl l3acp wifi_calling device_policy lbs application_policy_v2 user_defined proxy_auth proxy_acct vlan_pooling)
 for f in ${partner_test_functions[@]}; do
   echo "export ${f^^}_FILE=$VAR_DIR/output/id/${f}_ids.log"
   export ${f^^}_FILE=$VAR_DIR/output/id/${f}_ids.log
