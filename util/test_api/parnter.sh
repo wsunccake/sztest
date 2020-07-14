@@ -338,6 +338,92 @@ query_all_proxy_auth_by_domain_id() {
 
 
 ###
+### proxy acct
+###
+
+query_all_proxy_acct_by_domain_id() {
+  local domain_id=$1
+  local tmp_entity=$(mktemp proxy-acct-$SZ_IP-XXXXXXXXXX --tmpdir=/tmp)
+
+  local data="{
+  \"attributes\": [\"*\"],
+  \"filters\": [{\"type\": \"DOMAIN\",
+                 \"value\": \"${domain_id}\"
+  }]
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/services/acct/query ['data']=$data)
+  local total_count=`pubapi_post "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.totalCount'`
+
+  local list_size=1000
+  local page=1
+  for index in $(seq 1 $list_size $total_count); do
+  local data="{
+    \"attributes\": [\"*\"],
+    \"filters\": [{\"type\": \"DOMAIN\",
+                   \"value\": \"${domain_id}\"
+    }],
+    \"page\": ${page},
+    \"limit\": ${list_size}
+}"
+
+    page=$(($page + 1))
+
+    declare -A api_data=(['url']=${PUBAPI_BASE_URL}/services/acct/query ['data']=$data)
+    pubapi_post "$(declare -p api_data)" \
+    | sed -n 's/Response body: //p' \
+    | jq --raw-output '.list[] | .id, .domainId' \
+    | tr -d \" \
+    | paste - - -d '|' \
+    | tee -a "${tmp_entity}"
+  done
+}
+
+
+###
+### vlan pooling
+###
+
+query_all_vlan_pooling_by_domain_id() {
+  local domain_id=$1
+  local tmp_entity=$(mktemp vlanpooling-$SZ_IP-XXXXXXXXXX --tmpdir=/tmp)
+
+  local data="{
+  \"attributes\": [\"*\"],
+  \"filters\": [{\"type\": \"DOMAIN\",
+                 \"value\": \"${domain_id}\"
+  }]
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/vlanpoolings/query ['data']=$data)
+  local total_count=`pubapi_post "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.totalCount'`
+
+  local list_size=1000
+  local page=1
+  for index in $(seq 1 $list_size $total_count); do
+  local data="{
+    \"attributes\": [\"*\"],
+    \"filters\": [{\"type\": \"DOMAIN\",
+                   \"value\": \"${domain_id}\"
+    }],
+    \"page\": ${page},
+    \"limit\": ${list_size}
+}"
+
+    page=$(($page + 1))
+
+    declare -A api_data=(['url']=${PUBAPI_BASE_URL}/vlanpoolings/query ['data']=$data)
+    pubapi_post "$(declare -p api_data)" \
+    | sed -n 's/Response body: //p' \
+    | jq --raw-output '.list[] | .id, .domainId' \
+    | tr -d \" \
+    | paste - - -d '|' \
+    | tee -a "${tmp_entity}"
+  done
+}
+
+
+###
 ### export function
 ###
 
