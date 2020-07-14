@@ -32,18 +32,19 @@ pubapi_post() {
 
   local method=POST
   local url=${api_data['url']}
-  local data=${api_data['data']}
+#  local data=${api_data['data']}
   local file=${api_data['file']}
 
   echo "Request method: ${method}"
   echo "Request URL: ${url}"
+  echo "Request body: ${data}"
 
-  if [ -z $data ]; then
-    data="@${file}"
-    echo "Request body: `jq '.' ${file}`"
-  else
-    echo "Request body: ${data}"
-  fi
+#  if [ -z $data ]; then
+#    data="@${file}"
+#    echo "Request body: `jq '.' ${file}`"
+#  else
+#    echo "Request body: ${data}"
+#  fi
 
   echo -n 'Response body: '
   curl --insecure \
