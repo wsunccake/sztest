@@ -32,8 +32,8 @@ pubapi_post() {
 
   local method=POST
   local url=${api_data['url']}
-#  local data=${api_data['data']}
-  local file=${api_data['file']}
+  local data=${api_data['data']}
+#  local file=${api_data['file']}
 
   echo "Request method: ${method}"
   echo "Request URL: ${url}"

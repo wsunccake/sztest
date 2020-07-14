@@ -209,6 +209,92 @@ query_all_wifi_calling_by_domain_id() {
 
 
 ###
+### device policy
+###
+
+query_all_device_policy_by_domain_id() {
+  local domain_id=$1
+  local tmp_entity=$(mktemp device-policy-$SZ_IP-XXXXXXXXXX --tmpdir=/tmp)
+
+  local data="{
+  \"attributes\": [\"*\"],
+  \"filters\": [{\"type\": \"DOMAIN\",
+                 \"value\": \"${domain_id}\"
+  }]
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/devicePolicy/query ['data']=$data)
+  local total_count=`pubapi_post "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.totalCount'`
+
+  local list_size=1000
+  local page=1
+  for index in $(seq 1 $list_size $total_count); do
+  local data="{
+    \"attributes\": [\"*\"],
+    \"filters\": [{\"type\": \"DOMAIN\",
+                   \"value\": \"${domain_id}\"
+    }],
+    \"page\": ${page},
+    \"limit\": ${list_size}
+}"
+
+    page=$(($page + 1))
+
+    declare -A api_data=(['url']=${PUBAPI_BASE_URL}/devicePolicy/query ['data']=$data)
+    pubapi_post "$(declare -p api_data)" \
+    | sed -n 's/Response body: //p' \
+    | jq --raw-output '.list[] | .id' \
+    | tr -d \" \
+    | paste - -d '|' \
+    | tee -a "${tmp_entity}"
+  done
+}
+
+
+###
+### application policy
+###
+
+query_all_application_policy_v2_by_domain_id() {
+  local domain_id=$1
+  local tmp_entity=$(mktemp application-policy-$SZ_IP-XXXXXXXXXX --tmpdir=/tmp)
+
+  local data="{
+  \"attributes\": [\"*\"],
+  \"filters\": [{\"type\": \"DOMAIN\",
+                 \"value\": \"${domain_id}\"
+  }]
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/query/applicationPolicyV2 ['data']=$data)
+:  local total_count=`pubapi_post "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.totalCount'`
+
+  local list_size=1000
+  local page=1
+  for index in $(seq 1 $list_size $total_count); do
+  local data="{
+    \"attributes\": [\"*\"],
+    \"filters\": [{\"type\": \"DOMAIN\",
+                   \"value\": \"${domain_id}\"
+    }],
+    \"page\": ${page},
+    \"limit\": ${list_size}
+}"
+
+    page=$(($page + 1))
+
+    declare -A api_data=(['url']=${PUBAPI_BASE_URL}/query/applicationPolicyV2 ['data']=$data)
+    pubapi_post "$(declare -p api_data)" \
+    | sed -n 's/Response body: //p' \
+    | jq --raw-output '.list[] | .id, .domainId' \
+    | tr -d \" \
+    | paste - - -d '|' \
+    | tee -a "${tmp_entity}"
+  done
+}
+
+
+###
 ### export function
 ###
 

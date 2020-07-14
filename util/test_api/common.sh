@@ -64,7 +64,7 @@ get_all_zone() {
 ###
 
 query_all_wlan() {
-  local tmp_entity=$(mktemp wlan-$SZ_IP-XXXXXXXXXX --tmpdir=/tmp)
+  local tmp_entity=$(mktemp wlan-${SZ_IP}-XXXXXXXXXX --tmpdir=/tmp)
 
   declare -A api_data=(['url']=${PUBAPI_BASE_URL}/query/wlan ['data']='{"attributes": ["*"]}')
   local total_count=`pubapi_post "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.totalCount'`
@@ -101,7 +101,7 @@ get_ap() {
 
 
 get_all_ap() {
-  local tmp_entity=$(mktemp ap-$SZ_IP-XXXXXXXXXX --tmpdir=/tmp)
+  local tmp_entity=$(mktemp ap-${SZ_IP}-XXXXXXXXXX --tmpdir=/tmp)
 
   declare -A api_data=(['url']=${PUBAPI_BASE_URL}/aps)
   local total_count=`pubapi_get "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.totalCount'`
@@ -126,7 +126,7 @@ query_ap() {
 
 
 query_all_ap() {
-  local tmp_entity=$(mktemp ap-$SZ_IP-XXXXXXXXXX --tmpdir=/tmp)
+  local tmp_entity=$(mktemp ap-${SZ_IP}-XXXXXXXXXX --tmpdir=/tmp)
 
   declare -A api_data=(['url']=${PUBAPI_BASE_URL}/query/ap ['data']='{"attributes": ["*"]}')
   local total_count=`pubapi_post "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.totalCount'`
