@@ -1,5 +1,39 @@
 #!/bin/bash
 
+###
+### curl
+###
+
+sz_curl_cmd() {
+  local method=$1
+  local url=$2
+  local data=$3
+
+  case $method in
+  "GET")
+    curl --insecure \
+         --silent \
+         --max-time "${CURL_TIMEOUT}" \
+         --cookie "${SZ_COOKIE}" \
+         --write-out "\nResponse code: %{http_code}\nResponse time: %{time_total}\n" \
+         --request "${method}"\
+         --header "content-type: application/json" \
+         "${url}"
+    ;;
+  "POST"|"PUT")
+    curl --insecure \
+         --silent \
+         --max-time "${CURL_TIMEOUT}" \
+         --cookie "${SZ_COOKIE}" \
+         --write-out "\nResponse code: %{http_code}\nResponse time: %{time_total}\n" \
+         --request "${method}"\
+         --header "content-type: application/json" \
+         --data "${data}" \
+         "${url}"
+    ;;
+  esac
+}
+
 
 ###
 ### pubapi
@@ -16,14 +50,7 @@ pubapi_get() {
   echo "Request body: ${data}"
 
   echo -n 'Response body: '
-  curl --insecure \
-       --silent \
-       --max-time "${CURL_TIMEOUT}" \
-       --cookie "${SZ_COOKIE}" \
-       --write-out "\nResponse code: %{http_code}\nResponse time: %{time_total}\n" \
-       --request "${method}"\
-       --header "content-type: application/json" \
-       "${url}"
+  sz_curl_cmd ${method} ${url}
 }
 
 
@@ -33,29 +60,21 @@ pubapi_post() {
   local method=POST
   local url=${api_data['url']}
   local data=${api_data['data']}
-#  local file=${api_data['file']}
+  local file=${api_data['file']}
 
   echo "Request method: ${method}"
   echo "Request URL: ${url}"
-  echo "Request body: ${data}"
+#  echo "Request body: ${data}"
 
-#  if [ -z $data ]; then
-#    data="@${file}"
-#    echo "Request body: `jq '.' ${file}`"
-#  else
-#    echo "Request body: ${data}"
-#  fi
+  if [ -z "$data" ]; then
+    data="@${file}"
+    echo "Request body: `jq '.' ${file}`"
+  else
+    echo "Request body: ${data}"
+  fi
 
   echo -n 'Response body: '
-  curl --insecure \
-       --silent \
-       --max-time "${CURL_TIMEOUT}" \
-       --cookie "${SZ_COOKIE}" \
-       --write-out "\nResponse code: %{http_code}\nResponse time: %{time_total}\n" \
-       --request "${method}"\
-       --header "content-type: application/json" \
-       --data "${data}" \
-       "${url}"
+  sz_curl_cmd ${method} ${url} "${data}"
 }
 
 
@@ -70,7 +89,7 @@ pubapi_put() {
   echo "Request method: ${method}"
   echo "Request URL: ${url}"
 
-  if [ -z $data ]; then
+  if [ -z "$data" ]; then
     data="@${file}"
     echo "Request body: `jq '.' ${file}`"
   else
@@ -78,15 +97,7 @@ pubapi_put() {
   fi
 
   echo -n 'Response body: '
-  curl --insecure \
-       --silent \
-       --max-time "${CURL_TIMEOUT}" \
-       --cookie "${SZ_COOKIE}" \
-       --write-out "\nResponse code: %{http_code}\nResponse time: %{time_total}\n" \
-       --request "${method}"\
-       --header "content-type: application/json" \
-       --data "${data}" \
-       "${url}"
+  sz_curl_cmd ${method} ${url} "${data}"
 }
 
 
@@ -145,6 +156,7 @@ pubapi_logout() {
 ### export function
 ###
 
+export -f sz_curl_cmd
 export -f pubapi_get
 export -f pubapi_post
 export -f pubapi_put
