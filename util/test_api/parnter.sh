@@ -310,7 +310,6 @@ query_all_user_defined_by_domain_id() {
 }"
 
   declare -A api_data=(['url']=${PUBAPI_BASE_URL}/query/userDefined ['data']=$data)
-  pubapi_post "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.'
   local total_count=`pubapi_post "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.totalCount'`
 
   local list_size=1000
