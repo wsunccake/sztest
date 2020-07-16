@@ -25,6 +25,7 @@ get_all_xx() {
 ### query all
 ###
 
+query_all_xx() {
   eval "declare -A api_data="${1#*=}
   local tmp_entity=$(mktemp xx-$SZ_IP-XXXXXXXXXX --tmpdir=/tmp)
 #  local base_data=${api_data['data']}
