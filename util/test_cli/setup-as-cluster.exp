@@ -1,0 +1,75 @@
+#!/usr/bin/env expect
+
+set ERR_UNEXPECTED_OUTPUT 1
+
+set SMALL_TIMEOUT 30
+set MEDIUM_TIMEOUT 300
+set LONG_TIMEOUT 2100
+
+set timeout $MEDIUM_TIMEOUT
+
+# login
+spawn ssh -o UserKnownHostsFile=/dev/null \
+          -o StrictHostKeyChecking=no \
+          admin@$env(SZ_IP)
+
+expect_after {
+    timeout {
+        send_error "\n\n*** ERROR: unexpected output\n"
+        exit $ERR_UNEXPECTED_OUTPUT
+    }
+}
+
+set passwords "$env(DEFAULT_PASSWORD) $env(ADMIN_PASSWORD)"
+set i 0
+expect {
+    -nocase "password:" {
+        send "[lindex $passwords $i]\n";
+        incr i;
+        exp_continue;
+    }
+    eof {
+        send_user "\n\n*** ERROR: server has closed the connection\n"
+        exit $ERR_CONNECTION
+    }
+    ">" {}; # tend to be empty
+}
+send "enable\n"
+expect -nocase "password:"
+send "$env(DEFAULT_PASSWORD)\n"
+expect "#"
+
+# setup
+send "setup\n"
+
+expect "Do you want to setup network"
+send "n\n"
+
+expect "(C)reate a new cluster or (J)oin an exist cluster"
+send "j\n"
+
+expect "Enter cluster seed"
+send "$env(CLUSTER_IP)\n"
+
+expect "Cluster Name"
+send "$env(CLUSTER_NAME)\n"
+
+expect "Controller Description"
+send "$env(SZ_NAME)\n"
+
+expect "Are these correct"
+send "y\n"
+
+expect "controller behind NAT"
+send "$env(BEHIND_NAT_CHOICE)\n"
+
+expect "Enter cluster admin password for validation"
+send "$env(ADMIN_PASSWORD)\n"
+
+set timeout $LONG_TIMEOUT
+expect "System setup is finished*Press the enter key to continue."
+
+send "\n"
+
+send_user "\n"
+

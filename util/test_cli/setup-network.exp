@@ -1,0 +1,86 @@
+#!/usr/bin/env expect
+
+set ERR_UNEXPECTED_OUTPUT 1
+
+set SMALL_TIMEOUT 30
+set MEDIUM_TIMEOUT 300
+set LONG_TIMEOUT 1800
+
+set timeout $MEDIUM_TIMEOUT
+
+# login
+spawn ssh -o UserKnownHostsFile=/dev/null \
+          -o StrictHostKeyChecking=no \
+          admin@$env(SZ_IP)
+
+expect_after {
+    timeout {
+        send_error "\n\n*** ERROR: unexpected output\n"
+        exit $ERR_UNEXPECTED_OUTPUT
+    }
+}
+
+set passwords "$env(DEFAULT_PASSWORD) $env(ADMIN_PASSWORD)"
+set i 0
+expect {
+    -nocase "password:" {
+        send "[lindex $passwords $i]\n";
+        incr i;
+        exp_continue;
+    }
+    eof {
+        send_user "\n\n*** ERROR: server has closed the connection\n"
+        exit $ERR_CONNECTION
+    }
+    ">" {}; # tend to be empty
+}
+send "enable\n"
+expect -nocase "password:"
+send "$env(DEFAULT_PASSWORD)\n"
+expect "#"
+
+# setup
+send "setup\n"
+
+expect {
+    "Select vSZ Profile (1/2)" {
+        send "2\n"
+        exp_continue
+    }
+
+    "Are you sure you want to install" {
+        send "y\n"
+        exp_continue
+    }
+
+    "Select address type" {
+        send "1\n"
+    }
+}
+
+expect "Select IP configuration"
+send "2\n"
+
+expect {
+    "Primary DNS:" {
+        send "$env(PRIMARY_DNS)\n"
+        exp_continue
+    }
+
+    "Secondary DNS:" {
+        send "$env(SECONDARY_DNS)\n"
+        exp_continue
+    }
+
+    "Do you want to apply the settings?" {
+        send "y\n"
+    }
+}
+
+
+expect "Accept these settings and continue"
+send "y\n"
+
+expect "*#"
+exit
+
