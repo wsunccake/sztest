@@ -39,65 +39,49 @@ sz_curl_cmd() {
 ### pubapi
 ###
 
-pubapi_get() {
+pubapi() {
   eval "declare -A api_data="${1#*=}
 
-  local method=GET
+  local method=${api_data['method']}
   local url=${api_data['url']}
+  local data=${api_data['data']}
+  local file=${api_data['file']}
 
   echo "Request method: ${method}"
   echo "Request URL: ${url}"
-  echo "Request body: ${data}"
+
+  if [ -z "$data" ]; then
+    if [ -n "$file" ]; then
+      data="@${file}"
+      echo "Request body: `jq '.' ${file}`"
+    fi
+  else
+    echo "Request body: ${data}"
+  fi
 
   echo -n 'Response body: '
-  sz_curl_cmd ${method} ${url}
+  sz_curl_cmd ${method} ${url} "${data}"
+}
+
+
+pubapi_get() {
+  eval "declare -A api_data="${1#*=}
+  api_data['method']=GET
+  pubapi "$(declare -p api_data)"
 }
 
 
 pubapi_post() {
-  eval "declare -A input="${1#*=}
-
-  local method=POST
-  local url=${api_data['url']}
-  local data=${api_data['data']}
-  local file=${api_data['file']}
-
-  echo "Request method: ${method}"
-  echo "Request URL: ${url}"
-#  echo "Request body: ${data}"
-
-  if [ -z "$data" ]; then
-    data="@${file}"
-    echo "Request body: `jq '.' ${file}`"
-  else
-    echo "Request body: ${data}"
-  fi
-
-  echo -n 'Response body: '
-  sz_curl_cmd ${method} ${url} "${data}"
+  eval "declare -A api_data="${1#*=}
+  api_data['method']=POST
+  pubapi "$(declare -p api_data)"
 }
 
 
 pubapi_put() {
-  eval "declare -A input="${1#*=}
-
-  local method=PUT
-  local url=${api_data['url']}
-  local data=${api_data['data']}
-  local file=${api_data['file']}
-
-  echo "Request method: ${method}"
-  echo "Request URL: ${url}"
-
-  if [ -z "$data" ]; then
-    data="@${file}"
-    echo "Request body: `jq '.' ${file}`"
-  else
-    echo "Request body: ${data}"
-  fi
-
-  echo -n 'Response body: '
-  sz_curl_cmd ${method} ${url} "${data}"
+  eval "declare -A api_data="${1#*=}
+  api_data['method']=PUT
+  pubapi "$(declare -p api_data)"
 }
 
 
@@ -157,6 +141,7 @@ pubapi_logout() {
 ###
 
 export -f sz_curl_cmd
+export -f pubapi
 export -f pubapi_get
 export -f pubapi_post
 export -f pubapi_put
