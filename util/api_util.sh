@@ -10,7 +10,7 @@ sz_curl_cmd() {
   local url=$2
   local data=$3
 
-  case $method in
+  case ${method} in
   "GET")
     curl --insecure \
          --silent \
