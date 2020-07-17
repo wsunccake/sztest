@@ -32,10 +32,10 @@ node {
     currentBuild.displayName = "${params.SZ_VERSION} - ${params.SCENARIO} - #${currentBuild.number}"
 
     stage('Prepare Var Dir') {
-        build job: 'prepare_var_dir',
+        build job: 'prepare_copy_var_dir',
               parameters: [
-                      string(name: 'version', value: "${SZ_VERSION}"),
-                      string(name: 'scenario', value: "${SCENARIO}"),
+                      string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
+                      string(name: 'SCENARIO', value: "${SCENARIO}"),
                       string(name: 'SRC_DIR', value: "${SRC_DIR}"),
                       string(name: 'VAR_DIR', value: "${VAR_DIR}"),
               ],
@@ -43,10 +43,10 @@ node {
     }
 
     stage('Launch SZ') {
-        build job: 'launch_sz',
+        build job: 'prepare_launch_sz',
               parameters: [
-                      string(name: 'version', value: "${SZ_VERSION}"),
-                      string(name: 'scenario', value: "${SCENARIO}"),
+                      string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
+                      string(name: 'SCENARIO', value: "${SCENARIO}"),
                       string(name: 'VAR_DIR', value: "${VAR_DIR}"),
               ]
     }
@@ -60,17 +60,28 @@ node {
         }
     }
 
-    stage('Prepare SZ') {
-        build job: 'prepare_sz',
+        stage('Prepare SZ') {
+        build job: 'prepare_fresh_install',
               parameters: [
-                      string(name: 'version', value: "${SZ_VERSION}"),
-                      string(name: 'scenario', value: "${SCENARIO}"),
+                      string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
+                      string(name: 'SCENARIO', value: "${SCENARIO}"),
                       string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
                       string(name: 'SZ_IP', value: "${szIP}"),
                       string(name: 'CLUSTER_NAME', value: "api-perf-${SCENARIO}"),
               ]
     }
+
+//    stage('Prepare SZ') {
+//        build job: 'prepare_sz',
+//              parameters: [
+//                      string(name: 'version', value: "${SZ_VERSION}"),
+//                      string(name: 'scenario', value: "${SCENARIO}"),
+//                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+//                      string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+//                      string(name: 'SZ_IP', value: "${szIP}"),
+//                      string(name: 'CLUSTER_NAME', value: "api-perf-${SCENARIO}"),
+//              ]
+//    }
 
     stage('Create Config') {
         build job: 'suite_phase1_config',
