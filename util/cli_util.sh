@@ -58,5 +58,5 @@ wait_until_pingable() {
     sleep ${wait_time}
   done
 
-  return ${is_ping}
+  echo ${is_ping}
 }
