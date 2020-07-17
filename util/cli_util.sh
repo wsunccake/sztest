@@ -53,7 +53,7 @@ wait_until_pingable() {
   local is_ping="false"
 
   for i in `seq ${repeat_time}`; do
-    is_ping=$(pingable host_ip)
+    is_ping=$(pingable $host_ip)
     [[ "x${is_ping}" == "xtrue" ]] && break
     sleep ${wait_time}
   done
