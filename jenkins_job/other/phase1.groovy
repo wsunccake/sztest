@@ -11,6 +11,7 @@ node {
 
                     string(name: 'API_PERF_VER', defaultValue: 'v9_1', description: ''),
 
+                    string(name: 'SZ_NUM', defaultValue: '1', description: ''),
                     string(name: 'AP_NUM', defaultValue: '10000', description: ': group1: 6000, group2: 2000, group3: 2000'),
                     string(name: 'UE_NUM', defaultValue: '100000', description: ' group1: 48000, group2: 48000, group3: 4000'),
                     string(name: 'DPSK_AMOUNT', defaultValue: "10", description: ''),
@@ -48,6 +49,7 @@ node {
                       string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
                       string(name: 'SCENARIO', value: "${SCENARIO}"),
                       string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                      string(name: 'SZ_NUM', value: "${SZ_NUM}"),
               ]
     }
 
@@ -60,7 +62,7 @@ node {
         }
     }
 
-        stage('Prepare SZ') {
+        stage('Fresh Install SZ') {
         build job: 'prepare_fresh_install',
               parameters: [
                       string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
@@ -69,6 +71,16 @@ node {
                       string(name: 'SZ_IP', value: "${szIP}"),
                       string(name: 'CLUSTER_NAME', value: "api-perf-${SCENARIO}"),
               ]
+    }
+
+    stage('Join SZ Cluster') {
+        build job: 'prepare_join_cluster',
+                parameters: [
+                        string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
+                        string(name: 'SCENARIO', value: "${SCENARIO}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'CLUSTER_NAME', value: "api-perf-${SCENARIO}"),
+                ]
     }
 
 //    stage('Prepare SZ') {
