@@ -32,6 +32,16 @@ sz_curl_cmd() {
          --data "${data}" \
          "${url}"
     ;;
+  "DELETE")
+    curl --insecure \
+         --silent \
+         --max-time "${CURL_TIMEOUT}" \
+         --cookie "${SZ_COOKIE}" \
+         --write-out "\nResponse code: %{http_code}\nResponse time: %{time_total}\n" \
+         --request "${method}"\
+         --header "content-type: application/json" \
+         "${url}"
+    ;;
   esac
 }
 
@@ -82,6 +92,13 @@ pubapi_post() {
 pubapi_put() {
   eval "declare -A api_data="${1#*=}
   api_data['method']=PUT
+  pubapi "$(declare -p api_data)"
+}
+
+
+pubapi_delete() {
+  eval "declare -A api_data="${1#*=}
+  api_data['method']=DELETE
   pubapi "$(declare -p api_data)"
 }
 
@@ -192,6 +209,7 @@ export -f pubapi
 export -f pubapi_get
 export -f pubapi_post
 export -f pubapi_put
+export -f pubapi_delete
 export -f pubapi_login
 export -f pubapi_logout
 export -f get_all_xx
