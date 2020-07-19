@@ -88,7 +88,7 @@ for f in `ls $TMP_DIR/in_*`; do
   ./login.sh admin "$ADMIN_PASSWORD"
   
   # create wlan
-  cat $f | xargs -n11 -P $NPROC sh -c './create_wispr_wlan_with_proxy.sh $4 $2 $6 $8 $10 | tee $VAR_DIR/output/wispr_wlans/$1_$4.out'
+  cat $f | xargs -n11 -P $NPROC sh -c './create_wispr_wlan_with_proxy.sh $4 $2 $6 $8 ${10} | tee $VAR_DIR/output/wispr_wlans/$1_$4.out'
     
   # logout
   ./logout.sh
