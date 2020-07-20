@@ -43,14 +43,15 @@ node {
               propagate: false
     }
 
-    stage('Launch SZ') {
-        build job: 'prepare_launch_sz',
-              parameters: [
-                      string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
-                      string(name: 'SCENARIO', value: "${SCENARIO}"),
-                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                      string(name: 'SZ_NUM', value: "${SZ_NUM}"),
-              ]
+    stage('Setup SZ') {
+        build job: 'suite_sz_setup',
+                parameters: [
+                        string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
+                        string(name: 'SCENARIO', value: "${SCENARIO}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'SZ_NUM', value: "${SZ_NUM}"),
+                        string(name: 'CLUSTER_NAME', value: "api-perf-${SCENARIO}"),
+                ]
     }
 
     stage('Setup SZ IP') {
@@ -62,26 +63,6 @@ node {
         }
     }
 
-        stage('Fresh Install SZ') {
-        build job: 'prepare_fresh_install',
-              parameters: [
-                      string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
-                      string(name: 'SCENARIO', value: "${SCENARIO}"),
-                      string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                      string(name: 'SZ_IP', value: "${szIP}"),
-                      string(name: 'CLUSTER_NAME', value: "api-perf-${SCENARIO}"),
-              ]
-    }
-
-    stage('Join SZ Cluster') {
-        build job: 'prepare_join_cluster',
-                parameters: [
-                        string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
-                        string(name: 'SCENARIO', value: "${SCENARIO}"),
-                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                        string(name: 'CLUSTER_NAME', value: "api-perf-${SCENARIO}"),
-                ]
-    }
 
 //    stage('Prepare SZ') {
 //        build job: 'prepare_sz',
