@@ -4,7 +4,7 @@ node {
     properties([
             parameters([
                     string(name: 'SZ_VERSION', defaultValue: '5.2.1.0'),
-                    string(name: 'SCENARIO', defaultValue: 'phase1'),
+                    string(name: 'SCENARIO', defaultValue: 'partner'),
                     string(name: 'AP_VERSION', defaultValue: '5.2.1.0'),
                     string(name: 'SRC_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${SCENARIO}', description: ''),
                     string(name: 'VAR_DIR', defaultValue: '/usr/share/nginx/html/api_perf/${SZ_VERSION}/${SCENARIO}', description: ''),
