@@ -8,13 +8,12 @@ node {
                     string(name: 'AP_VERSION', defaultValue: '5.2.1.0'),
                     string(name: 'SRC_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${SCENARIO}', description: ''),
                     string(name: 'VAR_DIR', defaultValue: '/usr/share/nginx/html/api_perf/${SZ_VERSION}/${SCENARIO}', description: ''),
-
+                    string(name: 'GCE_IMAGE', defaultValue: 'vscg-cloud-${SZ_VERSION}', description: ''),
                     string(name: 'API_PERF_VER', defaultValue: 'v9_1', description: ''),
 
                     string(name: 'SZ_NUM', defaultValue: '1', description: ''),
                     string(name: 'AP_NUM', defaultValue: '10000', description: ': group1: 6000, group2: 2000, group3: 2000'),
                     string(name: 'UE_NUM', defaultValue: '100000', description: ' group1: 48000, group2: 48000, group3: 4000'),
-                    string(name: 'DPSK_AMOUNT', defaultValue: "10", description: ''),
                     string(name: 'MADSZ_TGZ', defaultValue: 'madSZ-v5.2.1-14-u1804.tar.xz  ', description: ''),
 
                     string(name: 'DATA_DIR', defaultValue: '/usr/share/nginx/html/api_perf/5.2/report/${SCENARIO}', description: ''),
@@ -51,7 +50,7 @@ node {
                         string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                         string(name: 'SZ_NUM', value: "${SZ_NUM}"),
                         string(name: 'CLUSTER_NAME', value: "partner-${SCENARIO}"),
-                        string(name: 'GCE_IMAGE', defaultValue: "vscg-cloud-${SZ_VERSION}", description: '')
+                        string(name: 'GCE_IMAGE', defaultValue: "${GCE_IMAGE}", description: '')
                 ]
     }
 
