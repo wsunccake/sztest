@@ -50,7 +50,7 @@ node {
                         string(name: 'SCENARIO', value: "${SCENARIO}"),
                         string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                         string(name: 'SZ_NUM', value: "${SZ_NUM}"),
-                        string(name: 'CLUSTER_NAME', value: "api-perf-${SCENARIO}"),
+                        string(name: 'CLUSTER_NAME', value: "partner-${SCENARIO}"),
                 ]
     }
 
@@ -63,15 +63,13 @@ node {
         }
     }
 
-
-    stage('Create Config') {
-        build job: 'suite_phase1_config',
+    stage('Create Config Per Partner Domain') {
+        build job: 'suite_partner_config_per_partner_domain',
               parameters: [
                       string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
                       string(name: 'SCENARIO', value: "${SCENARIO}"),
                       string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                       string(name: 'SZ_IP', value: "${szIP}"),
-                      string(name: 'DPSK_AMOUNT', value: "${DPSK_AMOUNT}"),
               ]
     }
 
