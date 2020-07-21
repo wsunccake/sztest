@@ -418,6 +418,13 @@ query_all_device_policy_by_domain_id() {
 }
 
 
+delete_domain_device_policy() {
+  local id=$1
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/devicePolicy/${id})
+  pubapi_delete "$(declare -p api_data)"
+}
+
+
 ###
 ### export function
 ###
@@ -434,3 +441,5 @@ export -f create_l3acp
 export -f create_lbs
 export -f create_wifi_calling_policy
 export -f create_domain_device_policy
+
+export -f delete_domain_device_policy

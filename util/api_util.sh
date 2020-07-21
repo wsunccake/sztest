@@ -11,7 +11,7 @@ sz_curl_cmd() {
   local data=$3
 
   case ${method} in
-  "GET")
+  "GET"|"DELETE")
     curl --insecure \
          --silent \
          --max-time "${CURL_TIMEOUT}" \
@@ -82,6 +82,13 @@ pubapi_post() {
 pubapi_put() {
   eval "declare -A api_data="${1#*=}
   api_data['method']=PUT
+  pubapi "$(declare -p api_data)"
+}
+
+
+pubapi_delete() {
+  eval "declare -A api_data="${1#*=}
+  api_data['method']=DELETE
   pubapi "$(declare -p api_data)"
 }
 
@@ -192,6 +199,7 @@ export -f pubapi
 export -f pubapi_get
 export -f pubapi_post
 export -f pubapi_put
+export -f pubapi_delete
 export -f pubapi_login
 export -f pubapi_logout
 export -f get_all_xx
