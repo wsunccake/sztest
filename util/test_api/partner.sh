@@ -18,6 +18,11 @@ gen_qc_template_by_domain_id() {
 
 
 ###
+### per partner domain
+###
+
+
+###
 ### partner domain
 ###
 
@@ -426,8 +431,192 @@ delete_domain_device_policy() {
 
 
 ###
+### per zone
+###
+
+
+###
+### non proxy auth
+###
+
+create_non_proxy_auth_service() {
+  local name=$1
+  local ip=$2
+  local port=$3
+  local secret=$4
+  local zone_uuid=$5
+  local data="{
+    \"name\": \"${name}\",
+    \"primary\": {
+        \"ip\": \"${ip}\",
+        \"port\": ${port},
+        \"sharedSecret\": \"${secret}\"
+    }
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/rkszones/${zone_uuid}/aaa/radius ['data']=$data)
+  pubapi_post "$(declare -p api_data)"
+
+}
+
+
+###
+### non proxy acct
+###
+
+create_non_proxy_acct_service() {
+  local name=$1
+  local ip=$2
+  local port=$3
+  local secret=$4
+  local zone_uuid=$5
+  local data="{
+    \"name\": \"${name}\",
+    \"primary\": {
+        \"ip\": \"${ip}\",
+        \"port\": ${port},
+        \"sharedSecret\": \"${secret}\"
+    }
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/rkszones/${zone_uuid}/aaa/radius?forAccounting=true ['data']=$data)
+  pubapi_post "$(declare -p api_data)"
+}
+
+
+###
+### psk wlan
+###
+
+create_open_wlan_with_wpa2_and_aes() {
+  local name=$1
+  local zone_uuid=$2
+  local data="{
+    \"name\": \"${name}\",
+    \"ssid\": \"${name}\",
+    \"encryption\": {
+        \"algorithm\": \"AES\",
+        \"method\": \"WPA2\",
+        \"mfp\": \"disabled\",
+        \"passphrase\": \"password\"
+    }
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/rkszones/${zone_uuid}/wlans ['data']=$data)
+  pubapi_post "$(declare -p api_data)"
+}
+
+
+###
+### hotspot
+###
+
+create_hotspot() {
+  local name=$1
+  local zone_uuid=$2
+  local data="{
+    \"name\": \"${name}\",
+    \"smartClientSupport\": \"None\",
+    \"macAddressFormat\": 2
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/rkszones/${zone_uuid}/portals/hotspot/internal ['data']=$data)
+  pubapi_post "$(declare -p api_data)"
+}
+
+
+###
+### wispr mac wlan
+###
+
+create_wispr_mac_wlan_with_proxy() {
+  local name=$1
+  local zone_uuid=$2
+  local hotspot_name=$3
+  local auth_id=$4
+  local acct_id=$5
+  local data="{
+    \"name\": \"${name}\",
+    \"ssid\": \"${name}\",
+    \"portalServiceProfile\": {
+        \"name\": \"${hotspot_name}\"
+    },
+    \"authServiceOrProfile\": {
+        \"throughController\": true,
+        \"id\": \"${auth_id}\"
+    },
+    \"accountingServiceOrProfile\": {
+        \"throughController\": true,
+        \"id\": \"${acct_id}\",
+        \"interimUpdateMin\": 10,
+        \"accountingDelayEnabled\": false
+    }
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/rkszones/${zone_uuid}/wlans/wisprmac ['data']=$data)
+  pubapi_post "$(declare -p api_data)"
+}
+
+
+###
+### wispr wlan
+###
+
+create_wispr_wlan_with_proxy() {
+  local name=$1
+  local zone_uuid=$2
+  local hotspot_name=$3
+  local auth_id=$4
+  local acct_id=$5
+  local data="{
+    \"name\": \"${name}\",
+    \"ssid\": \"${name}\",
+    \"portalServiceProfile\": {
+        \"name\": \"${hotspot_name}\"
+    },
+    \"authServiceOrProfile\": {
+        \"throughController\": true,
+        \"id\": \"${auth_id}\"
+    },
+    \"accountingServiceOrProfile\": {
+        \"throughController\": true,
+        \"id\": \"${acct_id}\",
+        \"interimUpdateMin\": 10,
+        \"accountingDelayEnabled\": false
+    }
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/rkszones/${zone_uuid}/wlans/wispr ['data']=$data)
+  pubapi_post "$(declare -p api_data)"
+}
+
+
+###
+### ap
+###
+
+create_ap() {
+  local mac=$1
+  local serial=$2
+  local model=$3
+  local zone_uuid=$4
+  local data="{
+    \"mac\": \"${ap_mac}\",
+    \"zoneId\": \"${zone_uuid}\",
+    \"serial\": \"${serial}\",
+    \"model\": \"${model}\"
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/aps ['data']=$data)
+  pubapi_post "$(declare -p api_data)"
+}
+
+
+###
 ### export function
 ###
+
+# per partner domain
 
 export -f create_partner_domain
 export -f create_zone
@@ -443,3 +632,13 @@ export -f create_wifi_calling_policy
 export -f create_domain_device_policy
 
 export -f delete_domain_device_policy
+
+# per zone
+
+export -f create_non_proxy_auth_service
+export -f create_non_proxy_acct_service
+export -f create_open_wlan_with_wpa2_and_aes
+export -f create_hotspot
+export -f create_wispr_mac_wlan_with_proxy
+export -f create_wispr_wlan_with_proxy
+export -f create_ap
