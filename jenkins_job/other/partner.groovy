@@ -73,6 +73,25 @@ node {
               ]
     }
 
+    stage('Create Config Per Zone') {
+        build job: 'suite_partner_config_per_zone',
+                parameters: [
+                        string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
+                        string(name: 'SCENARIO', value: "${SCENARIO}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ]
+    }
+
+    stage('Prepare ID Data') {
+        build job: 'partner_prepare_id_data',
+                parameters: [
+                        string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
+                        string(name: 'SCENARIO', value: "${SCENARIO}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ]
+    }
 
     stage('Join AP and UE') {
         if (params.is_skip_join == "false") {
