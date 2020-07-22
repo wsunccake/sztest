@@ -1,0 +1,125 @@
+#!/usr/bin/env expect
+
+set ERR_UNEXPECTED_OUTPUT 1
+
+set SMALL_TIMEOUT 30
+set MEDIUM_TIMEOUT 300
+set LONG_TIMEOUT 1800
+
+set timeout $SMALL_TIMEOUT
+
+# login
+spawn ssh -o UserKnownHostsFile=/dev/null \
+          -o StrictHostKeyChecking=no \
+          admin@$env(SZ_IP)
+
+expect_after {
+    timeout {
+        send_user "\n\n*** ERROR: unexpected output\n"
+        exit $ERR_UNEXPECTED_OUTPUT
+    }
+}
+
+# enter basic mode password
+set passwords "$env(DEFAULT_PASSWORD) $env(ADMIN_PASSWORD)"
+set i 0
+expect {
+    -nocase "password:" {
+        send "[lindex $passwords $i]\n";
+        incr i;
+        exp_continue;
+    }
+    eof {
+        send_user "\n\n*** ERROR: server has closed the connection\n"
+        exit $ERR_CONNECTION
+    }
+    ">" {
+        send "enable\n"
+    }
+}
+# enter enable mode password
+set i 0
+expect {
+    -nocase "password:" {
+        send "[lindex $passwords $i]\n";
+        incr i;
+        exp_continue;
+    }
+    "Incorrect enable password" {
+        send "enable\n"
+        send "[lindex $passwords $i]\n";
+        incr i;
+        exp_continue;
+    }
+    eof {
+        send_user "\n\n*** ERROR: server has closed the connection\n"
+        exit $ERR_CONNECTION
+    }
+    "#" {
+        send "debug\n";
+    };
+}
+
+expect {
+    "\(debug\)#" {
+        send "save passphrase\n"
+    }
+}
+
+# root
+expect {
+    "Passphrase:" {
+        send "$env(PASSPHRASE)\n"
+        exp_continue
+    }
+    "\\\$" {
+        send "sudo su -\n"
+    }
+}
+
+# configure collectd
+expect "]#"
+send "cd /opt/ruckuswireless/wsg/conf/collectd\n"
+
+expect "collectd\]#"
+send "./run.sh\n"
+
+set timeout $MEDIUM_TIMEOUT
+expect {
+    "SCG user name:" {
+        send "admin\n"
+        exp_continue
+    }
+    "SCG user password:" {
+        send "$env(ADMIN_PASSWORD)\n"
+        exp_continue
+    }
+    "IP of your graphite server:" {
+        send "$env(GRAPHITE_IP)\n"
+        exp_continue
+    }
+    "port of your graphite server" {
+        send "$env(GRAPHITE_PORT)\n"
+        exp_continue
+    }
+    "cluster information" {
+        send "$env(CLUSTER_NAME)\n"
+        exp_continue
+    }
+    "node number within the cluster" {
+        send "$env(NODE_NUMBER)\n"
+        exp_continue
+    }
+    "yes to continue; no to setup again:" {
+        send "yes\n"
+        exp_continue
+    }
+    "enable monitor madSZ" {
+        send "n\n"
+        exp_continue
+    }
+    "collectd\]#" {
+    }
+}
+
+send_user "\n"

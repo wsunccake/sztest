@@ -2,6 +2,16 @@
 
 
 ###
+### controller
+###
+
+get_controller() {
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/controller)
+  pubapi_get "$(declare -p api_data)"
+}
+
+
+###
 ### domain
 ###
 
