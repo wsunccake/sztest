@@ -13,6 +13,7 @@ gen_qc_template_by_domain_id() {
                  \"value\": \"${domain_id}\"
   }]
 }"
+
   echo ${data}
 }
 
@@ -98,6 +99,15 @@ query_all_proxy_auth_by_domain_id() {
 }
 
 
+delete_auth_service() {
+  local id=$1
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/services/auth/${id})
+  pubapi_delete "$(declare -p api_data)"
+}
+
+
+
 ###
 ### proxy acct
 ###
@@ -133,6 +143,14 @@ query_all_proxy_acct_by_domain_id() {
 }
 
 
+delete_acct_service() {
+  local id=$1
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/services/acct/${id})
+  pubapi_delete "$(declare -p api_data)"
+}
+
+
 ###
 ### vlan pooling
 ###
@@ -159,6 +177,14 @@ query_all_vlan_pooling_by_domain_id() {
 
   declare -A api_data=(['url']=${PUBAPI_BASE_URL}/vlanpoolings/query ['data']=$data)
   query_all_xx "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.list[] | .id, .domainId' | tr -d \" | paste - - -d '|'
+}
+
+
+delete_vlan_pooling() {
+  local id=$1
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/vlanpoolings/${id})
+  pubapi_delete "$(declare -p api_data)"
 }
 
 
@@ -204,6 +230,14 @@ query_all_application_policy_v2_by_domain_id() {
 }
 
 
+delete_application_policy() {
+  local id=$1
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/avc/applicationPolicyV2/${id})
+  pubapi_delete "$(declare -p api_data)"
+}
+
+
 ###
 ### user defined
 ###
@@ -222,6 +256,23 @@ create_user_defined() {
 
   declare -A api_data=(['url']=${PUBAPI_BASE_URL}/avc/userDefined ['data']=$data)
   pubapi_post "$(declare -p api_data)"
+}
+
+
+query_all_user_defined_by_domain_id() {
+  local domain_id=$1
+  local data="`gen_qc_template_by_domain_id ${domain_id}`"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/query/userDefined ['data']=$data)
+  query_all_xx "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.list[] | .id, .domainId' | tr -d \" | paste - - -d '|'
+}
+
+
+delete_user_defined() {
+  local id=$1
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/avc/userDefined/${id})
+  pubapi_delete "$(declare -p api_data)"
 }
 
 
@@ -274,6 +325,14 @@ put_l2acl() {
 }
 
 
+delete_l2acl() {
+  local id=$1
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/l2AccessControls/${id})
+  pubapi_delete "$(declare -p api_data)"
+}
+
+
 ###
 ### l3acp
 ###
@@ -320,6 +379,14 @@ put_l3acp() {
 }
 
 
+delete_l3acp() {
+  local id=$1
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/l3AccessControlPolicies/${id})
+  pubapi_delete "$(declare -p api_data)"
+}
+
+
 ###
 ### lbs
 ###
@@ -347,6 +414,14 @@ query_all_lbs_by_domain_id() {
 
   declare -A api_data=(['url']=${PUBAPI_BASE_URL}/profiles/lbs/query ['data']=$data)
   query_all_xx "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.list[] | .id, .domainId' | tr -d \" | paste - - -d '|'
+}
+
+
+delete_lbs() {
+  local id=$1
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/profiles/lbs/${id})
+  pubapi_delete "$(declare -p api_data)"
 }
 
 
@@ -381,6 +456,14 @@ query_all_wifi_calling_by_domain_id() {
 
   declare -A api_data=(['url']=${PUBAPI_BASE_URL}/wifiCalling/query ['data']=$data)
   query_all_xx "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.list[] | .id, .domainId' | tr -d \" | paste - - -d '|'
+}
+
+
+delete_wifi_calling() {
+  local id=$1
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/wifiCalling/${id})
+  pubapi_delete "$(declare -p api_data)"
 }
 
 
@@ -425,6 +508,7 @@ query_all_device_policy_by_domain_id() {
 
 delete_domain_device_policy() {
   local id=$1
+
   declare -A api_data=(['url']=${PUBAPI_BASE_URL}/devicePolicy/${id})
   pubapi_delete "$(declare -p api_data)"
 }
@@ -631,6 +715,15 @@ export -f create_lbs
 export -f create_wifi_calling_policy
 export -f create_domain_device_policy
 
+export -f delete_auth_service
+export -f delete_acct_service
+export -f delete_vlan_pooling
+export -f delete_application_policy
+export -f delete_user_defined
+export -f delete_l2acl
+export -f delete_l3acp
+export -f delete_lbs
+export -f delete_wifi_calling
 export -f delete_domain_device_policy
 
 # per zone
