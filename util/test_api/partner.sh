@@ -459,10 +459,10 @@ query_all_wifi_calling_by_domain_id() {
 }
 
 
-delete_wifi_calling() {
+delete_wifi_calling_policy() {
   local id=$1
 
-  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/wifiCalling/${id})
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/wifiCalling/wifiCallingPolicy/${id})
   pubapi_delete "$(declare -p api_data)"
 }
 
@@ -723,7 +723,7 @@ export -f delete_user_defined
 export -f delete_l2acl
 export -f delete_l3acp
 export -f delete_lbs
-export -f delete_wifi_calling
+export -f delete_wifi_calling_policy
 export -f delete_domain_device_policy
 
 # per zone
