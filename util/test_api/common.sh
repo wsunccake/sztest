@@ -50,7 +50,7 @@ get_all_zone() {
 
 query_all_wlan() {
   declare -A api_data=(['url']=${PUBAPI_BASE_URL}/query/wlan ['data']='{"attributes": ["*"]}')
-  query_all_xx "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.list[] | .wlanId, .name, .zoneId, .zoneName' | tr -d \" | paste -d '|' - - - -
+  query_all_xx "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.list[] | .wlanId, .name, .zoneId, .zoneName, .domainName' | tr -d \" | paste -d '|' - - - - -
 }
 
 
