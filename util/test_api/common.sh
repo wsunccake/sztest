@@ -86,7 +86,7 @@ query_all_ap() {
 ### local license server
 ###
 
-update_license_server() {
+update_local_license_server() {
   local license_server_ip=$1
   local license_server_port=$2
   license_server_port=${license_server_port:-"3333"}
