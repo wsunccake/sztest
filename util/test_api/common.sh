@@ -80,3 +80,28 @@ query_all_ap() {
   declare -A api_data=(['url']=${PUBAPI_BASE_URL}/query/ap ['data']='{"attributes": ["*"]}')
   query_all_xx "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.list[] | .apMac, .serial, .zoneId, .domainId' | tr -d \" | paste -d '|' - - - -
 }
+
+
+###
+### local license server
+###
+
+update_license_server() {
+  local license_server_ip=$1
+  local license_server_port=$2
+  license_server_port=${license_server_port:-"3333"}
+  local data="{
+    \"ipAddress\": \"${license_server_ip}\",
+    \"port\": ${license_server_port},
+    \"useCloud\": false
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/licenseServer ['data']=${data})
+  pubapi_put "$(declare -p api_data)"
+}
+
+
+sync_local_license_server() {
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/licenses/sync)
+  pubapi_put "$(declare -p api_data)"
+}
