@@ -1,0 +1,75 @@
+#!/usr/bin/env expect
+
+set ERR_UNEXPECTED_OUTPUT 1
+
+set SMALL_TIMEOUT 30
+set MEDIUM_TIMEOUT 300
+set LONG_TIMEOUT 1800
+
+set timeout $SMALL_TIMEOUT
+
+# login
+spawn ssh -o UserKnownHostsFile=/dev/null \
+          -o StrictHostKeyChecking=no \
+          admin@$env(SZ_IP)
+
+expect_after {
+    timeout {
+        send_user "\n\n*** ERROR: unexpected output\n"
+        exit $ERR_UNEXPECTED_OUTPUT
+    }
+}
+
+# enter basic mode password
+set passwords "$env(DEFAULT_PASSWORD) $env(ADMIN_PASSWORD)"
+set i 0
+expect {
+    -nocase "password:" {
+        send "[lindex $passwords $i]\n";
+        incr i;
+        exp_continue;
+    }
+    eof {
+        send_user "\n\n*** ERROR: server has closed the connection\n"
+        exit $ERR_CONNECTION
+    }
+    ">" {
+        send "enable\n"
+    }
+}
+# enter enable mode password
+set i 0
+expect {
+    -nocase "password:" {
+        send "[lindex $passwords $i]\n";
+        incr i;
+        exp_continue;
+    }
+    "Incorrect enable password" {
+        send "enable\n"
+        send "[lindex $passwords $i]\n";
+        incr i;
+        exp_continue;
+    }
+    eof {
+        send_user "\n\n*** ERROR: server has closed the connection\n"
+        exit $ERR_CONNECTION
+    }
+    "#" {
+        send "debug\n";
+    };
+}
+
+expect "\(debug\)#"
+send "no screen-pagination\n"
+
+expect "\(debug\)#"
+send "do show license\n"
+
+
+expect "\(debug\)#"
+send "end\n"
+
+expect "#"
+
+send_user "\n"

@@ -1,0 +1,164 @@
+#!/usr/bin/env expect
+
+set ERR_UNEXPECTED_OUTPUT 1
+set ERR_CONNECTION 2
+
+set SMALL_TIMEOUT 30
+set MEDIUM_TIMEOUT 300
+set LONG_TIMEOUT 1800
+
+set pinpoint_dir /opt/ruckuswireless/3rdparty/pinpoint
+set conf_dir /opt/ruckuswireless/wsg/cli/conf
+set timeout $SMALL_TIMEOUT
+
+# login
+spawn ssh -o UserKnownHostsFile=/dev/null \
+          -o StrictHostKeyChecking=no \
+          admin@$env(SZ_IP)
+
+expect_after {
+    timeout {
+        send_user "\n\n*** ERROR: unexpected output\n"
+        exit $ERR_UNEXPECTED_OUTPUT
+    }
+}
+
+# enter basic mode password
+set passwords "$env(DEFAULT_PASSWORD) $env(ADMIN_PASSWORD)"
+set i 0
+expect {
+    -nocase "password:" {
+        send "[lindex $passwords $i]\n";
+        incr i;
+        exp_continue;
+    }
+    eof {
+        send_user "\n\n*** ERROR: server has closed the connection\n"
+        exit $ERR_CONNECTION
+    }
+    ">" {
+        send "enable\n"
+    }
+}
+# enter enable mode password
+set i 0
+expect {
+    -nocase "password:" {
+        send "[lindex $passwords $i]\n";
+        incr i;
+        exp_continue;
+    }
+    "Incorrect enable password" {
+        send "enable\n"
+        send "[lindex $passwords $i]\n";
+        incr i;
+        exp_continue;
+    }
+    eof {
+        send_user "\n\n*** ERROR: server has closed the connection\n"
+        exit $ERR_CONNECTION
+    }
+    "#" {
+        send "debug\n";
+    };
+}
+
+expect {
+    "\(debug\)#" {
+        send "save passphrase\n"
+    }
+}
+
+# root
+expect {
+    "Passphrase:" {
+        send "$env(PASSPHRASE)\n"
+        exp_continue
+    }
+    "Incorrect passphrase" {
+        send_user "\n\n*** ERROR: server has closed the connection\n"
+        exit $ERR_CONNECTION
+    }
+
+    "\\\$" {
+        send "sudo su -\n"
+    }
+}
+
+expect "\]#"
+send "mount -o remount,rw /\n"
+
+# configure pinpoint
+expect "\]#"
+send "mkdir -p $pinpoint_dir\n"
+
+expect "\]#"
+send "cd $pinpoint_dir\n"
+
+expect "pinpoint\]#"
+send "wget $env(PINPOINT_PACKAGE) -O pinpoint-agent.tar.gz\n"
+sleep 10
+
+expect "pinpoint\]#"
+send "tar zvxf pinpoint-agent.tar.gz\n"
+sleep 10
+
+expect "pinpoint\]#"
+send "sed -i s/^profiler.collector.ip=.*/profiler.collector.ip=$env(PINPOINT_IP)/ pinpoint.config\n"
+
+expect "pinpoint\]#"
+send "sed -i s/^profiler.sampling.rate=.*/profiler.sampling.rate=$env(PINPOINT_RATE)/ pinpoint.config\n"
+
+expect "pinpoint\]#"
+send "sed -i s/^profiler.interceptorregistry.size=.*/profiler.interceptorregistry.size=$env(PINPOINT_SIZE)/ pinpoint.config\n"
+
+expect "pinpoint\]#"
+send "sed -i s/^profiler.include=.*/profiler.include=$env(PINPOINT_INCLUDE)/ pinpoint.config\n"
+
+expect "pinpoint\]#"
+send "sed -i s/^profiler.entrypoint=.*/profiler.entrypoint=$env(PINPOINT_ENTRYPOINT)/ pinpoint.config\n"
+
+expect "pinpoint\]#"
+send "sed -i s/^profiler.spring.beans.1.annotation=.*/profiler.spring.beans.1.annotation=$env(PINPOINT_ANNOTATION)/ pinpoint.config\n"
+
+# update tomcat config
+expect "pinpoint\]#"
+send "cd $conf_dir\n"
+
+expect "conf]#"
+send "cp tomcat.cnf tomcat.cnf.org\n"
+
+expect {
+    "overwrite" {
+        send "no\n"
+        exp_continue
+    }
+    eof {
+        send_user "no eof"
+        exp_continue
+    }
+    "conf\]#" {
+        send "sed s'@^EXTRA_JVM_OPTIONS: \"@EXTRA_JVM_OPTIONS: \"-Dpinpoint.agentId=$env(CLUSTER_NAME) -Dpinpoint.applicationName=$env(CLUSTER_NAME) -javaagent:$pinpoint_dir/$env(PINPOINT_JAR) @' tomcat.cnf > tomcat.cnf.new\n"
+    }
+}
+
+expect "conf\]#"
+send "cat tomcat.cnf.new > tomcat.cnf\n"
+
+expect "conf\]#"
+send "\n"
+
+# restart tomcat
+set timeout $MEDIUM_TIMEOUT
+expect "conf\]#"
+send "/opt/ruckuswireless/wsg/cli/bin/tomcat.py restart\n"
+sleep 10
+
+expect "conf\]#"
+expect "conf\]#"
+send "\n"
+
+expect "conf\]#"
+send_user "\n"
+exit
+

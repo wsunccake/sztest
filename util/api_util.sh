@@ -11,7 +11,7 @@ sz_curl_cmd() {
   local data=$3
 
   case ${method} in
-  "GET")
+  "GET"|"DELETE")
     curl --insecure \
          --silent \
          --max-time "${CURL_TIMEOUT}" \
