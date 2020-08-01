@@ -50,7 +50,7 @@ node {
                         string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                         string(name: 'SZ_NUM', value: "${SZ_NUM}"),
                         string(name: 'CLUSTER_NAME', value: "partner-${SCENARIO}"),
-                        string(name: 'GCE_IMAGE', value: "${GCE_IMAGE}", description: ''),
+                        string(name: 'GCE_IMAGE', value: "${GCE_IMAGE}"),
                 ]
     }
 
