@@ -83,16 +83,6 @@ node {
                 ]
     }
 
-    stage('Prepare ID Data') {
-        build job: 'partner_prepare_id_data',
-                parameters: [
-                        string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
-                        string(name: 'SCENARIO', value: "${SCENARIO}"),
-                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                        string(name: 'SZ_IP', value: "${szIP}"),
-                ]
-    }
-
     stage('Join AP and UE') {
         if (params.is_skip_join == "false") {
             build job: 'join_ap_ue', parameters: [string(name: 'version', value: "${SZ_VERSION}"),
@@ -109,6 +99,16 @@ node {
         } else {
             echo "Skip to Join AP and UE"
         }
+    }
+
+    stage('Prepare ID Data') {
+        build job: 'partner_prepare_id_data',
+                parameters: [
+                        string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
+                        string(name: 'SCENARIO', value: "${SCENARIO}"),
+                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                        string(name: 'SZ_IP', value: "${szIP}"),
+                ]
     }
 
     stage('Test Query API') {
