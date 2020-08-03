@@ -33,7 +33,7 @@ associate_sim_ue() {
   echo "start to associate ue time:`date`"
 
   echo "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${uesim_cfg} ${SIM_USER}@${sim_pc}:/tmp/ue_open.conf"
-  scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${uesim_cfg} ${SIM_USER}@{$sim_pc}:/tmp/ue_open.conf
+  scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${uesim_cfg} ${SIM_USER}@${sim_pc}:/tmp/ue_open.conf
   echo "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${SIM_USER}@${sim_pc} 'sudo /root/run_madue.sh /tmp/ue_open.conf'"
   ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${SIM_USER}@${sim_pc} 'sudo /root/run_madue.sh /tmp/ue_open.conf'
 
