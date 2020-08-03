@@ -82,6 +82,54 @@ query_all_ap() {
 }
 
 
+monitor_ap() {
+  local domain_id=$1
+  domain_id=${domain_id:-"${DEFAULT_DOMAIN_UUID}"}
+  local data="{
+    \"filters\": [{
+      \"type\": \"DOMAIN\",
+      \"value\": \"${domain_id}\"
+    }]
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/monitor/ap ['data']=${data})
+  pubapi_post "$(declare -p api_data)"
+}
+
+
+query_ap_up-to-date() {
+  local data="{
+    \"attributes\": [\"*\"],
+    \"fullTextSearch\": {
+        \"type\": \"AND\",
+        \"value\": \"Up-to-date\"
+    }
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/query/ap ['data']=${data})
+  pubapi_post "$(declare -p api_data)"
+}
+
+
+###
+### ue
+###
+
+monitor_ue() {
+  local domain_id=$1
+  domain_id=${domain_id:-"${DEFAULT_DOMAIN_UUID}"}
+  local data="{
+    \"filters\": [{
+      \"type\": \"DOMAIN\",
+      \"value\": \"${domain_id}\"
+    }]
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/monitor/client ['data']=${data})
+  pubapi_post "$(declare -p api_data)"
+}
+
+
 ###
 ### local license server
 ###
