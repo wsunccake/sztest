@@ -32,6 +32,16 @@ sz_curl_cmd() {
          --data "${data}" \
          "${url}"
     ;;
+  "DELETE")
+    curl --insecure \
+         --silent \
+         --max-time "${CURL_TIMEOUT}" \
+         --cookie "${SZ_COOKIE}" \
+         --write-out "\nResponse code: %{http_code}\nResponse time: %{time_total}\n" \
+         --request "${method}"\
+         --header "content-type: application/json" \
+         "${url}"
+    ;;
   esac
 }
 

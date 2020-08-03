@@ -592,6 +592,35 @@ create_open_wlan_with_wpa2_and_aes() {
 
 
 ###
+### 802.1x wlan
+###
+
+create_8021x_wlan_with_non_proxy() {
+  local name=$1
+  local zone_uuid=$2
+  local auth_id=$3
+  local acct_id=$4
+  local data="{
+    \"name\": \"${name}\",
+    \"ssid\": \"${name}\",
+    \"authServiceOrProfile\": {
+        \"throughController\": false,
+        \"id\": \"${auth_id}\"
+    },
+    \"accountingServiceOrProfile\": {
+        \"throughController\": false,
+        \"id\": \"${acct_id}\",
+        \"interimUpdateMin\": 10,
+        \"accountingDelayEnabled\": false
+    }
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/rkszones/${zone_uuid}/wlans/standard8021X ['data']=$data)
+  pubapi_post "$(declare -p api_data)"
+}
+
+
+###
 ### hotspot
 ###
 
@@ -731,6 +760,7 @@ export -f delete_domain_device_policy
 export -f create_non_proxy_auth_service
 export -f create_non_proxy_acct_service
 export -f create_open_wlan_with_wpa2_and_aes
+export -f create_8021x_wlan_with_non_proxy
 export -f create_hotspot
 export -f create_wispr_mac_wlan_with_proxy
 export -f create_wispr_wlan_with_proxy
