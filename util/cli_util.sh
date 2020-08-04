@@ -37,6 +37,40 @@ gcloud compute instances create ${vm_name} \
 
 
 ###
+### sim
+###
+
+launch_sim() {
+  local cloud_service=$1
+  local vm_name=$2
+  local cmd
+
+  case ${cloud_service} in
+  "GCE")
+    cmd="""\
+gcloud compute instances create ${vm_name} \
+--zone=${GCE_ZONE} \
+--machine-type=${MADSZ_MACHINE_TYPE} \
+--image-project=${MADSZ_IMAGE_PROJECT} \
+--image=${MADSZ_IMAGE} \
+--boot-disk-size=${MADSZ_DISK_SIZE} \
+--boot-disk-type=${MADSZ_DISK_TYPE} \
+--tags=${GCE_TAG} \
+--labels=${GCE_LABELS}
+"""
+  ;;
+  *)
+    echo "un support cloud service"
+    exit 1
+  ;;
+  esac
+
+  echo ${cmd}
+  ${cmd}
+}
+
+
+###
 ### network command
 ###
 
