@@ -31,10 +31,20 @@ pipeline {
                 sh '''#!/bin/bash
 cd ${API_PERF_DIR}/util/locust_test
 source venv/bin/activate
+
+echo "export DOMAIN_ID_FILE=$DOMAIN_ID_FILE"
 export DOMAIN_ID_FILE=${VAR_DIR}/output/id/domain_ids.log
+
+echo "export AP_ZONE_DOMAIN_ID_FILE=$AP_ZONE_DOMAIN_ID_FILE"
 export AP_ZONE_DOMAIN_ID_FILE=${VAR_DIR}/output/id/ap_zone_domain_id.log
-echo "DOMAIN_ID_FILE: $DOMAIN_ID_FILE"
-echo "AP_ZONE_DOMAIN_ID_FILE: $AP_ZONE_DOMAIN_ID_FILE"
+
+# partner-update
+partner_test_functions=(l2acl l3acp wifi_calling device_policy lbs application_policy_v2 user_defined proxy_auth proxy_acct vlan_pooling)
+for f in ${partner_test_functions[@]}; do
+  echo "export ${f^^}_FILE=$VAR_DIR/output/id/${f}_ids.log"
+  export ${f^^}_FILE=$VAR_DIR/output/id/${f}_ids.log
+done
+
 
 mkdir -p ${VAR_DIR}/output/api_performance
 
@@ -50,3 +60,4 @@ done
         }
     }
 }
+
