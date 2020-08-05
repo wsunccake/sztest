@@ -21,6 +21,14 @@ get_domain() {
 }
 
 
+get_domain_by_name() {
+  local name=$1
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/domains/byName/${name})
+  pubapi_get "$(declare -p api_data)"
+}
+
+
 get_all_domain() {
   declare -A api_data=(['url']=${PUBAPI_BASE_URL}/domains)
   get_all_xx "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.list[] | .id, .name' | tr -d \" | paste -d '|' - -
