@@ -9,7 +9,7 @@ node {
                     string(name: 'VAR_DIR', defaultValue: '/usr/share/nginx/html/api_perf/${SZ_VERSION}/${SCENARIO}', description: ''),
 
                     // prepare_copy_var_dir
-                    string(name: 'SRC_DIR', defaultValue: '/var/lib/jenkins/api_perf/var/${SCENARIO}', description: ''),
+                    string(name: 'SRC_DIR', defaultValue: '/var/lib/sztest/conf/${SCENARIO}', description: ''),
 
                     // suite_sz_setup
                     string(name: 'GCE_IMAGE', defaultValue: 'vscg-cloud-${SZ_VERSION}', description: ''),
