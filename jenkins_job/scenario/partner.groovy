@@ -94,7 +94,7 @@ node {
 
     stage('Join AP and Associate UE') {
         if (params.is_skip_end2end == "false") {
-            build job: 'end2end_join_associate',
+            build job: 'suite_end2end_join_and_associate',
                     parameters: [
                             string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
                             string(name: 'SCENARIO', value: "${SCENARIO}"),
