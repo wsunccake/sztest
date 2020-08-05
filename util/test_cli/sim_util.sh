@@ -4,7 +4,7 @@ create_ap_cfg() {
   local apsim_cfg=$1
 
   sed s/SZIP=.*/SZIP=${SZ_IP}/ ${apsim_cfg}.template > ${apsim_cfg}
-  sed -i s/FWVER=.*/FWVER=AP_VERSION/ ${apsim_cfg}
+  sed -i s/FWVER=.*/FWVER=${AP_VERSION}/ ${apsim_cfg}
   sed -i s/MODEL=.*/MODEL=${AP_MODEL}/ ${apsim_cfg}
 }
 
