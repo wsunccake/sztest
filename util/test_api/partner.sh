@@ -714,7 +714,7 @@ create_ap() {
   local model=$3
   local zone_uuid=$4
   local data="{
-    \"mac\": \"${ap_mac}\",
+    \"mac\": \"${mac}\",
     \"zoneId\": \"${zone_uuid}\",
     \"serial\": \"${serial}\",
     \"model\": \"${model}\"
