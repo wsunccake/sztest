@@ -726,6 +726,19 @@ create_ap() {
 
 
 ###
+### delete wlan
+###
+
+delete_wlan() {
+  local id=$1
+  local zone_uuid=$2
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/rkszones/${zone_uuid}/wlans/${id})
+  pubapi_delete "$(declare -p api_data)"
+}
+
+
+###
 ### export function
 ###
 
@@ -754,6 +767,7 @@ export -f delete_l3acp
 export -f delete_lbs
 export -f delete_wifi_calling_policy
 export -f delete_domain_device_policy
+export -f delete_wlan
 
 # per zone
 
@@ -765,3 +779,4 @@ export -f create_hotspot
 export -f create_wispr_mac_wlan_with_proxy
 export -f create_wispr_wlan_with_proxy
 export -f create_ap
+
