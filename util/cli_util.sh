@@ -120,3 +120,52 @@ wait_until_pingable() {
 
   echo ${is_ping}
 }
+
+
+ping_available() {
+  local host_ip=$1
+  host_ip=${host_ip:=127.0.0.1}
+
+  ping -c3 -W5 ${host_ip} >& /dev/null && echo "true" || echo "false"
+}
+
+
+port_available() {
+  local host_ip=$1
+  local host_port=$2
+  host_ip=${host_ip:=127.0.0.1}
+  host_port=${host_port:=22}
+
+  nc -w3 ${host_ip} ${host_port} < /dev/null >& /dev/null && echo "true" || echo "false"
+}
+
+
+ssh_available() {
+  local host_ip=$1
+  local user=$2
+  local cmd=$3
+  local host_port=$4
+
+  host_ip=${host_ip:=127.0.0.1}
+  host_port=${host_port:=22}
+  username=${user:=root}
+  run_command=${run_command:=uptime}
+
+  ssh -o StrictHostKeyChecking=no -o ConnectTimeout=3 -p ${host_port} ${username}@${host_ip} ${run_command}>& /dev/null && echo "true" || echo "false"
+}
+
+
+wait_until_ping_available() {
+  local repeat_time=$1
+  local wait_time=$2
+  local host_ip=$3
+  local is_ping_available="false"
+
+  for i in `seq ${repeat_time}`; do
+    is_ping_available=$(ping_available $host_ip)
+    [[ "x${is_ping_available}" == "xtrue" ]] && break
+    sleep ${wait_time}
+  done
+
+  echo ${is_ping_available}
+}
