@@ -4,7 +4,7 @@ node {
     properties([
             parameters([
                     // common
-                    string(name: 'SZ_VERSION', defaultValue: '5.2.1.0'),
+                    string(name: 'SZ_VERSION', defaultValue: '5.2.1.1'),
                     string(name: 'SCENARIO', defaultValue: 'partner'),
                     string(name: 'VAR_DIR', defaultValue: '/usr/share/nginx/html/api_perf/${SZ_VERSION}/${SCENARIO}', description: ''),
 
@@ -16,7 +16,7 @@ node {
                     string(name: 'SZ_NUM', defaultValue: '1', description: ''),
 
                     // end2end_join_associate
-                    string(name: 'AP_VERSION', defaultValue: '5.2.1.0'),
+                    string(name: 'AP_VERSION', defaultValue: '5.2.1.1'),
                     string(name: 'AP_MODEL', defaultValue: 'R710', description: ''),
                     string(name: 'AP_NUM', defaultValue: '9999', description: ''),
                     string(name: 'UE_NUM', defaultValue: '90000', description: ''),
@@ -29,11 +29,11 @@ node {
                     string(name: 'is_clean_env', defaultValue: 'true', description: ''),
 
                     string(name: 'API_PERF_VER', defaultValue: 'v9_1', description: ''),
-                    string(name: 'DATA_DIR', defaultValue: '/usr/share/nginx/html/api_perf/5.2/report/${SCENARIO}', description: ''),
+                    string(name: 'DATA_DIR', defaultValue: '/usr/share/nginx/html/api_perf/5.2.1.1/report/${SCENARIO}', description: ''),
 
-
-                    string(name: 'NUM_CLIENT', defaultValue: '2', description: ''),
-                    string(name: 'HATCH_RATE', defaultValue: '1', description: ''),
+                    // query_api
+                    string(name: 'NUM_CLIENT', defaultValue: '10', description: ''),
+                    string(name: 'HATCH_RATE', defaultValue: '2', description: ''),
                     string(name: 'RUN_TIME', defaultValue: '20m1s', description: ''),
             ])
     ])
@@ -124,16 +124,16 @@ node {
 
     stage('Test Query API') {
         if (params.is_skip_query == "false") {
-            build job: 'query_api', parameters: [string(name: 'version', value: "${SZ_VERSION}"),
-                                                 string(name: 'scenario', value: "${SCENARIO}"),
-                                                 string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                 string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                 string(name: 'TASK_DIR', value: 'phase1'),
-                                                 string(name: 'SZ_IP', value: "${szIP}"),
-                                                 string(name: 'NUM_CLIENT', value: "${NUM_CLIENT}"),
-                                                 string(name: 'HATCH_RATE', value: "${HATCH_RATE}"),
-                                                 string(name: 'RUN_TIME', value: "${RUN_TIME}"),
-
+            build job: 'query_api', parameters: [
+                    string(name: 'version', value: "${SZ_VERSION}"),
+                    string(name: 'scenario', value: "${SCENARIO}"),
+                    string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                    string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                    string(name: 'TASK_DIR', value: 'phase1'),
+                    string(name: 'SZ_IP', value: "${szIP}"),
+                    string(name: 'NUM_CLIENT', value: "${NUM_CLIENT}"),
+                    string(name: 'HATCH_RATE', value: "${HATCH_RATE}"),
+                    string(name: 'RUN_TIME', value: "${RUN_TIME}"),
             ]
         } else {
             echo "Skip to Test Query API"
@@ -142,12 +142,12 @@ node {
 
     stage('Create CSV') {
         if (params.is_skip_csv == "false") {
-            build job: 'create_csv', parameters: [string(name: 'version', value: "${SZ_VERSION}"),
-                                                  string(name: 'scenario', value: "${SCENARIO}"),
-                                                  string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                                                  string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                                                  string(name: 'DATA_DIR', value: "${DATA_DIR}"),
-
+            build job: 'create_csv', parameters: [
+                    string(name: 'version', value: "${SZ_VERSION}"),
+                    string(name: 'scenario', value: "${SCENARIO}"),
+                    string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                    string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                    string(name: 'DATA_DIR', value: "${DATA_DIR}"),
             ]
         } else {
             echo "Skip to Create CSV"
