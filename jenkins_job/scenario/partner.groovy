@@ -22,20 +22,22 @@ node {
                     string(name: 'UE_NUM', defaultValue: '90000', description: ''),
                     string(name: 'MADSZ_TGZ', defaultValue: 'madSZ-v5.2.1-14-u1804.tar.xz  ', description: ''),
 
+                    // query_api
+                    string(name: 'NUM_CLIENT', defaultValue: '10', description: ''),
+                    string(name: 'HATCH_RATE', defaultValue: '2', description: ''),
+                    string(name: 'RUN_TIME', defaultValue: '20m1s', description: ''),
+ 
                     // stage control
                     string(name: 'is_skip_end2end', defaultValue: 'false', description: ''),
                     string(name: 'is_skip_query', defaultValue: 'false', description: ''),
                     string(name: 'is_skip_csv', defaultValue: 'false', description: ''),
+                    string(name: 'is_skip_delete_config', defaultValue: 'false', description: ''),
                     string(name: 'is_clean_env', defaultValue: 'true', description: ''),
 
                     string(name: 'API_PERF_VER', defaultValue: 'v9_1', description: ''),
                     string(name: 'DATA_DIR', defaultValue: '/usr/share/nginx/html/api_perf/5.2.1.1/report/${SCENARIO}', description: ''),
 
-                    // query_api
-                    string(name: 'NUM_CLIENT', defaultValue: '10', description: ''),
-                    string(name: 'HATCH_RATE', defaultValue: '2', description: ''),
-                    string(name: 'RUN_TIME', defaultValue: '20m1s', description: ''),
-            ])
+           ])
     ])
 
     currentBuild.displayName = "${params.SZ_VERSION} - ${params.SCENARIO} - #${currentBuild.number}"
@@ -72,23 +74,23 @@ node {
         }
     }
 
-    stage('Create Config Per Partner Domain') {
+    stage('Create Config') {
         build job: 'suite_partner_config_per_partner_domain',
                 parameters: [
                         string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
                         string(name: 'SCENARIO', value: "${SCENARIO}"),
                         string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                         string(name: 'SZ_IP', value: "${szIP}"),
+                        string(name: 'NPROC', value: "8"),
                 ]
-    }
 
-    stage('Create Config Per Zone') {
         build job: 'suite_partner_config_per_zone',
                 parameters: [
                         string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
                         string(name: 'SCENARIO', value: "${SCENARIO}"),
                         string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                         string(name: 'SZ_IP', value: "${szIP}"),
+                        string(name: 'NPROC', value: "8"),
                 ]
     }
 
@@ -112,24 +114,34 @@ node {
         }
     }
 
-    stage('Prepare ID Data') {
-        build job: 'partner_prepare_id_data',
-                parameters: [
-                        string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
-                        string(name: 'SCENARIO', value: "${SCENARIO}"),
-                        string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                        string(name: 'SZ_IP', value: "${szIP}"),
-                ]
-    }
-
     stage('Test Query API') {
         if (params.is_skip_query == "false") {
-            build job: 'query_api', parameters: [
-                    string(name: 'version', value: "${SZ_VERSION}"),
-                    string(name: 'scenario', value: "${SCENARIO}"),
+            build job: 'partner_prepare_id_data',
+                    parameters: [
+                            string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
+                            string(name: 'SCENARIO', value: "${SCENARIO}"),
+                            string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                            string(name: 'SZ_IP', value: "${szIP}"),
+                    ]
+
+            build job: 'test_run_locustio', parameters: [
+                    string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
+                    string(name: 'SCENARIO', value: "${SCENARIO}"),
                     string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                     string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
-                    string(name: 'TASK_DIR', value: 'phase1'),
+                    string(name: 'TASK_DIR', value: 'partner-query'),
+                    string(name: 'SZ_IP', value: "${szIP}"),
+                    string(name: 'NUM_CLIENT', value: "${NUM_CLIENT}"),
+                    string(name: 'HATCH_RATE', value: "${HATCH_RATE}"),
+                    string(name: 'RUN_TIME', value: "${RUN_TIME}"),
+            ]
+
+            build job: 'test_run_locustio', parameters: [
+                    string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
+                    string(name: 'SCENARIO', value: "${SCENARIO}"),
+                    string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                    string(name: 'API_PERF_VER', value: "${API_PERF_VER}"),
+                    string(name: 'TASK_DIR', value: 'partner-update'),
                     string(name: 'SZ_IP', value: "${szIP}"),
                     string(name: 'NUM_CLIENT', value: "${NUM_CLIENT}"),
                     string(name: 'HATCH_RATE', value: "${HATCH_RATE}"),
@@ -137,6 +149,32 @@ node {
             ]
         } else {
             echo "Skip to Test Query API"
+        }
+    }
+
+    stage('Delete Config') {
+        if (params.is_skip_delete_config == "false") {
+            build job: 'partner_delete_wlan_per_zone',
+                    parameters: [
+                            string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
+                            string(name: 'SCENARIO', value: "${SCENARIO}"),
+                            string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                            string(name: 'SZ_IP', value: "${SZ_IP}"),
+                            string(name: 'NPROC', value: "16"),
+                    ],
+                    propagate: false
+
+            build job: 'suite_partner_delete_config_per_partner_domain',
+                    parameters: [
+                            string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
+                            string(name: 'SCENARIO', value: "${SCENARIO}"),
+                            string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                            string(name: 'SZ_IP', value: "${SZ_IP}"),
+                            string(name: 'NPROC', value: "10"),
+                    ],
+                    propagate: false
+        } else {
+            echo "Skip to Create CSV"
         }
     }
 
