@@ -209,6 +209,14 @@ node {
                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
                     ],
                     propagate: false
+
+            build job: 'end2end_delete_sim',
+                    parameters: [
+                            string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
+                            string(name: 'SCENARIO', value: "${SCENARIO}"),
+                            string(name: 'VAR_DIR', value: "${VAR_DIR}"),
+                    ],
+                    propagate: false
         } else {
             echo "Skip to Clean Env"
         }
