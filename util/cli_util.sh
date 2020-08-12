@@ -96,6 +96,28 @@ gcloud compute instances stop ${vm_name}
 }
 
 
+delete_vm() {
+  local cloud_service=$1
+  local vm_name=$2
+  local cmd
+
+  case ${cloud_service} in
+  "GCE")
+    cmd="""\
+gcloud compute instances delete ${vm_name}
+"""
+  ;;
+  *)
+    echo "un support cloud service"
+    exit 1
+  ;;
+  esac
+
+  echo ${cmd}
+  ${cmd}
+}
+
+
 ###
 ### network command
 ###
