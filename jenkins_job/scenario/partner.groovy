@@ -159,7 +159,7 @@ node {
                             string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
                             string(name: 'SCENARIO', value: "${SCENARIO}"),
                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                            string(name: 'SZ_IP', value: "${SZ_IP}"),
+                            string(name: 'SZ_IP', value: "${szIP}"),
                             string(name: 'NPROC', value: "16"),
                     ],
                     propagate: false
@@ -169,7 +169,7 @@ node {
                             string(name: 'SZ_VERSION', value: "${SZ_VERSION}"),
                             string(name: 'SCENARIO', value: "${SCENARIO}"),
                             string(name: 'VAR_DIR', value: "${VAR_DIR}"),
-                            string(name: 'SZ_IP', value: "${SZ_IP}"),
+                            string(name: 'SZ_IP', value: "${szIP}"),
                             string(name: 'NPROC', value: "10"),
                     ],
                     propagate: false
