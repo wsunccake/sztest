@@ -191,3 +191,30 @@ wait_until_ping_available() {
 
   echo ${is_ping_available}
 }
+
+
+###
+### other
+###
+
+statistics_locustio_output() {
+  local f=$1
+  awk -F, '/status: 20/{print $2}' $f | sed 's/.*response time://' | statistics.awk
+}
+
+
+collect_curl_output() {
+  local file_pattern=$1
+  local file_dir=$2
+  file_pattern=${file_pattern:=*.out}
+  file_dir=${file_dir:=.}
+
+  find ${file_dir} -name "$file_pattern" -exec grep -H -E 'Response time|Response code' {} \;
+}
+
+
+statistics_curl_output() {
+  local f=$1
+  awk '/Response time/{print $3}' $f | statistics.awk
+}
+
