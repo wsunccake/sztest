@@ -1,0 +1,133 @@
+#!/usr/bin/env expect
+
+set ERR_UNEXPECTED_OUTPUT 1
+set ERR_CONNECTION 2
+
+set SMALL_TIMEOUT 30
+set MEDIUM_TIMEOUT 300
+set LONG_TIMEOUT 1800
+
+set conf_file /opt/ruckuswireless/wsg/conf/productAwareThreshold.properties
+set timeout $SMALL_TIMEOUT
+
+# login
+spawn ssh -o UserKnownHostsFile=/dev/null \
+          -o StrictHostKeyChecking=no \
+          admin@$env(SZ_IP)
+
+expect_after {
+    timeout {
+        send_user "\n\n*** ERROR: unexpected output\n"
+        exit $ERR_UNEXPECTED_OUTPUT
+    }
+}
+
+# enter basic mode password
+set passwords "$env(DEFAULT_PASSWORD) $env(ADMIN_PASSWORD)"
+set i 0
+expect {
+    -nocase "password:" {
+        send "[lindex $passwords $i]\n";
+        incr i;
+        exp_continue;
+    }
+    eof {
+        send_user "\n\n*** ERROR: server has closed the connection\n"
+        exit $ERR_CONNECTION
+    }
+    ">" {
+        send "enable\n"
+    }
+}
+
+# enter enable mode password
+set i 0
+expect {
+    -nocase "password:" {
+        send "[lindex $passwords $i]\n";
+        incr i;
+        exp_continue;
+    }
+    "Incorrect enable password" {
+        send "enable\n"
+        send "[lindex $passwords $i]\n";
+        incr i;
+        exp_continue;
+    }
+    eof {
+        send_user "\n\n*** ERROR: server has closed the connection\n"
+        exit $ERR_CONNECTION
+    }
+    "#" {
+        send "debug\n";
+    };
+}
+
+expect {
+    "\(debug\)#" {
+        send "save passphrase\n"
+    }
+}
+
+# root
+expect {
+    "Passphrase:" {
+        send "$env(PASSPHRASE)\n"
+        exp_continue
+    }
+    "Incorrect passphrase" {
+        send_user "\n\n*** ERROR: server has closed the connection\n"
+        exit $ERR_CONNECTION
+    }
+
+    "\\\$" {
+        send "sudo su -\n"
+    }
+}
+
+expect "\]#"
+send "mount -o remount,rw /\n"
+
+# update configure
+expect "\]#"
+send "cp -fv $conf_file $conf_file.`date +%s`\n"
+
+expect "\]#"
+send "cat << EOF > tmp.sh
+sed -i s/^scg.max.zones.vSCGckumo=.*/scg.max.zones.vSCGckumo=$env(zones_vSCGckumo)/ $conf_file
+sed -i s/^scg.max.authentication_servers.per_tenant.vSCGckumo=.*/scg.max.authentication_servers.per_tenant.vSCGckumo=$env(authentication_servers_per_tenant_vSCGckumo)/ $conf_file
+sed -i s/^scg.max.accounting_servers.per_tenant.vSCGckumo=.*/scg.max.accounting_servers.per_tenant.vSCGckumo=$env(accounting_servers_per_tenant_vSCGckumo)/ $conf_file
+sed -i s/^scg.max.vlan_pooling_profiles_per_tenant.vSCGckumo=.*/scg.max.vlan_pooling_profiles_per_tenant.vSCGckumo=$env(vlan_pooling_profiles_per_tenant_vSCGckumo)/ $conf_file
+sed -i s/^scg.max.qm_application_policies.per_tenant.vSCGckumo=.*/scg.max.qm_application_policies.per_tenant.vSCGckumo=$env(qm_application_policies_per_tenant_vSCGckumo)/ $conf_file
+sed -i s/^scg.max.user_defined_applications.per_tenant.vSCGckumo=.*/scg.max.user_defined_applications.per_tenant.vSCGckumo=$env(user_defined_applications_per_tenant_vSCGckumo)/ $conf_file
+sed -i s/^scg.max.l2_access_control.per_tenant.vSCGckumo=.*/scg.max.l2_access_control.per_tenant.vSCGckumo=$env(l2_access_control_per_tenant_vSCGckumo)/ $conf_file
+sed -i s/^scg.max.l3_access_control.per_tenant.vSCGckumo=.*/scg.max.l3_access_control.per_tenant.vSCGckumo=$env(l3_access_control_per_tenant_vSCGckumo)/ $conf_file
+sed -i s/^scg.max.lbs_profiles.per_tenant.vSCGckumo=.*/scg.max.lbs_profiles.per_tenant.vSCGckumo=$env(lbs_profiles_per_tenant_vSCGckumo)/ $conf_file
+sed -i s/^scg.max.wifi_calling_policies.per_tenant.vSCGckumo=.*/scg.max.wifi_calling_policies.per_tenant.vSCGckumo=$env(wifi_calling_policies_per_tenant_vSCGckumo)/ $conf_file
+sed -i s/^scg.max.domain_device_policy.per_tenant.vSCGckumo=.*/scg.max.domain_device_policy.per_tenant.vSCGckumo=$env(domain_device_policy_per_tenant_vSCGckumo)/ $conf_file
+EOF\n"
+sleep 1
+
+expect "\]#"
+send "chmod +x tmp.sh\n"
+
+expect "\]#"
+send "cat tmp.sh\n"
+
+expect "\]#"
+send "./tmp.sh\n"
+
+expect "\]#"
+send "rm -fv tmp.sh\n"
+
+expect "\]#"
+send "cat $conf_file\n"
+
+expect "\]#"
+send "/opt/ruckuswireless/wsg/cli/bin/tomcat.py restart\n"
+sleep 10
+
+expect "\]#"
+send_user "\n"
+exit
+
