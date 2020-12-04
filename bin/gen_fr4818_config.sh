@@ -89,7 +89,7 @@ for zone_num in `seq -w ${ZONE_FIRST} ${ZONE_LAST}`; do
 done
 
 for lbs_num in `seq ${LBS_FIRST} ${LBS_LAST}`; do
-  lbs_name="lbs_${lbs_num}"
+  lbs_name="lbs-${lbs_num}"
   echo "${lbs_name}" >> ${LBS_DIR}/lbs.inp
 done
 
