@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 create_zone() {
   local name=$1
   local domain_id=$2
@@ -34,7 +33,6 @@ create_lbs() {
   pubapi_post "$(declare -p api_data)"
 }
 
-
 create_ap_group() {
   local name=$1
   local zone_id=$2
@@ -45,6 +43,19 @@ create_ap_group() {
   pubapi_post "$(declare -p api_data)"
 }
 
+patch_zone_with_lbs() {
+  local zone_id=$1
+  local lbs_id=$2
+  local data="{
+    \"locationBasedService\": {
+        \"id\": \"${lbs_id}\"
+    }
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/rkszones/${zone_id} ['data']=$data)
+  pubapi_patch "$(declare -p api_data)"
+}
+
 ###
 ### export function
 ###
@@ -52,3 +63,4 @@ create_ap_group() {
 export -f create_zone
 export -f create_lbs
 export -f create_ap_group
+export -f patch_zone_with_lbs
