@@ -23,7 +23,7 @@ source ${LIB_DIR}/gen_tool.sh
 ### define variable
 ###
 
-ZONES=${ZONES:=300}
+ZONES=${ZONES:=1024}
 LBS=${LSB:=1024}
 AP_GROUPS_QUOTIENT=$(expr ${LBS} / ${ZONES})
 AP_GROUPS_REMAINDER=$(expr ${LBS} % ${ZONES})
