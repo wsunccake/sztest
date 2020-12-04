@@ -216,6 +216,7 @@ export -f pubapi
 export -f pubapi_get
 export -f pubapi_post
 export -f pubapi_put
+export -f pubapi_patch
 export -f pubapi_delete
 export -f pubapi_login
 export -f pubapi_logout
