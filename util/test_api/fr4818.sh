@@ -56,6 +56,40 @@ patch_zone_with_lbs() {
   pubapi_patch "$(declare -p api_data)"
 }
 
+delete_zone() {
+  local id=$1
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/rkszones/${id})
+  pubapi_delete "$(declare -p api_data)"
+}
+
+delete_lbs() {
+  local id=$1
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/profiles/lbs/${id})
+  pubapi_delete "$(declare -p api_data)"
+}
+
+gen_qc_template_by_domain_id() {
+  local domain_id=$1
+  local data="{
+  \"attributes\": [\"*\"],
+  \"filters\": [{\"type\": \"DOMAIN\",
+                 \"value\": \"${domain_id}\"
+  }]
+}"
+
+  echo ${data}
+}
+
+query_all_lbs_by_domain_id() {
+  local domain_id=$1
+  local data="`gen_qc_template_by_domain_id ${domain_id}`"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/profiles/lbs/query ['data']=$data)
+  query_all_xx "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.list[] | .id' | tr -d \" | paste - -d '|'
+}
+
 ###
 ### export function
 ###
@@ -64,3 +98,6 @@ export -f create_zone
 export -f create_lbs
 export -f create_ap_group
 export -f patch_zone_with_lbs
+export -f delete_zone
+export -f delete_lbs
+
