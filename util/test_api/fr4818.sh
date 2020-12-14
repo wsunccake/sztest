@@ -56,6 +56,17 @@ patch_zone_with_lbs() {
   pubapi_patch "$(declare -p api_data)"
 }
 
+patch_lbs() {
+  local lbs_id=$1
+  local password=$2
+  local data="{
+    \"password\": \"${password}\"
+}"
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/profiles/lbs/${lbs_id} ['data']=$data)
+  pubapi_patch "$(declare -p api_data)"
+}
+
 delete_zone() {
   local id=$1
 
@@ -90,6 +101,14 @@ query_all_lbs_by_domain_id() {
   query_all_xx "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq '.list[] | .id' | tr -d \" | paste - -d '|'
 }
 
+get_lbs_state() {
+  local id=$1
+
+  declare -A api_data=(['url']=${SZ_PROTOCOL}://${SZ_IP}:${SZ_PORT}/wsg/api/scg/lbsservice/byZone/${id})
+  pubapi_get "$(declare -p api_data)" | sed -n 's/Response body: //p' | jq -r '.data.list[0] | .venue, .state' | paste  - -
+}
+
+
 ###
 ### export function
 ###
@@ -98,6 +117,9 @@ export -f create_zone
 export -f create_lbs
 export -f create_ap_group
 export -f patch_zone_with_lbs
+export -f patch_lbs
 export -f delete_zone
 export -f delete_lbs
+export -f get_lbs_state
+
 

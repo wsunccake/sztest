@@ -41,7 +41,9 @@ get_all_domain() {
 ###
 
 get_zone() {
-  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/rkszones)
+  local id=$1
+
+  declare -A api_data=(['url']=${PUBAPI_BASE_URL}/rkszones/${id})
   pubapi_get "$(declare -p api_data)"
 }
 
