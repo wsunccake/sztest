@@ -28,9 +28,18 @@ create_attribute_per_feature() {
   local attribute_prefix=$4
   local first_num=$5
   local last_num=$6
+  local fix_width=$7
   local num
 
-  for num in `seq -w $first_num $last_num`; do
+  if [ -z ${fix_width} ]; then
+    fix_opt='-w'
+  elif [ ${fix_width} == 'false' ]; then
+    fix_opt=' '
+  else
+    fix_opt='-w'
+  fi
+
+  for num in `seq ${fix_opt} ${first_num} ${last_num}`; do
     local name="${attribute_prefix}${num}"
     echo "${name}" >> ${attribute_dir}/${attribute_file}.inp
     # same attribute name in different feature

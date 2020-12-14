@@ -21,7 +21,7 @@ sz_curl_cmd() {
          --header "content-type: application/json" \
          "${url}"
     ;;
-  "POST"|"PUT")
+  "POST"|"PUT"|"PATCH")
     curl --insecure \
          --silent \
          --max-time "${CURL_TIMEOUT}" \
@@ -92,6 +92,13 @@ pubapi_post() {
 pubapi_put() {
   eval "declare -A api_data="${1#*=}
   api_data['method']=PUT
+  pubapi "$(declare -p api_data)"
+}
+
+
+pubapi_patch() {
+  eval "declare -A api_data="${1#*=}
+  api_data['method']=PATCH
   pubapi "$(declare -p api_data)"
 }
 
@@ -209,6 +216,7 @@ export -f pubapi
 export -f pubapi_get
 export -f pubapi_post
 export -f pubapi_put
+export -f pubapi_patch
 export -f pubapi_delete
 export -f pubapi_login
 export -f pubapi_logout
